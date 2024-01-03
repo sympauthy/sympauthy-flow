@@ -1,9 +1,11 @@
-<script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+<script setup lang='ts'>
+import ByPasswordCard from '@/components/signin/ByPasswordCard.vue'
+import ByProviderCard from '@/components/signin/ByProviderCard.vue'
 </script>
 
 <template>
-  <main class='container'>
-
-  </main>
+  <div class='card-group'>
+    <ByProviderCard></ByProviderCard>
+    <ByPasswordCard></ByPasswordCard>
+  </div>
 </template>
