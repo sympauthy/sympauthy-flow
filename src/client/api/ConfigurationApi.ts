@@ -1,6 +1,7 @@
 import { AbstractApi } from '@/client/api/AbstractApi'
 import type { ConfigurationResource } from '@/client/model/ConfigurationResource'
 import { configurationResourceSchema } from '@/client/model/ConfigurationResource'
+import type { InjectionKey } from 'vue'
 
 export class ConfigurationApi extends AbstractApi {
 
@@ -15,3 +16,5 @@ export class ConfigurationApi extends AbstractApi {
     })
   }
 }
+
+export const configurationApiKey: InjectionKey<ConfigurationApi> = Symbol('ConfigurationApi')
