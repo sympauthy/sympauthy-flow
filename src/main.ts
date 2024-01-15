@@ -7,14 +7,18 @@ import { router } from '@/router'
 import { createPinia } from 'pinia'
 import Ajv from 'ajv'
 import { ConfigurationApi, configurationApiKey } from '@/client/api/ConfigurationApi'
-
-const ajv = new Ajv()
-const configurationApi = new ConfigurationApi()
+import { SignInApi, signInApiKey } from '@/client/api/SignInApi'
 
 const pinia = createPinia()
+
+const ajv = new Ajv()
+const configurationApi = new ConfigurationApi(pinia)
+const signInApi = new SignInApi(pinia)
+
 createApp(App)
   .use(router)
   .use(i18n)
   .use(pinia)
   .provide(configurationApiKey, configurationApi)
+  .provide(signInApiKey, signInApi)
   .mount('#app')

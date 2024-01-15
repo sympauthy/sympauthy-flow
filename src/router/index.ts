@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import SignInView from '@/pages/SignInPage.vue'
+import ErrorPage from '@/pages/ErrorPage.vue'
+import SignInPage from '@/pages/SignInPage.vue'
 
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,7 +13,12 @@ export const router = createRouter({
     {
       path: '/sign-in',
       name: 'SignIn',
-      component: SignInView
+      component: SignInPage
+    },
+    {
+      path: '/error',
+      name: 'Error',
+      component: ErrorPage
     }
   ]
 })

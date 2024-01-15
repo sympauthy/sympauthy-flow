@@ -2,12 +2,17 @@ import Ajv, { type JSONSchemaType } from 'ajv'
 import { type ErrorResource, errorResourceSchema } from '@/client/model/ErrorResource'
 import { ApiException, makeApiException } from '@/exception/ApiException'
 import { translateMessage } from '@/i18n'
+import type { Pinia } from 'pinia'
+import { useState } from '@/stores/StateStore'
 
 export interface QueryOptions {
   path: string
-  body?: any
-  state?: string
+  authenticated?: boolean
   timeoutInMs?: number
+}
+
+export interface PostQueryOptions {
+  body: any
 }
 
 export interface JsonQueryOptions<T> {
@@ -17,18 +22,32 @@ export interface JsonQueryOptions<T> {
 export class AbstractApi {
 
   private readonly ajv = new Ajv()
+  private readonly state: (() => string) | undefined = undefined
+
+  constructor(
+    pinia: Pinia
+  ) {
+    const stateStore = useState(pinia)
+    this.state = stateStore.state
+  }
 
   async get<T>(options: QueryOptions & JsonQueryOptions<T>): Promise<T> {
     const response = await this.fetch('get', options)
     return this.parseResponseContent(response, options)
   }
 
+  async post<T>(options: QueryOptions & PostQueryOptions & JsonQueryOptions<T>): Promise<T> {
+    const response = await this.fetch('post', options, options)
+    return this.parseResponseContent(response, options)
+  }
+
   private async fetch(
     method: 'get' | 'put' | 'post' | 'delete',
-    options: QueryOptions
+    options: QueryOptions,
+    postOptions?: PostQueryOptions
   ): Promise<Response> {
-    const url = this.getURL(options)
-    const requestInit = await this.getRequestInit(method, options)
+    const url = this.getUrl(options)
+    const requestInit = await this.getRequestInit(method, options, postOptions)
 
     try {
       return await fetch(url, requestInit)
@@ -40,19 +59,27 @@ export class AbstractApi {
 
   private async getRequestInit(
     method: string,
-    options: QueryOptions
+    options: QueryOptions,
+    postOptions?: PostQueryOptions
   ): Promise<RequestInit> {
-    return {
+    const init: RequestInit = {
       method: method,
-      headers: await this.makeHeaders(options),
+      headers: await this.makeHeaders(options, postOptions),
       credentials: 'omit'
     }
+    if (postOptions?.body !== undefined) {
+      init.body = JSON.stringify(postOptions.body)
+    }
+    return init
   }
 
-  private async makeHeaders(options: QueryOptions): Promise<Headers> {
+  private async makeHeaders(
+    options: QueryOptions,
+    postOptions?: PostQueryOptions
+  ): Promise<Headers> {
     const headers = new Headers()
     headers.set('Accept', 'application/json')
-    if (options.body !== undefined) {
+    if (postOptions?.body !== undefined) {
       headers.set('Content-Type', 'application/json')
     }
     return headers
@@ -92,8 +119,37 @@ export class AbstractApi {
     return content
   }
 
-  private getURL(options: QueryOptions): string {
-    return options.path // FIXME
+  private getUrl(options: QueryOptions): string {
+    const url = new URL(`${document.location.protocol}//${document.location.host}`)
+    url.pathname = options.path
+    if (options.authenticated) {
+      url.searchParams.append("state", this.getState())
+    }
+    return url.toString()
+  }
+
+  /**
+   * Return the state that must be appended to the url to authenticate this request to the authentication server.
+   *
+   * @private
+   */
+  private getState(): string {
+    let state: string | undefined = undefined
+    if (this.state !== undefined) {
+      try {
+        state = this?.state()
+      } catch (e) {
+        console.error('Failed to obtain state', e)
+      }
+    }
+    if (state === undefined) {
+      throw new ApiException(
+        'api.unknown',
+        translateMessage('api.unknown'),
+        undefined
+      )
+    }
+    return state
   }
 
   convertResponseToApiException(content: any, response: Response): ApiException {

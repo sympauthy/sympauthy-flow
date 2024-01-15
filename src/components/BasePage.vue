@@ -1,3 +1,8 @@
+<script setup lang='ts'>
+</script>
+
 <template>
-  <slot />
+  <main class='container'>
+    <slot />
+  </main>
 </template>

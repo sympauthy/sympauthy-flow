@@ -12,7 +12,5 @@ loadConfiguration()
 </script>
 
 <template>
-  <main class='container'>
-    <RouterView v-if='configuration !== undefined' />
-  </main>
+  <RouterView v-if='configuration !== undefined' />
 </template>

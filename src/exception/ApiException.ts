@@ -30,3 +30,11 @@ export function makeApiException(
     descriptionKey ? translateMessage(descriptionKey) : undefined
   )
 }
+
+export function getErrorMessageOrThrow(e: any): string {
+  if (e instanceof ApiException) {
+    return e.description ?? e.details ?? e.errorCode
+  } else {
+    throw e
+  }
+}

@@ -1,10 +1,18 @@
 <script lang='ts' setup>
 import type { ProviderConfigurationResource } from '@/client/model/ProviderConfigurationResource'
+import { useState } from '@/stores/StateStore'
 
-defineProps<{
+const stateStore = useState()
+const { redirectToAuthenticatedUrl } = stateStore
+
+const props = defineProps<{
   size: 'small' | 'default',
   provider: ProviderConfigurationResource
 }>()
+
+function onClick() {
+  redirectToAuthenticatedUrl(props.provider.authorize_url)
+}
 </script>
 
 <template>
@@ -12,7 +20,7 @@ defineProps<{
 
   </template>
   <template v-if='size === "default"'>
-    <button class='btn btn-primary w-100'>
+    <button @click='onClick' class='btn btn-primary w-100'>
       {{ provider.name }}
     </button>
   </template>
