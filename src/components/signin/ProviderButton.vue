@@ -1,5 +1,5 @@
 <script lang='ts' setup>
-import type { ProviderConfigurationResource } from '@/client/model/ProviderConfigurationResource'
+import type { ProviderConfigurationResource } from '@/client/model/config/ProviderConfigurationResource'
 import { useState } from '@/stores/StateStore'
 
 const stateStore = useState()

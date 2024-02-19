@@ -1,0 +1,12 @@
+@import "~bootstrap/scss/bootstrap";
+
+/**
+ * CSS variables allowing the user
+ */
+:root {
+  --form-field-margin-bottom: #{map-get($spacers, 3)};
+}
+
+.form-field {
+  margin-bottom: var(--form-field-margin-bottom);
+}

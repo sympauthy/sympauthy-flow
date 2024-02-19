@@ -1,6 +1,6 @@
 import { AbstractApi } from '@/client/api/AbstractApi'
-import type { ConfigurationResource } from '@/client/model/ConfigurationResource'
-import { configurationResourceSchema } from '@/client/model/ConfigurationResource'
+import type { ConfigurationResource } from '@/client/model/config/ConfigurationResource'
+import { configurationResourceSchema } from '@/client/model/config/ConfigurationResource'
 import type { InjectionKey } from 'vue'
 import type { Pinia } from 'pinia'
 

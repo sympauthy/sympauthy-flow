@@ -57,7 +57,9 @@ const onSubmit = handleSubmit(async (values) => {
 
       <div class='mb-3 w-100 text-center'>
         <i18n-t keypath='components.by_password_card.no_account'>
-          <a>{{ t('components.by_password_card.sign_up') }}</a>
+          <router-link :to='{name: "SignUp"}'>
+            {{ t('components.by_password_card.sign_up_action') }}
+          </router-link>
         </i18n-t>
       </div>
 

@@ -1,4 +1,6 @@
 import { inject, type InjectionKey } from 'vue'
+import type { Router } from 'vue-router'
+import { or } from 'ajv/dist/compile/codegen'
 
 export function injectRequired<T>(key: InjectionKey<T> | string): T {
   const injected = inject(key)
@@ -6,4 +8,25 @@ export function injectRequired<T>(key: InjectionKey<T> | string): T {
     throw new Error('Failed to inject required dependencies.')
   }
   return injected
+}
+
+/**
+ * Redirect the end-user
+ *
+ * @param router
+ * @param redirectUri
+ */
+export async function redirectOrReplace(
+  router: Router,
+  redirectUri: string
+) {
+  const origin = document.location.origin
+  if (redirectUri.startsWith(origin)) {
+    const path = redirectUri.substring(origin.length)
+    await router.replace({
+      path: path
+    })
+  } else {
+    document.location = redirectUri
+  }
 }

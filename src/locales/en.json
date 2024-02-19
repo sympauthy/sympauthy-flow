@@ -4,6 +4,7 @@
   },
   "common": {
     "password": "Password",
+    "confirm_password": "Confirm your password",
     "sign_in": "Sign-in",
     "sign_up": "Sign-up"
   },
@@ -11,14 +12,24 @@
     "by_password_card": {
       "title": "Login to your account",
       "no_account": "Don't have an account? {0}",
-      "sign_up": "Sign Up!",
+      "sign_up_action": "Sign Up!",
       "forgotten_password": "Forgot password?"
     }
   },
   "pages": {
+    "sign_up": {
+      "title": "Create your account",
+      "already_have_account": "Already have an account? {0}",
+      "sign_in_action": "Sign-in instead!"
+    },
     "error": {
       "title": "An error occurred"
     }
   },
-  "claims": {}
+  "errors": {
+    "missing_state": {
+      "description": "You are not authorized to access the page. Please go back to your application and retry to sign-in.",
+      "details": "A state issued by the authorization server must be passed as query param."
+    }
+  }
 }

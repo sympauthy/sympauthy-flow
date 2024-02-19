@@ -1,16 +1,14 @@
 <script lang='ts' setup>
-import { RouterView } from 'vue-router'
-import { useConfiguration } from '@/stores/ConfigurationStore'
-import { storeToRefs } from 'pinia'
-
-const configurationStore = useConfiguration()
-const { configuration } = storeToRefs(configurationStore)
-const { loadConfiguration } = configurationStore
-
-loadConfiguration()
-
+import ConfiguredApp from '@/ConfiguredApp.vue'
 </script>
 
 <template>
-  <RouterView v-if='configuration !== undefined' />
+  <Suspense>
+    <template #default>
+      <ConfiguredApp />
+    </template>
+    <template #fallback>
+      FIXME: loading...
+    </template>
+  </Suspense>
 </template>
