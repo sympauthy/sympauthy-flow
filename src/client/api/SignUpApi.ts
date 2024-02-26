@@ -14,7 +14,7 @@ export class SignUpApi extends AbstractApi {
     super(pinia)
   }
 
-  async signUp(body: SignUpInputResource): Promise<SignUpResultResource> {
+  async signUp(body: any): Promise<SignUpResultResource> {
     return this.post({
       authenticated: true,
       path: '/api/v1/flow/sign-up',

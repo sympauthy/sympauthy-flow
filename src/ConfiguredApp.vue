@@ -7,17 +7,18 @@ import { useI18n } from 'vue-i18n'
 import { provide } from 'vue'
 import { configurationKey } from '@/utils/ConfigurationUtils'
 
-const i18n = useI18n()
 const router = useRouter()
 const configurationStore = useConfiguration()
 
 try {
   const configuration = await configurationStore.loadConfiguration()
-  provide(configurationKey, configuration)
+  if (configuration !== undefined) {
+    provide(configurationKey, configuration)
+  }
 } catch (e) {
   if (e instanceof ApiException) {
     const errorRoute = makeErrorRoute(e.errorCode, e.details, e.description)
-    router.go(errorRoute)
+    router.replace(errorRoute)
   } else {
     throw e
   }

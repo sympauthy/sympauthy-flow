@@ -90,7 +90,8 @@ const onSubmit = handleSubmit(async (values) => {
         </div>
 
         <Form @submit='onSubmit' :validation-schema='validationSchema' v-slot='{errors}'>
-          <claims-input-group :configs='configuration.password?.sign_up_claims' />
+          <claims-input-group v-if='configuration.password?.sign_up_claims'
+                              :configs='configuration.password.sign_up_claims' />
 
           <div class='form-field'>
             <label for='password' class='form-label'>

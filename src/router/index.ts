@@ -56,10 +56,11 @@ export function makeTranslatedErrorRoute(
   detailsMessageId?: string,
   descriptionMessageId?: string
 ): RouteLocationRaw {
+  const t = i18n.global.t as (v: string) => string
   return makeErrorRoute(
     errorCode,
-    detailsMessageId !== undefined ? i18n.global.t(detailsMessageId) : undefined,
-    descriptionMessageId !== undefined ? i18n.global.t(descriptionMessageId) : undefined
+    detailsMessageId !== undefined ? t(detailsMessageId) : undefined,
+    descriptionMessageId !== undefined ? t(descriptionMessageId) : undefined
   )
 }
 

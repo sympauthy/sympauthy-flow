@@ -31,5 +31,9 @@
       "description": "You are not authorized to access the page. Please go back to your application and retry to sign-in.",
       "details": "A state issued by the authorization server must be passed as query param."
     }
+  },
+  "or": {
+    "or": "{0} or {1}",
+    "separator": "{0}, {1}"
   }
 }

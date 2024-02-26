@@ -1,23 +1,21 @@
 <script setup lang='ts'>
 import { useI18n } from 'vue-i18n'
-import { useConfiguration } from '@/stores/ConfigurationStore'
-import { storeToRefs } from 'pinia'
 import { signInApiKey } from '@/client/api/SignInApi'
-import { injectRequired } from '@/utils/VueUtils'
+import { injectRequired, redirectOrReplace } from '@/utils/VueUtils'
 import { object, string } from 'yup'
 import { useForm } from 'vee-validate'
-import { useState } from '@/stores/StateStore'
 import { ref } from 'vue'
 import { getErrorMessageOrThrow } from '@/exception/ApiException'
+import { useRouter } from 'vue-router'
+import CommonButton from '@/components/CommonButton.vue'
 
 const signInApi = injectRequired(signInApiKey)
 const { t } = useI18n()
-const configStore = useConfiguration()
-const stateStore = useState()
-const { configuration } = storeToRefs(configStore)
 
-const isSubmitting = ref<Boolean>(false)
+const isSubmitting = ref<boolean>(false)
 const submitError = ref<String>()
+
+const router = useRouter()
 
 const { handleSubmit, defineField, errors } = useForm({
   validationSchema: object({
@@ -32,11 +30,13 @@ const onSubmit = handleSubmit(async (values) => {
   if (isSubmitting.value) return
   isSubmitting.value = true
   submitError.value = undefined
+
   try {
     const result = await signInApi.signIn(values.login, values.password)
-    console.log(result)
+    await redirectOrReplace(router, result.redirect_url)
   } catch (e) {
     submitError.value = getErrorMessageOrThrow(e)
+    return
   } finally {
     isSubmitting.value = false
   }
@@ -51,10 +51,6 @@ const onSubmit = handleSubmit(async (values) => {
         {{ t('components.by_password_card.title') }}
       </h5>
 
-      <div v-if='submitError' class='alert alert-danger mb-3' role='alert'>
-        {{ submitError }}
-      </div>
-
       <div class='mb-3 w-100 text-center'>
         <i18n-t keypath='components.by_password_card.no_account'>
           <router-link :to='{name: "SignUp"}'>
@@ -63,12 +59,17 @@ const onSubmit = handleSubmit(async (values) => {
         </i18n-t>
       </div>
 
+      <div v-if='submitError' class='alert alert-danger mb-3' role='alert'>
+        {{ submitError }}
+      </div>
+
       <form @submit='onSubmit' novalidate>
         <div class='mb-3'>
           <label for='login' class='form-label'></label>
           <input id='login'
                  type='text'
                  class='form-control'
+                 :disabled='isSubmitting'
                  :class='{"is-invalid": errors.login}'
                  v-model='login'
                  v-bind='loginAttrs'>
@@ -82,8 +83,9 @@ const onSubmit = handleSubmit(async (values) => {
             {{ t('common.password') }}
           </label>
           <input id='password'
-                 type='text'
+                 type='password'
                  class='form-control'
+                 :disabled='isSubmitting'
                  :class='{"is-invalid": errors.password}'
                  v-model='password'
                  v-bind='passwordAttrs'>
@@ -95,16 +97,12 @@ const onSubmit = handleSubmit(async (values) => {
           <a>{{ t('components.by_password_card.forgotten_password') }}</a>
         </div>
 
-        <button type='submit'
-                class='btn btn-primary w-100 mt-5'>
+        <common-button type='submit'
+                       class='btn-primary w-100 mt-5'>
           {{ t('common.sign_in') }}
-        </button>
+        </common-button>
       </form>
 
     </div>
   </div>
 </template>
-
-<style scoped>
-
-</style>

@@ -8,7 +8,7 @@ export const useConfiguration = defineStore('configuration', () => {
 
   const configuration = ref<ConfigurationResource>()
 
-  const loadConfiguration = async (): ConfigurationResource => {
+  const loadConfiguration = async (): Promise<ConfigurationResource | undefined> => {
     if (configuration.value === undefined) {
       configuration.value = await configurationApi?.fetchConfiguration()
     }
