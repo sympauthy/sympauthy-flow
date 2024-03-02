@@ -14,7 +14,7 @@ export interface ConfigurationResource {
   claims: Array<ClaimConfigurationResource>
   features: FeaturesConfigurationResource
   password?: PasswordConfigurationResource
-  providers: Array<ProviderConfigurationResource>
+  providers?: Array<ProviderConfigurationResource>
 }
 
 export const configurationResourceSchema: JSONSchemaType<ConfigurationResource> = {
@@ -38,8 +38,9 @@ export const configurationResourceSchema: JSONSchemaType<ConfigurationResource> 
       type: 'array',
       items: {
         ...providerConfigurationResourceSchema
-      }
+      },
+      nullable: true
     }
   },
-  required: ['claims', 'features', 'providers']
+  required: ['claims', 'features']
 }
