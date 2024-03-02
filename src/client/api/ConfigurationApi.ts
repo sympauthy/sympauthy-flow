@@ -5,7 +5,6 @@ import type { InjectionKey } from 'vue'
 import type { Pinia } from 'pinia'
 
 export class ConfigurationApi extends AbstractApi {
-
   constructor(pinia: Pinia) {
     super(pinia)
   }

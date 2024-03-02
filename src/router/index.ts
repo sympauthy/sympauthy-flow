@@ -36,7 +36,7 @@ export function makeErrorRoute(
   description?: string
 ): RouteLocationRaw {
   const queryParams: Record<string, string> = {
-    'error_code': errorCode
+    error_code: errorCode
   }
   if (details !== undefined) {
     queryParams['details'] = details
@@ -66,8 +66,10 @@ export function makeTranslatedErrorRoute(
 
 export function makeUnknownErrorRoute(i18n: I18n): RouteLocationRaw {
   return makeTranslatedErrorRoute(
-    i18n, 'unknown',
-    'errors.unknown.details', 'errors.unknown.description'
+    i18n,
+    'unknown',
+    'errors.unknown.details',
+    'errors.unknown.description'
   )
 }
 
@@ -115,19 +117,18 @@ export function makeRouter(i18n: I18n): Router {
       const fromState = getStateQueryParam(from)
       if (fromState !== undefined) {
         // The state was present, copy the state and redirect to the to page with the state query param.
-        return merge(
-          to,
-          {
-            query: {
-              state: fromState
-            }
+        return merge(to, {
+          query: {
+            state: fromState
           }
-        )
+        })
       } else {
         // The state is missing, go to error page.
         return makeTranslatedErrorRoute(
-          i18n, 'state.unauthorized',
-          'errors.missing_state.details', 'errors.missing_state.description'
+          i18n,
+          'state.unauthorized',
+          'errors.missing_state.details',
+          'errors.missing_state.description'
         )
       }
     }

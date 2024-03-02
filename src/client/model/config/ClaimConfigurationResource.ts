@@ -3,26 +3,26 @@ import type { ClaimType } from '@/client/model/config/ClaimType'
 import type { ClaimGroup } from '@/client/model/config/ClaimGroup'
 
 export interface ClaimConfigurationResource {
-  id: string,
-  name: string,
-  type: ClaimType,
+  id: string
+  name: string
+  type: ClaimType
   group?: ClaimGroup
 }
 
 export const claimConfigurationResourceSchema: JSONSchemaType<ClaimConfigurationResource> = {
   type: 'object',
   properties: {
-    'id': {
+    id: {
       type: ['string']
     },
-    'name': {
+    name: {
       type: ['string']
     },
-    'type': {
+    type: {
       type: ['string'],
-      enum: ['string' , 'email' /* FIXME , 'phone_number', 'date' */]
+      enum: ['string', 'email' /* FIXME , 'phone_number', 'date' */]
     },
-    'group': {
+    group: {
       type: ['string'],
       enum: ['identity', 'address'],
       nullable: true

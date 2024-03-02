@@ -1,5 +1,4 @@
-<script setup lang='ts'>
-
+<script setup lang="ts">
 const props = withDefaults(
   defineProps<{
     loading: boolean | undefined
@@ -8,16 +7,12 @@ const props = withDefaults(
     loading: false
   }
 )
-
 </script>
 
 <template>
-  <button class='btn'>
+  <button class="btn">
     <slot />
-
   </button>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

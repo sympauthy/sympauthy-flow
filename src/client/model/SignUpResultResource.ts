@@ -7,7 +7,7 @@ export interface SignUpResultResource {
 export const signUpResultResourceSchema: JSONSchemaType<SignUpResultResource> = {
   type: 'object',
   properties: {
-    'redirect_url': {
+    redirect_url: {
       type: ['string']
     }
   },

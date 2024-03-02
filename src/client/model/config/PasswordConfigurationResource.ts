@@ -9,7 +9,7 @@ export interface PasswordConfigurationResource {
 export const passwordConfigurationResourceSchema: JSONSchemaType<PasswordConfigurationResource> = {
   type: 'object',
   properties: {
-    'sign_up_claims': {
+    sign_up_claims: {
       type: 'array',
       items: {
         ...collectedClaimConfigurationResourceSchema

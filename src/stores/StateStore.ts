@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { isBlankOrEmpty } from '@/utils/StringUtils'
 
 export const useState = defineStore('state', () => {
-
   const state = (): string => {
     const params = new URLSearchParams(document.location.search)
 
@@ -28,7 +27,7 @@ export const useState = defineStore('state', () => {
    */
   const redirectToAuthenticatedUrl = (url: string) => {
     const uri = new URL(url)
-    uri.searchParams.append("state", state())
+    uri.searchParams.append('state', state())
     document.location = uri.toString()
   }
 

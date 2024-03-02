@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import { RouterView, useRouter } from 'vue-router'
 import { useConfiguration } from '@/stores/ConfigurationStore'
 import { ApiException } from '@/exception/ApiException'

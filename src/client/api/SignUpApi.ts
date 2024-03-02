@@ -9,7 +9,6 @@ export interface SignUpInputResource {
 }
 
 export class SignUpApi extends AbstractApi {
-
   constructor(pinia: Pinia) {
     super(pinia)
   }

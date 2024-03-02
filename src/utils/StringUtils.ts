@@ -20,6 +20,6 @@ export function or(i18n: I18n, values: Array<string>): string {
     (acc, it) => {
       return translateMessage('or.separator', { '0': acc, '1': it })
     },
-    translateMessage('or.or', { '0': values[0], '1': values[1] }),
+    translateMessage('or.or', { '0': values[0], '1': values[1] })
   )
 }

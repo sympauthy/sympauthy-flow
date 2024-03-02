@@ -20,13 +20,10 @@ export interface JsonQueryOptions<T> {
 }
 
 export class AbstractApi {
-
   private readonly ajv = new Ajv()
   private readonly state: (() => string) | undefined = undefined
 
-  constructor(
-    pinia: Pinia
-  ) {
+  constructor(pinia: Pinia) {
     const stateStore = useState(pinia)
     this.state = stateStore.state
   }
@@ -88,7 +85,11 @@ export class AbstractApi {
   async checkContentType(response: Response, options: QueryOptions, expectedContentType: string) {
     const contentType = response.headers.get('Content-Type')
     if (!contentType || !contentType.includes(expectedContentType)) {
-      console.error('Server responded with unexpected content-type %o while fetching path %o.', contentType, options.path)
+      console.error(
+        'Server responded with unexpected content-type %o while fetching path %o.',
+        contentType,
+        options.path
+      )
       throw makeApiException('api.unknown')
     }
   }
@@ -97,12 +98,20 @@ export class AbstractApi {
     if (!response.ok) {
       await this.checkContentType(response, options, 'application/json')
       const content = await response.json()
-      console.error('Server responded with status %d while fetching path %o: %o', response.status, options.path, content)
+      console.error(
+        'Server responded with status %d while fetching path %o: %o',
+        response.status,
+        options.path,
+        content
+      )
       throw this.convertResponseToApiException(content, response)
     }
   }
 
-  async parseResponseContent<T>(response: Response, options: QueryOptions & JsonQueryOptions<T>): Promise<T> {
+  async parseResponseContent<T>(
+    response: Response,
+    options: QueryOptions & JsonQueryOptions<T>
+  ): Promise<T> {
     await this.checkResponseOk(response, options)
     await this.checkContentType(response, options, 'application/json')
 
@@ -110,9 +119,12 @@ export class AbstractApi {
     if (options.schema) {
       const validate = this.ajv.compile(options.schema)
       if (!validate(content)) {
-        console.error('Server responded with content not expected schema while fetching path %o.', options.path,
+        console.error(
+          'Server responded with content not expected schema while fetching path %o.',
+          options.path,
           JSON.stringify(options.schema),
-          JSON.stringify(content))
+          JSON.stringify(content)
+        )
         throw makeApiException('api.unknown')
       }
     }
@@ -123,7 +135,7 @@ export class AbstractApi {
     const url = new URL(`${document.location.protocol}//${document.location.host}`)
     url.pathname = options.path
     if (options.authenticated) {
-      url.searchParams.append("state", this.getState())
+      url.searchParams.append('state', this.getState())
     }
     return url.toString()
   }
@@ -143,11 +155,7 @@ export class AbstractApi {
       }
     }
     if (state === undefined) {
-      throw new ApiException(
-        'api.unknown',
-        translateMessage('api.unknown'),
-        undefined
-      )
+      throw new ApiException('api.unknown', translateMessage('api.unknown'), undefined)
     }
     return state
   }
@@ -162,12 +170,7 @@ export class AbstractApi {
         response
       )
     } else {
-      return new ApiException(
-        'api.unknown',
-        translateMessage('api.unknown'),
-        undefined,
-        response
-      )
+      return new ApiException('api.unknown', translateMessage('api.unknown'), undefined, response)
     }
   }
 }

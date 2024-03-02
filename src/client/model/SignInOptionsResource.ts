@@ -1,5 +1,8 @@
 import { type JSONSchemaType } from 'ajv'
-import { type PasswordOptionsResource, passwordOptionsResourceSchema } from '@/client/model/PasswordOptionsResource'
+import {
+  type PasswordOptionsResource,
+  passwordOptionsResourceSchema
+} from '@/client/model/PasswordOptionsResource'
 
 export interface SignInOptionsResource {
   password?: PasswordOptionsResource
@@ -8,7 +11,7 @@ export interface SignInOptionsResource {
 export const signInOptionsResourceSchema: JSONSchemaType<SignInOptionsResource> = {
   type: 'object',
   properties: {
-    'password': {
+    password: {
       ...passwordOptionsResourceSchema,
       nullable: true
     }

@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import ByPasswordCard from '@/components/signin/ByPasswordCard.vue'
 import ByProviderCard from '@/components/signin/ByProviderCard.vue'
 import BasePage from '@/components/BasePage.vue'
@@ -12,13 +12,12 @@ const { configuration } = storeToRefs(configurationStore)
 const hasProvider = computed(() => {
   return (configuration?.value?.providers ?? []).length > 0
 })
-
 </script>
 
 <template>
   <base-page>
-    <div class='card-group'>
-      <by-provider-card v-if='hasProvider'></by-provider-card>
+    <div class="card-group">
+      <by-provider-card v-if="hasProvider"></by-provider-card>
       <by-password-card></by-password-card>
     </div>
   </base-page>

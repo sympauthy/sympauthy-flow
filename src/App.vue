@@ -1,4 +1,4 @@
-<script lang='ts' setup>
+<script lang="ts" setup>
 import ConfiguredApp from '@/ConfiguredApp.vue'
 </script>
 
@@ -7,8 +7,6 @@ import ConfiguredApp from '@/ConfiguredApp.vue'
     <template #default>
       <ConfiguredApp />
     </template>
-    <template #fallback>
-      FIXME: loading...
-    </template>
+    <template #fallback> FIXME: loading... </template>
   </Suspense>
 </template>

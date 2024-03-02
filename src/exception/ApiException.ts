@@ -1,7 +1,6 @@
 import { translateMessage } from '@/i18n'
 
 export class ApiException {
-
   constructor(
     /**
      * A code identifying the error.
@@ -16,14 +15,10 @@ export class ApiException {
      */
     readonly description?: string,
     readonly response?: Response
-  ) {
-  }
+  ) {}
 }
 
-export function makeApiException(
-  errorCode: string,
-  descriptionKey?: string
-): ApiException {
+export function makeApiException(errorCode: string, descriptionKey?: string): ApiException {
   return new ApiException(
     errorCode,
     translateMessage(errorCode),

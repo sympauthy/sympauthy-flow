@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import BasePage from '@/components/BasePage.vue'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
@@ -23,7 +23,10 @@ const signUpApi = injectRequired(signUpApiKey)
 const isSubmitting = ref<Boolean>(false)
 const submitError = ref<String>()
 
-const claimSchemas = claimFormService.getSchemasForClaims(configuration, configuration.password?.sign_up_claims || [])
+const claimSchemas = claimFormService.getSchemasForClaims(
+  configuration,
+  configuration.password?.sign_up_claims || []
+)
 
 const validationSchema = object({
   ...claimSchemas,
@@ -71,52 +74,57 @@ const onSubmit = handleSubmit(async (values) => {
 
 <template>
   <base-page>
-    <div class='card'>
-      <div class='card-body'>
-        <h5 class='card-title w-100 text-center mb-3'>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title w-100 text-center mb-3">
           {{ t('pages.sign_up.title') }}
         </h5>
 
-        <div class='mb-3 w-100 text-center'>
-          <i18n-t keypath='pages.sign_up.already_have_account'>
-            <router-link :to='{name: "SignIn"}'>
+        <div class="mb-3 w-100 text-center">
+          <i18n-t keypath="pages.sign_up.already_have_account">
+            <router-link :to="{ name: 'SignIn' }">
               {{ t('pages.sign_up.sign_in_action') }}
             </router-link>
           </i18n-t>
         </div>
 
-        <div v-if='submitError' class='alert alert-danger mb-3' role='alert'>
+        <div v-if="submitError" class="alert alert-danger mb-3" role="alert">
           {{ submitError }}
         </div>
 
-        <Form @submit='onSubmit' :validation-schema='validationSchema' v-slot='{errors}'>
-          <claims-input-group v-if='configuration.password?.sign_up_claims'
-                              :configs='configuration.password.sign_up_claims' />
+        <Form @submit="onSubmit" :validation-schema="validationSchema" v-slot="{ errors }">
+          <claims-input-group
+            v-if="configuration.password?.sign_up_claims"
+            :configs="configuration.password.sign_up_claims"
+          />
 
-          <div class='form-field'>
-            <label for='password' class='form-label'>
+          <div class="form-field">
+            <label for="password" class="form-label">
               {{ t('common.password') }}
             </label>
-            <Field name='password'
-                   type='password'
-                   class='form-control'
-                   :class='{"is-invalid": errors.password}' />
-            <ErrorMessage name='password' class='invalid-feedback' />
+            <Field
+              name="password"
+              type="password"
+              class="form-control"
+              :class="{ 'is-invalid': errors.password }"
+            />
+            <ErrorMessage name="password" class="invalid-feedback" />
           </div>
 
-          <div class='form-field'>
-            <label for='confirm_password' class='form-label'>
+          <div class="form-field">
+            <label for="confirm_password" class="form-label">
               {{ t('common.confirm_password') }}
             </label>
-            <Field name='confirm_password'
-                   type='password'
-                   class='form-control'
-                   :class='{"is-invalid": errors.confirm_password}' />
-            <ErrorMessage name='password' class='invalid-feedback' />
+            <Field
+              name="confirm_password"
+              type="password"
+              class="form-control"
+              :class="{ 'is-invalid': errors.confirm_password }"
+            />
+            <ErrorMessage name="password" class="invalid-feedback" />
           </div>
 
-          <button type='submit'
-                  class='btn btn-primary w-100 mt-5'>
+          <button type="submit" class="btn btn-primary w-100 mt-5">
             {{ t('common.sign_up') }}
           </button>
         </Form>
@@ -125,6 +133,4 @@ const onSubmit = handleSubmit(async (values) => {
   </base-page>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

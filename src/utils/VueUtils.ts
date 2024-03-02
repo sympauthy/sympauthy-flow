@@ -16,10 +16,7 @@ export function injectRequired<T>(key: InjectionKey<T> | string): T {
  * @param router
  * @param redirectUri
  */
-export async function redirectOrReplace(
-  router: Router,
-  redirectUri: string
-) {
+export async function redirectOrReplace(router: Router, redirectUri: string) {
   const origin = document.location.origin
   if (redirectUri.startsWith(origin)) {
     const path = redirectUri.substring(origin.length)

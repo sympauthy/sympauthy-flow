@@ -1,11 +1,13 @@
 import { AbstractApi } from '@/client/api/AbstractApi'
-import { type SignInResultResource, signInResultResourceSchema } from '@/client/model/SignInResultResource'
+import {
+  type SignInResultResource,
+  signInResultResourceSchema
+} from '@/client/model/SignInResultResource'
 import type { Pinia } from 'pinia'
 import type { InjectionKey } from 'vue'
 import { ConfigurationApi } from '@/client/api/ConfigurationApi'
 
 export class SignInApi extends AbstractApi {
-
   constructor(pinia: Pinia) {
     super(pinia)
   }

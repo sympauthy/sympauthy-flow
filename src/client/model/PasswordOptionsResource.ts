@@ -8,11 +8,11 @@ export interface PasswordOptionsResource {
 export const passwordOptionsResourceSchema: JSONSchemaType<PasswordOptionsResource> = {
   type: 'object',
   properties: {
-    'sign_up_url': {
+    sign_up_url: {
       type: ['string'],
       nullable: true
     },
-    'forgotten_password_url': {
+    forgotten_password_url: {
       type: ['string'],
       nullable: true
     }

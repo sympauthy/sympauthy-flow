@@ -9,14 +9,14 @@ export interface ErrorResource {
 export const errorResourceSchema: JSONSchemaType<ErrorResource> = {
   type: 'object',
   properties: {
-    'error_code': {
+    error_code: {
       type: ['string']
     },
-    'details': {
+    details: {
       type: ['string'],
       nullable: true
     },
-    'description': {
+    description: {
       type: ['string'],
       nullable: true
     }

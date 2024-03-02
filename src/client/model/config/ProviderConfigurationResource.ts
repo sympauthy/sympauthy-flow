@@ -10,13 +10,13 @@ export const providerConfigurationResourceSchema: JSONSchemaType<ProviderConfigu
   type: 'object',
   additionalProperties: true,
   properties: {
-    'id': {
+    id: {
       type: ['string']
     },
-    'name': {
+    name: {
       type: ['string']
     },
-    'authorize_url': {
+    authorize_url: {
       type: ['string']
     }
   },
