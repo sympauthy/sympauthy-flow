@@ -12,7 +12,7 @@ const props = defineProps<{
     <label :for="props.options.claim.id" class="form-label">
       {{ props.options.claim.name }}
     </label>
-    <Field class="form-control" :name="props.options.claim.id" />
+    <Field class="form-input" :name="props.options.claim.id" />
     <ErrorMessage class="invalid-feedback" :name="props.options.claim.id" />
   </div>
 </template>

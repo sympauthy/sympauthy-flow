@@ -16,12 +16,9 @@ function onClick() {
 </script>
 
 <template>
-  <template v-if="size === 'small'"> </template>
-  <template v-if="size === 'default'">
-    <button @click="onClick" class="btn btn-primary w-100">
-      {{ provider.name }}
-    </button>
-  </template>
+  <button @click="onClick" class="btn btn-primary w-full">
+    {{ provider.name }}
+  </button>
 </template>
 
 <style scoped></style>

@@ -3,7 +3,6 @@ import { RouterView, useRouter } from 'vue-router'
 import { useConfiguration } from '@/stores/ConfigurationStore'
 import { ApiException } from '@/exception/ApiException'
 import { makeErrorRoute } from '@/router'
-import { useI18n } from 'vue-i18n'
 import { provide } from 'vue'
 import { configurationKey } from '@/utils/ConfigurationUtils'
 

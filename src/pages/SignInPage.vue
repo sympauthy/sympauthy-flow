@@ -1,10 +1,10 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import ByPasswordCard from '@/components/signin/ByPasswordCard.vue'
 import ByProviderCard from '@/components/signin/ByProviderCard.vue'
-import BasePage from '@/components/BasePage.vue'
 import { useConfiguration } from '@/stores/ConfigurationStore'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
+import BasePage from '@/components/BasePage.vue'
 
 const configurationStore = useConfiguration()
 const { configuration } = storeToRefs(configurationStore)
@@ -16,9 +16,15 @@ const hasProvider = computed(() => {
 
 <template>
   <base-page>
-    <div class="card-group">
-      <by-provider-card v-if="hasProvider"></by-provider-card>
-      <by-password-card></by-password-card>
+    <div class='w-full flex items-center flex-col-reverse lg:flex-row lg:items-start'>
+      <by-provider-card v-if='hasProvider' class='card'></by-provider-card>
+      <by-password-card class='card'></by-password-card>
     </div>
   </base-page>
 </template>
+
+<style scoped>
+
+
+
+</style>

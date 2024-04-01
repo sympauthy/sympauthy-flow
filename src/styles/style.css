@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --color-primary: theme(colors.blue.800);
+    --color-on-primary: theme(colors.white);
+
+    --color-body: theme(colors.gray.100);
+    --color-on-body: theme(colors.gray.500);
+
+    --color-error: theme(colors.red.500);
+    --color-link: theme(colors.blue.500);
+
+    --max-width-card: 480px;
+}
+
+body {
+    color: var(--color-background);
+}
+
+/** Button **/
+
+.btn {
+    @apply border rounded p-2;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+}
+
+/** Form  **/
+
+.form-label {
+    @apply text-gray-700 text-sm font-bold mb-2;
+}
+
+.form-input {
+    @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none;
+}
+
+.invalid {
+    border-color: var(--color-error);
+}
+
+.invalid-feedback {
+    color: var(--color-error);
+}
+
+/** Text **/
+
+.text-primary {
+    color: var(--color-primary);
+}

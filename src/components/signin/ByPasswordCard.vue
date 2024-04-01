@@ -8,6 +8,8 @@ import { ref } from 'vue'
 import { getErrorMessageOrThrow } from '@/exception/ApiException'
 import { useRouter } from 'vue-router'
 import CommonButton from '@/components/CommonButton.vue'
+import BaseCard from '@/components/BaseCard.vue'
+import CommonAlert from '@/components/CommonAlert.vue'
 
 const signInApi = injectRequired(signInApiKey)
 const { t } = useI18n()
@@ -44,39 +46,36 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title w-100 text-center mb-3">
-        {{ t('components.by_password_card.title') }}
-      </h5>
-
-      <div class="mb-3 w-100 text-center">
-        <i18n-t keypath="components.by_password_card.no_account">
-          <router-link :to="{ name: 'SignUp' }">
+  <base-card>
+    <template v-slot:title>
+      {{ t('components.by_password_card.title') }}
+    </template>
+    <template v-slot:default>
+      <div class='mb-3 w-100 text-center'>
+        <i18n-t keypath='components.by_password_card.no_account'>
+          <router-link :to="{ name: 'SignUp' }" class='text-primary underline'>
             {{ t('components.by_password_card.sign_up_action') }}
           </router-link>
         </i18n-t>
       </div>
 
-      <div v-if="submitError" class="alert alert-danger mb-3" role="alert">
+      <common-alert v-if='submitError' class='mb-5'>
         {{ submitError }}
-      </div>
+      </common-alert>
 
       <form @submit="onSubmit" novalidate>
-        <div class="mb-3">
-          <label for="login" class="form-label"></label>
-          <input
-            id="login"
-            type="text"
-            class="form-control"
-            :disabled="isSubmitting"
-            :class="{ 'is-invalid': errors.login }"
-            v-model="login"
-            v-bind="loginAttrs"
-          />
-          <div class="invalid-feedback" :class="{ 'd-block': errors.login }">
-            {{ errors.login }}
-          </div>
+        <label for='login' class='form-label'></label>
+        <input
+          id='login'
+          type='text'
+          class='form-input'
+          :disabled='isSubmitting'
+          :class="{ 'is-invalid': errors.login }"
+          v-model='login'
+          v-bind='loginAttrs'
+        />
+        <div class='invalid-feedback' :class="{ 'd-block': errors.login }">
+          {{ errors.login }}
         </div>
 
         <div class="mb-1">
@@ -86,7 +85,7 @@ const onSubmit = handleSubmit(async (values) => {
           <input
             id="password"
             type="password"
-            class="form-control"
+            class="form-input"
             :disabled="isSubmitting"
             :class="{ 'is-invalid': errors.password }"
             v-model="password"
@@ -96,14 +95,14 @@ const onSubmit = handleSubmit(async (values) => {
             {{ errors.password }}
           </div>
         </div>
-        <div class="w-100 text-end">
+        <div class="w-100 text-end text-primary underline">
           <a>{{ t('components.by_password_card.forgotten_password') }}</a>
         </div>
 
-        <common-button type="submit" class="btn-primary w-100 mt-5">
+        <common-button type="submit" class="btn-primary w-full mt-5">
           {{ t('common.sign_in') }}
         </common-button>
       </form>
-    </div>
-  </div>
+    </template>
+  </base-card>
 </template>
