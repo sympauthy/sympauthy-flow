@@ -1,15 +1,19 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import { useI18n } from 'vue-i18n'
 import { signInApiKey } from '@/client/api/SignInApi'
 import { injectRequired, redirectOrReplace } from '@/utils/VueUtils'
 import { object, string } from 'yup'
-import { useForm } from 'vee-validate'
-import { ref } from 'vue'
+import { Form } from 'vee-validate'
+import { computed, ref } from 'vue'
 import { getErrorMessageOrThrow } from '@/exception/ApiException'
 import { useRouter } from 'vue-router'
 import CommonButton from '@/components/CommonButton.vue'
 import BaseCard from '@/components/BaseCard.vue'
 import CommonAlert from '@/components/CommonAlert.vue'
+import CommonInput from '@/components/CommonField.vue'
+import { configurationKey } from '@/utils/ConfigurationUtils'
+import { or } from '@/utils/StringUtils'
+import { i18n } from '@/i18n'
 
 const signInApi = injectRequired(signInApiKey)
 const { t } = useI18n()
@@ -18,17 +22,24 @@ const isSubmitting = ref<boolean>(false)
 const submitError = ref<String>()
 
 const router = useRouter()
+const configuration = injectRequired(configurationKey)
 
-const { handleSubmit, defineField, errors } = useForm({
-  validationSchema: object({
-    login: string().required(),
-    password: string().required()
-  })
+const loginLabel = computed(() => {
+  const claims = configuration.claims || []
+  const loginClaims = (configuration.password?.login_claims || [])
+    .map((claim) => {
+      return claims.find(it => it.id == claim)?.name
+    })
+    .filter((it): it is string => !!it)
+  return or(i18n, loginClaims)
 })
-const [login, loginAttrs] = defineField('login')
-const [password, passwordAttrs] = defineField('password')
 
-const onSubmit = handleSubmit(async (values) => {
+const validationSchema = object({
+  login: string().required(),
+  password: string().required()
+})
+
+const onSubmit = async (values: any) => {
   if (isSubmitting.value) return
   isSubmitting.value = true
   submitError.value = undefined
@@ -42,7 +53,7 @@ const onSubmit = handleSubmit(async (values) => {
   } finally {
     isSubmitting.value = false
   }
-})
+}
 </script>
 
 <template>
@@ -63,46 +74,27 @@ const onSubmit = handleSubmit(async (values) => {
         {{ submitError }}
       </common-alert>
 
-      <form @submit="onSubmit" novalidate>
+      <Form @submit='onSubmit' :validation-schema='validationSchema'>
         <label for='login' class='form-label'></label>
-        <input
-          id='login'
-          type='text'
-          class='form-input'
-          :disabled='isSubmitting'
-          :class="{ 'is-invalid': errors.login }"
-          v-model='login'
-          v-bind='loginAttrs'
-        />
-        <div class='invalid-feedback' :class="{ 'd-block': errors.login }">
-          {{ errors.login }}
-        </div>
+        <common-input name='login'
+                      type='text'
+                      class='mb-3'
+                      :label='loginLabel'
+                      :disabled='isSubmitting' />
 
-        <div class="mb-1">
-          <label for="password" class="form-label">
-            {{ t('common.password') }}
-          </label>
-          <input
-            id="password"
-            type="password"
-            class="form-input"
-            :disabled="isSubmitting"
-            :class="{ 'is-invalid': errors.password }"
-            v-model="password"
-            v-bind="passwordAttrs"
-          />
-          <div class="invalid-feedback" :class="{ 'd-block': errors.password }">
-            {{ errors.password }}
-          </div>
-        </div>
-        <div class="w-100 text-end text-primary underline">
+        <common-input name='password'
+                      class='mb-3'
+                      type='password'
+                      :label="t('common.password')" />
+
+        <div class='w-100 text-end text-primary underline'>
           <a>{{ t('components.by_password_card.forgotten_password') }}</a>
         </div>
 
-        <common-button type="submit" class="btn-primary w-full mt-5">
+        <common-button type='submit' class='btn-primary w-full mt-5'>
           {{ t('common.sign_in') }}
         </common-button>
-      </form>
+      </Form>
     </template>
   </base-card>
 </template>

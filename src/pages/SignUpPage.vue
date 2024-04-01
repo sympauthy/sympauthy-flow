@@ -15,6 +15,7 @@ import { useRouter } from 'vue-router'
 import { filter } from 'rambda/immutable'
 import BaseCard from '@/components/BaseCard.vue'
 import CommonAlert from '@/components/CommonAlert.vue'
+import CommonField from '@/components/CommonField.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -82,37 +83,22 @@ const onSubmit = async (values: any) => {
 
           </div>
 
-          <Form @submit='onSubmit' :validation-schema='validationSchema' v-slot='{ errors }'>
+          <Form @submit='onSubmit' :validation-schema='validationSchema'>
             <claims-input-group
               v-if='configuration.password?.sign_up_claims'
               :configs='configuration.password.sign_up_claims'
+              class='mb-3'
             />
 
-            <div class='form-field'>
-              <label for='password' class='form-label'>
-                {{ t('common.password') }}
-              </label>
-              <Field
-                name='password'
-                type='password'
-                class='form-input'
-                :class="{ 'is-invalid': errors.password }"
-              />
-              <ErrorMessage name='password' class='invalid-feedback' />
-            </div>
+            <common-field name='password'
+                          type='password'
+                          class='mb-3'
+                          :label="t('common.password')" />
 
-            <div class='form-field'>
-              <label for='confirm_password' class='form-label'>
-                {{ t('common.confirm_password') }}
-              </label>
-              <Field
-                name='confirm_password'
-                type='password'
-                class='form-input'
-                :class="{ 'is-invalid': errors.confirm_password }"
-              />
-              <ErrorMessage name='password' class='invalid-feedback' />
-            </div>
+            <common-field name='confirm_password'
+                          type='password'
+                          class='mb-3'
+                          :label="t('common.confirm_password')" />
 
             <button type='submit' class='btn btn-primary w-full mt-5'>
               {{ t('common.sign_up') }}

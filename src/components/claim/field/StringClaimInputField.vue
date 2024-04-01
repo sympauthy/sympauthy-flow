@@ -1,6 +1,6 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import type { ClaimInputFieldOptions } from '@/services/ClaimFormService'
-import { ErrorMessage, Field } from 'vee-validate'
+import CommonField from '@/components/CommonField.vue'
 
 const props = defineProps<{
   options: ClaimInputFieldOptions
@@ -8,13 +8,9 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="form-field">
-    <label :for="props.options.claim.id" class="form-label">
-      {{ props.options.claim.name }}
-    </label>
-    <Field class="form-input" :name="props.options.claim.id" />
-    <ErrorMessage class="invalid-feedback" :name="props.options.claim.id" />
-  </div>
+  <common-field :name='props.options.claim.id'
+                :label='props.options.claim.name'
+                type='input' />
 </template>
 
 <style scoped></style>

@@ -10,6 +10,10 @@ import { configurationKey } from '@/utils/ConfigurationUtils'
 import IdentityClaimsInputGroup from '@/components/claim/group/IdentityClaimsInputGroup.vue'
 import ClaimInputField from '@/components/claim/field/ClaimInputField.vue'
 
+defineOptions({
+  inheritAttrs: false
+})
+
 const props = defineProps<{
   configs: Array<CollectedClaimConfigurationResource>
 }>()
@@ -23,10 +27,10 @@ const optionsArray = claimFormService.getOptionsForClaims(configuration, props.c
 <template>
   <template v-for="options of optionsArray" :key="options.claim.id">
     <template v-if="options instanceof ClaimInputFieldOptions">
-      <claim-input-field :options="options" />
+      <claim-input-field :options='options' v-bind='$attrs' />
     </template>
     <template v-if="options instanceof ClaimInputGroupOptions && options.group === 'identity'">
-      <identity-claims-input-group :options="options" />
+      <identity-claims-input-group :options='options' v-bind='$attrs' />
     </template>
   </template>
 </template>
