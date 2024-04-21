@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import BasePage from '@/components/BasePage.vue'
+import BaseCard from '@/components/BaseCard.vue'
 
 const route = useRoute()
 
@@ -14,21 +15,19 @@ const description = computed(() => route.query['description'])
 
 <template>
   <base-page>
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title text-center mb-3">
+    <div class='flex justify-center w-100'>
+      <base-card>
+        <template v-slot:title>
           {{ t('pages.error.title') }}
-        </h5>
-        <div class="card-text">
-          {{ errorCode }}
-        </div>
-        <div class="card-text">
-          {{ details }}
-        </div>
-        <div class="card-text">
+        </template>
+        <p class='mb-3'>
           {{ description }}
-        </div>
-      </div>
+        </p>
+        <hr class='m-3'>
+        <p class='text-sm' style='color: var(--color-on-body);'>
+          {{ errorCode }} - {{ details }}
+        </p>
+      </base-card>
     </div>
   </base-page>
 </template>
