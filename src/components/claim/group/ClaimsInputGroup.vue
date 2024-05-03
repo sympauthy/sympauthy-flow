@@ -1,33 +1,33 @@
-<script setup lang="ts">
-import type { CollectedClaimConfigurationResource } from '@/client/model/config/CollectedClaimConfigurationResource'
-import {
-  ClaimFormService,
-  ClaimInputFieldOptions,
-  ClaimInputGroupOptions
-} from '@/services/ClaimFormService'
+<script setup lang='ts'>
+import { ClaimFormService, ClaimInputFieldOptions, ClaimInputGroupOptions } from '@/services/ClaimFormService'
 import { injectRequired } from '@/utils/VueUtils'
 import { configurationKey } from '@/utils/ConfigurationUtils'
 import IdentityClaimsInputGroup from '@/components/claim/group/IdentityClaimsInputGroup.vue'
 import ClaimInputField from '@/components/claim/field/ClaimInputField.vue'
 
+interface Props {
+  claims: Array<string>
+  disabled: boolean
+}
+
 defineOptions({
   inheritAttrs: false
 })
 
-const props = defineProps<{
-  configs: Array<CollectedClaimConfigurationResource>
-}>()
+const props = withDefaults(defineProps<Props>(), {
+  disabled: false
+})
 
 const configuration = injectRequired(configurationKey)
 const claimFormService = new ClaimFormService()
 
-const optionsArray = claimFormService.getOptionsForClaims(configuration, props.configs)
+const optionsArray = claimFormService.getOptionsForClaims(configuration, props.claims)
 </script>
 
 <template>
-  <template v-for="options of optionsArray" :key="options.claim.id">
-    <template v-if="options instanceof ClaimInputFieldOptions">
-      <claim-input-field :options='options' v-bind='$attrs' />
+  <template v-for='options of optionsArray' :key='options.getId()'>
+    <template v-if='options instanceof ClaimInputFieldOptions'>
+      <claim-input-field :options='options' :disabled='disabled' v-bind='$attrs' />
     </template>
     <template v-if="options instanceof ClaimInputGroupOptions && options.group === 'identity'">
       <identity-claims-input-group :options='options' v-bind='$attrs' />

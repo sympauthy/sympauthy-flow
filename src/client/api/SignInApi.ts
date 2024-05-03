@@ -1,18 +1,17 @@
 import { AbstractApi } from '@/client/api/AbstractApi'
 import {
-  type SignInResultResource,
-  signInResultResourceSchema
-} from '@/client/model/SignInResultResource'
+  type FlowResultResource,
+  flowResultResourceSchema
+} from '@/client/model/FlowResultResource'
 import type { Pinia } from 'pinia'
 import type { InjectionKey } from 'vue'
-import { ConfigurationApi } from '@/client/api/ConfigurationApi'
 
 export class SignInApi extends AbstractApi {
   constructor(pinia: Pinia) {
     super(pinia)
   }
 
-  async signIn(login: string, password: string): Promise<SignInResultResource> {
+  async signIn(login: string, password: string): Promise<FlowResultResource> {
     return this.post({
       authenticated: true,
       path: '/api/v1/flow/sign-in',
@@ -20,7 +19,7 @@ export class SignInApi extends AbstractApi {
         login: login,
         password: password
       },
-      schema: signInResultResourceSchema
+      schema: flowResultResourceSchema
     })
   }
 }

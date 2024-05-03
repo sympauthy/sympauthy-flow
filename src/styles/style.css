@@ -13,6 +13,7 @@
     --color-link: theme(colors.blue.500);
 
     --max-width-card: 480px;
+    --max-width-large-card: 680px;
 }
 
 body {

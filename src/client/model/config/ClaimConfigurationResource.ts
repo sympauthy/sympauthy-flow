@@ -4,6 +4,7 @@ import type { ClaimGroup } from '@/client/model/config/ClaimGroup'
 
 export interface ClaimConfigurationResource {
   id: string
+  required: boolean
   name: string
   type: ClaimType
   group?: ClaimGroup
@@ -14,6 +15,9 @@ export const claimConfigurationResourceSchema: JSONSchemaType<ClaimConfiguration
   properties: {
     id: {
       type: ['string']
+    },
+    required: {
+      type: ['boolean']
     },
     name: {
       type: ['string']
@@ -28,6 +32,6 @@ export const claimConfigurationResourceSchema: JSONSchemaType<ClaimConfiguration
       nullable: true
     }
   },
-  required: ['id', 'name', 'type'],
+  required: ['id', 'required', 'name', 'type'],
   additionalProperties: true
 }

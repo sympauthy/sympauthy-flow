@@ -1,42 +1,57 @@
 import type { ConfigurationResource } from '@/client/model/config/ConfigurationResource'
 import { Schema, string } from 'yup'
-import type { CollectedClaimConfigurationResource } from '@/client/model/config/CollectedClaimConfigurationResource'
 import type { ClaimConfigurationResource } from '@/client/model/config/ClaimConfigurationResource'
 import type { ClaimGroup } from '@/client/model/config/ClaimGroup'
 import type { InjectionKey } from 'vue'
-import { ConfigurationApi } from '@/client/api/ConfigurationApi'
 
-export class ClaimInputFieldOptions {
-  constructor(
-    readonly claim: ClaimConfigurationResource,
-    readonly config: CollectedClaimConfigurationResource
-  ) {}
+export interface ClaimInputOptions {
+  getId(): string
 }
 
-export class ClaimInputGroupOptions {
+export class ClaimInputFieldOptions implements ClaimInputOptions {
+  constructor(
+    readonly claim: ClaimConfigurationResource
+  ) {
+  }
+
+  getId(): string {
+    return this.claim.id
+  }
+}
+
+export class ClaimInputGroupOptions implements ClaimInputOptions {
   constructor(
     readonly group: ClaimGroup,
     readonly options: Array<ClaimInputFieldOptions>
-  ) {}
+  ) {
+  }
+
+  getId(): string {
+    return this.group
+  }
+
+  getClaimOptions(claim: string): ClaimInputFieldOptions | undefined {
+    return this.options.find((it) => it.claim.id === claim)
+  }
 }
 
 export class ClaimFormService {
   /**
-   * Return a list of pair associating the claim to their respective configuration.
+   * Return a list of configuration for the provided claims.
    * If a claim is not found for a configuration, we ignore it.
    */
-  getClaimAndConfigPairs(
+  getConfigForClaims(
     configuration: ConfigurationResource,
-    configs: Array<CollectedClaimConfigurationResource>
-  ): Array<[ClaimConfigurationResource, CollectedClaimConfigurationResource]> {
-    const claims: Array<[ClaimConfigurationResource, CollectedClaimConfigurationResource]> = []
-    for (const config of configs) {
-      const claim = configuration.claims.find((it) => it.id === config.id)
-      if (claim !== undefined) {
-        claims.push([claim, config])
+    claims: Array<string>
+  ): Array<ClaimConfigurationResource> {
+    const configs: Array<ClaimConfigurationResource> = []
+    for (const claim of claims) {
+      const claimConfig = configuration.claims.find((it) => it.id === claim)
+      if (claimConfig !== undefined) {
+        configs.push(claimConfig)
       }
     }
-    return claims
+    return configs
   }
 
   /**
@@ -44,11 +59,11 @@ export class ClaimFormService {
    */
   getSchemasForClaims(
     configuration: ConfigurationResource,
-    configs: Array<CollectedClaimConfigurationResource>
+    claims: Array<string>
   ): Record<string, Schema> {
     const schema: Record<string, Schema> = {}
-    for (const [claim, config] of this.getClaimAndConfigPairs(configuration, configs)) {
-      schema[claim.id] = this.getSchemaForClaim(claim, config)
+    for (const claim of this.getConfigForClaims(configuration, claims)) {
+      schema[claim.id] = this.getSchemaForClaim(claim)
     }
     return schema
   }
@@ -60,8 +75,7 @@ export class ClaimFormService {
    * @param config Additional config depending on the context where the claim is collected (sign-in, sign-up, etc.).
    */
   getSchemaForClaim(
-    claim: ClaimConfigurationResource,
-    config: CollectedClaimConfigurationResource
+    claim: ClaimConfigurationResource
   ): Schema {
     let claimSchema: Schema
     switch (claim.type) {
@@ -72,7 +86,7 @@ export class ClaimFormService {
         claimSchema = string().email()
         break
     }
-    if (config.required) {
+    if (claim.required) {
       claimSchema = claimSchema.required()
     }
     return claimSchema
@@ -85,19 +99,20 @@ export class ClaimFormService {
    */
   getOptionsForClaims(
     configuration: ConfigurationResource,
-    configs: Array<CollectedClaimConfigurationResource>
+    claims: Array<string>
   ): Array<ClaimInputFieldOptions | ClaimInputGroupOptions> {
     const optionsArray: Array<ClaimInputFieldOptions | ClaimInputGroupOptions> = []
+
+    const claimConfigs = this.getConfigForClaims(configuration, claims)
     const sortedClaims: Array<string> = []
-    const claimAndConfigPairs = this.getClaimAndConfigPairs(configuration, configs)
-    for (const [claim, config] of claimAndConfigPairs) {
+    for (const claim of claimConfigs) {
       if (!sortedClaims.includes(claim.id)) {
         if (claim.group !== undefined) {
-          const options = this.createInputOptionsForGroup(claim.group, claimAndConfigPairs)
+          const options = this.createInputOptionsForGroup(claim.group, claimConfigs)
           optionsArray.push(options)
           sortedClaims.push(...options.options.map((it) => it.claim.id))
         } else {
-          const options = this.createInputOptionsForClaim(claim, config)
+          const options = this.createInputOptionsForClaim(claim)
           optionsArray.push(options)
           sortedClaims.push(claim.id)
         }
@@ -108,19 +123,18 @@ export class ClaimFormService {
 
   private createInputOptionsForGroup(
     group: ClaimGroup,
-    claimAndConfigPairs: Array<[ClaimConfigurationResource, CollectedClaimConfigurationResource]>
+    claimAndConfigPairs: Array<ClaimConfigurationResource>
   ): ClaimInputGroupOptions {
     const claimsOptions = claimAndConfigPairs
-      .filter((it) => it[0].group === group)
-      .map(([claim, config]) => this.createInputOptionsForClaim(claim, config))
+      .filter((it) => it.group === group)
+      .map((claim) => this.createInputOptionsForClaim(claim))
     return new ClaimInputGroupOptions(group, claimsOptions)
   }
 
   private createInputOptionsForClaim(
-    claim: ClaimConfigurationResource,
-    config: CollectedClaimConfigurationResource
+    claim: ClaimConfigurationResource
   ): ClaimInputFieldOptions {
-    return new ClaimInputFieldOptions(claim, config)
+    return new ClaimInputFieldOptions(claim)
   }
 }
 

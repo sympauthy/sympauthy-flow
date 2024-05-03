@@ -1,11 +1,16 @@
 <script setup lang='ts'>
 import { Field } from 'vee-validate'
 
-const props = defineProps<{
+interface Props {
   name: string,
   label: string | undefined,
-  type: 'text' | 'password'
-}>()
+  type: 'text' | 'password',
+  disabled?: boolean,
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  disabled: false
+})
 
 </script>
 
@@ -20,6 +25,7 @@ const props = defineProps<{
     <Field :name='props.name' v-slot='{field, errorMessage}'>
       <input v-bind='field'
              :type='props.type'
+             :disabled='props.disabled'
              class='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none' />
       <span v-if='errorMessage'
             style='color: var(--color-danger)'

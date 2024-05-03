@@ -14,7 +14,11 @@ const getNavigatorLanguage = () => {
 export const i18n = createI18n({
   locale: getNavigatorLanguage(),
   fallbackLocale: 'en',
-  messages
+  messages: messages,
+
+  // Remove warning when translation is missing
+  fallbackWarn: false,
+  missingWarn: false
 })
 
 export function translateMessage(messageKey: string, values?: NamedValue): string {

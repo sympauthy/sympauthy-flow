@@ -2,23 +2,25 @@
 import BasePage from '@/components/BasePage.vue'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
-import { ErrorMessage, Field, Form } from 'vee-validate'
+import { Form } from 'vee-validate'
 import { object, string } from 'yup'
 import { injectRequired, redirectOrReplace } from '@/utils/VueUtils'
 import { signUpApiKey } from '@/client/api/SignUpApi'
 import ClaimsInputGroup from '@/components/claim/group/ClaimsInputGroup.vue'
 import { configurationKey } from '@/utils/ConfigurationUtils'
 import { claimFormServiceKey } from '@/services/ClaimFormService'
-import type { SignUpResultResource } from '@/client/model/SignUpResultResource'
 import { getErrorMessageOrThrow } from '@/exception/ApiException'
 import { useRouter } from 'vue-router'
 import { filter } from 'rambda/immutable'
 import BaseCard from '@/components/BaseCard.vue'
 import CommonAlert from '@/components/CommonAlert.vue'
 import CommonField from '@/components/CommonField.vue'
+import { claimServiceKey } from '@/services/ClaimsService'
+import type { FlowResultResource } from '@/client/model/FlowResultResource'
 
 const { t } = useI18n()
 const router = useRouter()
+const claimService = injectRequired(claimServiceKey)
 const claimFormService = injectRequired(claimFormServiceKey)
 const configuration = injectRequired(configurationKey)
 const signUpApi = injectRequired(signUpApiKey)
@@ -26,11 +28,9 @@ const signUpApi = injectRequired(signUpApiKey)
 const isSubmitting = ref<Boolean>(false)
 const submitError = ref<String>()
 
-const claimSchemas = claimFormService.getSchemasForClaims(
-  configuration,
-  configuration.password?.sign_up_claims || []
-)
+const signUpClaims = claimService.getSignUpClaims(configuration)
 
+const claimSchemas = claimFormService.getSchemasForClaims(configuration, signUpClaims)
 const validationSchema = object({
   ...claimSchemas,
   password: string().required(),
@@ -45,7 +45,7 @@ const onSubmit = async (values: any) => {
     ...filter((_: any, prop: string) => prop != 'confirm_password', values)
   }
 
-  let result: SignUpResultResource
+  let result: FlowResultResource
   try {
     result = await signUpApi.signUp(body)
   } catch (e) {
@@ -79,14 +79,10 @@ const onSubmit = async (values: any) => {
           <common-alert v-if='submitError' class='mb-3'>
             {{ submitError }}
           </common-alert>
-          <div v-if='submitError' class='alert alert-danger mb-3' role='alert'>
-
-          </div>
 
           <Form @submit='onSubmit' :validation-schema='validationSchema'>
             <claims-input-group
-              v-if='configuration.password?.sign_up_claims'
-              :configs='configuration.password.sign_up_claims'
+              :claims='signUpClaims'
               class='mb-3'
             />
 

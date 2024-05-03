@@ -1,10 +1,10 @@
 import type { JSONSchemaType } from 'ajv'
 
-export interface SignInResultResource {
+export interface FlowResultResource {
   redirect_url: string
 }
 
-export const signInResultResourceSchema: JSONSchemaType<SignInResultResource> = {
+export const flowResultResourceSchema: JSONSchemaType<FlowResultResource> = {
   type: 'object',
   properties: {
     redirect_url: {

@@ -12,6 +12,7 @@ import SignUpPage from '@/pages/SignUpPage.vue'
 import type { Pinia } from 'pinia'
 import type { I18n } from 'vue-i18n'
 import merge from 'ts-deepmerge'
+import CollectClaimsPage from '@/pages/CollectClaimsPage.vue'
 
 export function getStateQueryParam(route: RouteLocationNormalized): string | undefined {
   const stateQueryValues = route.query['state']
@@ -94,6 +95,14 @@ export function makeRouter(i18n: I18n): Router {
         path: '/sign-up',
         name: 'SignUp',
         component: SignUpPage,
+        meta: {
+          stateRequired: true
+        }
+      },
+      {
+        path: '/collect-claims',
+        name: 'CollectClaims',
+        component: CollectClaimsPage,
         meta: {
           stateRequired: true
         }

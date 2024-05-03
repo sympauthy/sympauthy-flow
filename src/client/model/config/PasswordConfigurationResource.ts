@@ -1,10 +1,8 @@
-import type { CollectedClaimConfigurationResource } from '@/client/model/config/CollectedClaimConfigurationResource'
 import type { JSONSchemaType } from 'ajv'
-import { collectedClaimConfigurationResourceSchema } from '@/client/model/config/CollectedClaimConfigurationResource'
 
 export interface PasswordConfigurationResource {
   login_claims?: Array<string>
-  sign_up_claims?: Array<CollectedClaimConfigurationResource>
+  sign_up_claims?: Array<string>
 }
 
 export const passwordConfigurationResourceSchema: JSONSchemaType<PasswordConfigurationResource> = {
@@ -20,7 +18,7 @@ export const passwordConfigurationResourceSchema: JSONSchemaType<PasswordConfigu
     sign_up_claims: {
       type: 'array',
       items: {
-        ...collectedClaimConfigurationResourceSchema
+        type: 'string'
       },
       nullable: true
     }

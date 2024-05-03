@@ -1,24 +1,20 @@
 import { AbstractApi } from '@/client/api/AbstractApi'
 import type { Pinia } from 'pinia'
 import type { InjectionKey } from 'vue'
-import type { SignUpResultResource } from '@/client/model/SignUpResultResource'
-import { signUpResultResourceSchema } from '@/client/model/SignUpResultResource'
-
-export interface SignUpInputResource {
-  password: string
-}
+import type { FlowResultResource } from '@/client/model/FlowResultResource'
+import { flowResultResourceSchema } from '@/client/model/FlowResultResource'
 
 export class SignUpApi extends AbstractApi {
   constructor(pinia: Pinia) {
     super(pinia)
   }
 
-  async signUp(body: any): Promise<SignUpResultResource> {
+  async signUp(body: any): Promise<FlowResultResource> {
     return this.post({
       authenticated: true,
       path: '/api/v1/flow/sign-up',
       body: body,
-      schema: signUpResultResourceSchema
+      schema: flowResultResourceSchema
     })
   }
 }

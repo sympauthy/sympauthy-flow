@@ -86,9 +86,7 @@ export class AbstractApi {
     const contentType = response.headers.get('Content-Type')
     if (!contentType || !contentType.includes(expectedContentType)) {
       console.error(
-        'Server responded with unexpected content-type %o while fetching path %o.',
-        contentType,
-        options.path
+        `Server responded with unexpected content-type ${contentType} while fetching path ${options.path}.`
       )
       throw makeApiException('api.unknown')
     }
@@ -99,10 +97,7 @@ export class AbstractApi {
       await this.checkContentType(response, options, 'application/json')
       const content = await response.json()
       console.error(
-        'Server responded with status %d while fetching path %o: %o',
-        response.status,
-        options.path,
-        content
+        `Server responded with status ${response.status} while fetching path ${options.path}: ${JSON.stringify(content)}`
       )
       throw this.convertResponseToApiException(content, response)
     }
