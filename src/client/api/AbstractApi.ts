@@ -155,17 +155,24 @@ export class AbstractApi {
     return state
   }
 
-  convertResponseToApiException(content: any, response: Response): ApiException {
+  private convertResponseToApiException(content: any, response: Response): ApiException {
     if (this.ajv.validate(errorResourceSchema, content)) {
       const error = content as ErrorResource
       return new ApiException(
         error.error_code,
         error.details || translateMessage('api.unknown'),
         error.description,
+        error,
         response
       )
     } else {
-      return new ApiException('api.unknown', translateMessage('api.unknown'), undefined, response)
+      return new ApiException(
+        'api.unknown',
+        translateMessage('api.unknown'),
+        undefined,
+        undefined,
+        response
+      )
     }
   }
 }

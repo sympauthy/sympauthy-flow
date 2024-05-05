@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script lang='ts' setup>
 import type { ClaimInputGroupOptions } from '@/services/ClaimFormService'
 import ClaimInputField from '@/components/claim/field/ClaimInputField.vue'
 import { OpenIdClaim } from '@/utils/OpenIdClaim'
@@ -6,6 +6,7 @@ import { computed } from 'vue'
 
 interface Props {
   options: ClaimInputGroupOptions,
+  errorMessages?: Record<string, string>,
   disabled?: boolean
 }
 
@@ -70,24 +71,28 @@ const shouldDisplaySplitName = computed(() => {
 <template>
   <template v-if='shouldDisplayName'>
     <claim-input-field v-if='nameOptions'
-                       :options='nameOptions'
                        :disabled='disabled'
+                       :error-message='errorMessages?.[OpenIdClaim.NAME]'
+                       :options='nameOptions'
                        v-bind='$attrs' />
   </template>
   <div v-if='shouldDisplaySplitName' class='md:flex md:flex-row'>
     <claim-input-field v-if='givenNameOptions'
-                       class='md:me-3'
-                       :options='givenNameOptions'
                        :disabled='disabled'
+                       :error-message='errorMessages?.[OpenIdClaim.GIVEN_NAME]'
+                       :options='givenNameOptions'
+                       class='md:me-3'
                        v-bind='$attrs' />
     <claim-input-field v-if='middleNameOptions'
-                       class='md:me-3'
-                       :options='middleNameOptions'
                        :disabled='disabled'
+                       :error-message='errorMessages?.[OpenIdClaim.MIDDLE_NAME]'
+                       :options='middleNameOptions'
+                       class='md:me-3'
                        v-bind='$attrs' />
     <claim-input-field v-if='familyNameOptions'
-                       :options='familyNameOptions'
                        :disabled='disabled'
+                       :error-message='errorMessages?.[OpenIdClaim.FAMILY_NAME]'
+                       :options='familyNameOptions'
                        v-bind='$attrs' />
   </div>
 </template>

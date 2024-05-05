@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script lang='ts' setup>
 import BasePage from '@/components/BasePage.vue'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
@@ -9,7 +9,7 @@ import { signUpApiKey } from '@/client/api/SignUpApi'
 import ClaimsInputGroup from '@/components/claim/group/ClaimsInputGroup.vue'
 import { configurationKey } from '@/utils/ConfigurationUtils'
 import { claimFormServiceKey } from '@/services/ClaimFormService'
-import { getErrorMessageOrThrow } from '@/exception/ApiException'
+import { getErrorMessageForProperties, getErrorMessageOrThrow } from '@/exception/ApiException'
 import { useRouter } from 'vue-router'
 import { filter } from 'rambda/immutable'
 import BaseCard from '@/components/BaseCard.vue'
@@ -27,6 +27,7 @@ const signUpApi = injectRequired(signUpApiKey)
 
 const isSubmitting = ref<Boolean>(false)
 const submitError = ref<String>()
+const submitFieldErrors = ref<Record<string, string>>()
 
 const signUpClaims = claimService.getSignUpClaims(configuration)
 
@@ -41,6 +42,9 @@ const onSubmit = async (values: any) => {
   if (isSubmitting.value) return
   isSubmitting.value = true
 
+  submitError.value = undefined
+  submitFieldErrors.value = undefined
+
   const body = {
     ...filter((_: any, prop: string) => prop != 'confirm_password', values)
   }
@@ -49,6 +53,7 @@ const onSubmit = async (values: any) => {
   try {
     result = await signUpApi.signUp(body)
   } catch (e) {
+    submitFieldErrors.value = getErrorMessageForProperties(e)
     submitError.value = getErrorMessageOrThrow(e)
     return
   } finally {
@@ -80,23 +85,24 @@ const onSubmit = async (values: any) => {
             {{ submitError }}
           </common-alert>
 
-          <Form @submit='onSubmit' :validation-schema='validationSchema'>
-            <claims-input-group
-              :claims='signUpClaims'
-              class='mb-3'
-            />
+          <Form :validation-schema='validationSchema' @submit='onSubmit'>
+            <claims-input-group :claims='signUpClaims'
+                                :error-messages='submitFieldErrors'
+                                class='mb-3' />
 
-            <common-field name='password'
-                          type='password'
+            <common-field :error-message='submitFieldErrors?.["password"]'
+                          :label="t('common.password')"
                           class='mb-3'
-                          :label="t('common.password')" />
+                          name='password'
+                          type='password' />
 
-            <common-field name='confirm_password'
-                          type='password'
+            <common-field :error-message='submitFieldErrors?.["confirm_password"]'
+                          :label="t('common.confirm_password')"
                           class='mb-3'
-                          :label="t('common.confirm_password')" />
+                          name='confirm_password'
+                          type='password' />
 
-            <button type='submit' class='btn btn-primary w-full mt-5'>
+            <button class='btn btn-primary w-full mt-5' type='submit'>
               {{ t('common.sign_up') }}
             </button>
           </Form>
@@ -105,5 +111,3 @@ const onSubmit = async (values: any) => {
     </div>
   </base-page>
 </template>
-
-<style scoped></style>

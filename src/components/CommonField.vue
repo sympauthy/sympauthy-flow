@@ -5,6 +5,7 @@ interface Props {
   name: string,
   label: string | undefined,
   type: 'text' | 'password',
+  errorMessage?: string,
   disabled?: boolean,
 }
 
@@ -27,10 +28,10 @@ const props = withDefaults(defineProps<Props>(), {
              :type='props.type'
              :disabled='props.disabled'
              class='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none' />
-      <span v-if='errorMessage'
+      <span v-if='props.errorMessage ?? errorMessage'
             style='color: var(--color-danger)'
             class='text-sm'>
-        {{ errorMessage }}
+        {{ props.errorMessage ?? errorMessage }}
       </span>
     </Field>
   </div>

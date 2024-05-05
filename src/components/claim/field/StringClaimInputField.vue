@@ -4,7 +4,8 @@ import CommonField from '@/components/CommonField.vue'
 
 interface Props {
   options: ClaimInputFieldOptions
-  disabled: boolean
+  errorMessage?: string
+  disabled?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -16,7 +17,8 @@ const props = withDefaults(defineProps<Props>(), {
   <common-field :name='props.options.claim.id'
                 :label='props.options.claim.name'
                 :disabled='props.disabled'
-                type='input' />
+                :error-message='errorMessage'
+                type='text' />
 </template>
 
 <style scoped></style>

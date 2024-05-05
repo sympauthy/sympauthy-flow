@@ -83,7 +83,7 @@ export class ClaimFormService {
         claimSchema = string()
         break
       case 'email':
-        claimSchema = string().email()
+        claimSchema = string()//.email()
         break
     }
     if (claim.required) {

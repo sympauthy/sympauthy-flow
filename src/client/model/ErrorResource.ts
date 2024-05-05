@@ -4,6 +4,27 @@ export interface ErrorResource {
   error_code: string
   details?: string
   description?: string
+  properties?: Array<PropertyErrorResource>
+}
+
+export interface PropertyErrorResource {
+  path: string
+  description?: string
+}
+
+export const propertyErrorResourceSchema: JSONSchemaType<PropertyErrorResource> = {
+  type: 'object',
+  properties: {
+    path: {
+      type: ['string']
+    },
+    description: {
+      type: ['string'],
+      nullable: true
+    }
+  },
+  required: ['path'],
+  additionalProperties: true
 }
 
 export const errorResourceSchema: JSONSchemaType<ErrorResource> = {
@@ -18,6 +39,13 @@ export const errorResourceSchema: JSONSchemaType<ErrorResource> = {
     },
     description: {
       type: ['string'],
+      nullable: true
+    },
+    properties: {
+      type: 'array',
+      items: {
+        ...propertyErrorResourceSchema
+      },
       nullable: true
     }
   },

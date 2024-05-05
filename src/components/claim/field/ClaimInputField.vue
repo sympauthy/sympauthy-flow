@@ -3,7 +3,8 @@ import type { ClaimInputFieldOptions } from '@/services/ClaimFormService'
 import StringClaimInputField from '@/components/claim/field/StringClaimInputField.vue'
 
 interface Props {
-  options: ClaimInputFieldOptions
+  options: ClaimInputFieldOptions,
+  errorMessage?: string,
   disabled?: boolean
 }
 
@@ -16,7 +17,9 @@ const type = props.options.claim.type
 
 <template>
   <template v-if="type === 'string' || type === 'email'">
-    <string-claim-input-field :options='options' :disabled='disabled' />
+    <string-claim-input-field :options='options'
+                              :error-message='errorMessage'
+                              :disabled='disabled' />
   </template>
 </template>
 

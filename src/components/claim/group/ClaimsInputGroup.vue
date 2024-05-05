@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script lang='ts' setup>
 import { ClaimFormService, ClaimInputFieldOptions, ClaimInputGroupOptions } from '@/services/ClaimFormService'
 import { injectRequired } from '@/utils/VueUtils'
 import { configurationKey } from '@/utils/ConfigurationUtils'
@@ -7,7 +7,8 @@ import ClaimInputField from '@/components/claim/field/ClaimInputField.vue'
 
 interface Props {
   claims: Array<string>
-  disabled: boolean
+  errorMessages?: Record<string, string>
+  disabled?: boolean
 }
 
 defineOptions({
@@ -27,10 +28,16 @@ const optionsArray = claimFormService.getOptionsForClaims(configuration, props.c
 <template>
   <template v-for='options of optionsArray' :key='options.getId()'>
     <template v-if='options instanceof ClaimInputFieldOptions'>
-      <claim-input-field :options='options' :disabled='disabled' v-bind='$attrs' />
+      <claim-input-field :disabled='disabled'
+                         :error-message='errorMessages?.[options.claim.id]'
+                         :options='options'
+                         v-bind='$attrs' />
     </template>
     <template v-if="options instanceof ClaimInputGroupOptions && options.group === 'identity'">
-      <identity-claims-input-group :options='options' v-bind='$attrs' />
+      <identity-claims-input-group :disabled='disabled'
+                                   :error-messages='errorMessages'
+                                   :options='options'
+                                   v-bind='$attrs' />
     </template>
   </template>
 </template>
