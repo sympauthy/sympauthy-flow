@@ -9,9 +9,8 @@ import {
 import ErrorPage from '@/pages/ErrorPage.vue'
 import SignInPage from '@/pages/SignInPage.vue'
 import SignUpPage from '@/pages/SignUpPage.vue'
-import type { Pinia } from 'pinia'
 import type { I18n } from 'vue-i18n'
-import merge from 'ts-deepmerge'
+import { merge } from 'ts-deepmerge'
 import CollectClaimsPage from '@/pages/CollectClaimsPage.vue'
 
 export function getStateQueryParam(route: RouteLocationNormalized): string | undefined {
