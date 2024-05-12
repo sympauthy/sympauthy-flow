@@ -11,12 +11,12 @@ import { claimFormServiceKey } from '@/services/ClaimFormService'
 import { getErrorMessageForProperties, getErrorMessageOrThrow } from '@/exception/ApiException'
 import { useRouter } from 'vue-router'
 import { filter } from 'rambda/immutable'
-import BaseCard from '@/components/card/BaseCard.vue'
 import CommonAlert from '@/components/CommonAlert.vue'
 import CommonField from '@/components/CommonField.vue'
 import { claimServiceKey } from '@/services/ClaimsService'
 import type { FlowResultResource } from '@/client/model/FlowResultResource'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
+import BasePage from '@/components/BasePage.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -67,9 +67,9 @@ const onSubmit = async (values: any) => {
 </script>
 
 <template>
-  <title-content-card>
+  <base-page>
     <div class='flex justify-center w-100'>
-      <base-card>
+      <title-content-card>
         <template v-slot:title>
           {{ t('pages.sign_up.title') }}
         </template>
@@ -108,7 +108,7 @@ const onSubmit = async (values: any) => {
             </button>
           </Form>
         </template>
-      </base-card>
+      </title-content-card>
     </div>
-  </title-content-card>
+  </base-page>
 </template>
