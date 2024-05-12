@@ -1,5 +1,4 @@
 <script lang='ts' setup>
-import BaseCard from '@/components/BaseCard.vue'
 import BasePage from '@/components/BasePage.vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
@@ -14,6 +13,7 @@ import { onMounted, ref } from 'vue'
 import { getErrorMessageForProperties, getErrorMessageOrThrow } from '@/exception/ApiException'
 import { claimApiKey } from '@/client/api/ClaimApi'
 import type { FlowResultResource } from '@/client/model/FlowResultResource'
+import TitleContentCard from '@/components/card/TitleContentCard.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -81,7 +81,7 @@ const onSubmit = async (values: any) => {
 <template>
   <base-page>
     <div class='flex justify-center w-100'>
-      <base-card size='large'>
+      <title-content-card size='large'>
         <template v-slot:title>
           {{ t('pages.collect_claims.title') }}
         </template>
@@ -96,7 +96,7 @@ const onSubmit = async (values: any) => {
             {{ t('common.continue') }}
           </button>
         </Form>
-      </base-card>
+      </title-content-card>
     </div>
   </base-page>
 </template>

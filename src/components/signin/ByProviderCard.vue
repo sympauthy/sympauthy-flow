@@ -1,25 +1,25 @@
-<script setup lang="ts">
+<script lang='ts' setup>
 import { useConfiguration } from '@/stores/ConfigurationStore'
 import { storeToRefs } from 'pinia'
 import ProviderButton from '@/components/signin/ProviderButton.vue'
-import BaseCard from '@/components/BaseCard.vue'
+import TitleContentCard from '@/components/card/TitleContentCard.vue'
 
 const configurationStore = useConfiguration()
 const { configuration } = storeToRefs(configurationStore)
 </script>
 
 <template>
-  <base-card>
+  <title-content-card>
     <template v-slot:title>
       Login using social account to get quick access.
     </template>
     <template v-slot:default>
       <provider-button
-        v-for="provider of configuration?.providers"
-        v-bind:key="provider.id"
-        v-bind:provider="provider"
-        size="default"
+        v-for='provider of configuration?.providers'
+        v-bind:key='provider.id'
+        size='default'
+        v-bind:provider='provider'
       />
     </template>
-  </base-card>
+  </title-content-card>
 </template>

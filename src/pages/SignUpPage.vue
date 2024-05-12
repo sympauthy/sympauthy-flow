@@ -1,5 +1,4 @@
 <script lang='ts' setup>
-import BasePage from '@/components/BasePage.vue'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import { Form } from 'vee-validate'
@@ -12,11 +11,12 @@ import { claimFormServiceKey } from '@/services/ClaimFormService'
 import { getErrorMessageForProperties, getErrorMessageOrThrow } from '@/exception/ApiException'
 import { useRouter } from 'vue-router'
 import { filter } from 'rambda/immutable'
-import BaseCard from '@/components/BaseCard.vue'
+import BaseCard from '@/components/card/BaseCard.vue'
 import CommonAlert from '@/components/CommonAlert.vue'
 import CommonField from '@/components/CommonField.vue'
 import { claimServiceKey } from '@/services/ClaimsService'
 import type { FlowResultResource } from '@/client/model/FlowResultResource'
+import TitleContentCard from '@/components/card/TitleContentCard.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -67,7 +67,7 @@ const onSubmit = async (values: any) => {
 </script>
 
 <template>
-  <base-page>
+  <title-content-card>
     <div class='flex justify-center w-100'>
       <base-card>
         <template v-slot:title>
@@ -110,5 +110,5 @@ const onSubmit = async (values: any) => {
         </template>
       </base-card>
     </div>
-  </base-page>
+  </title-content-card>
 </template>

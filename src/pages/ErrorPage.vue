@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import BasePage from '@/components/BasePage.vue'
-import BaseCard from '@/components/BaseCard.vue'
+import BaseCard from '@/components/card/BaseCard.vue'
 
 const route = useRoute()
 

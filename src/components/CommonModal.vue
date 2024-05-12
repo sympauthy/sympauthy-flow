@@ -1,13 +1,20 @@
 <script lang='ts' setup>
 
-import BaseCard from '@/components/BaseCard.vue'
+import { ref } from 'vue'
 
-interface Props {
-  open?: boolean
+const open = ref(true)
+
+const openModel = () => {
+  open.value = true
 }
 
-withDefaults(defineProps<Props>(), {
-  open: false
+const closeModal = () => {
+  open.value = false
+}
+
+defineExpose({
+  openModal: openModel,
+  closeModal: closeModal
 })
 
 </script>
@@ -17,8 +24,10 @@ withDefaults(defineProps<Props>(), {
   <div v-if='open' class='fixed inset-0 bg-gray-500 bg-opacity-60'></div>
 
   <!-- Modal -->
-  <div v-if='open' class='fixed inset-0 z-10 w-full pt-3 px-3 overflow-y-auto'>
-    <slot></slot>
+  <div v-if='open' class='fixed inset-0 z-10 w-screen h-screen'>
+    <div class='relative w-full h-full flex items-center justify-center'>
+      <slot></slot>
+    </div>
   </div>
 </template>
 

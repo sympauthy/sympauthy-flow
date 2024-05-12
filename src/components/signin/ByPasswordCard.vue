@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script lang='ts' setup>
 import { useI18n } from 'vue-i18n'
 import { signInApiKey } from '@/client/api/SignInApi'
 import { injectRequired, redirectOrReplace } from '@/utils/VueUtils'
@@ -8,12 +8,12 @@ import { computed, ref } from 'vue'
 import { getErrorMessageOrThrow } from '@/exception/ApiException'
 import { useRouter } from 'vue-router'
 import CommonButton from '@/components/CommonButton.vue'
-import BaseCard from '@/components/BaseCard.vue'
 import CommonAlert from '@/components/CommonAlert.vue'
 import CommonInput from '@/components/CommonField.vue'
 import { configurationKey } from '@/utils/ConfigurationUtils'
 import { or } from '@/utils/StringUtils'
 import { i18n } from '@/i18n'
+import TitleContentCard from '@/components/card/TitleContentCard.vue'
 
 const signInApi = injectRequired(signInApiKey)
 const { t } = useI18n()
@@ -57,7 +57,7 @@ const onSubmit = async (values: any) => {
 </script>
 
 <template>
-  <base-card>
+  <title-content-card>
     <template v-slot:title>
       {{ t('components.by_password_card.title') }}
     </template>
@@ -74,27 +74,27 @@ const onSubmit = async (values: any) => {
         {{ submitError }}
       </common-alert>
 
-      <Form @submit='onSubmit' :validation-schema='validationSchema'>
-        <label for='login' class='form-label'></label>
-        <common-input name='login'
-                      type='text'
-                      class='mb-3'
+      <Form :validation-schema='validationSchema' @submit='onSubmit'>
+        <label class='form-label' for='login'></label>
+        <common-input :disabled='isSubmitting'
                       :label='loginLabel'
-                      :disabled='isSubmitting' />
-
-        <common-input name='password'
                       class='mb-3'
-                      type='password'
-                      :label="t('common.password')" />
+                      name='login'
+                      type='text' />
+
+        <common-input :label="t('common.password')"
+                      class='mb-3'
+                      name='password'
+                      type='password' />
 
         <div class='w-100 text-end text-primary underline'>
           <a>{{ t('components.by_password_card.forgotten_password') }}</a>
         </div>
 
-        <common-button type='submit' class='btn-primary w-full mt-5'>
+        <common-button class='btn-primary w-full mt-5' type='submit'>
           {{ t('common.sign_in') }}
         </common-button>
       </Form>
     </template>
-  </base-card>
+  </title-content-card>
 </template>

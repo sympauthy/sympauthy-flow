@@ -2,12 +2,12 @@
 
 import { computed } from 'vue'
 
-interface Props {
+export interface BaseCardProps {
   size?: 'default' | 'large'
   noPadding?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<BaseCardProps>(), {
   size: 'default',
   noPadding: false
 })
@@ -31,14 +31,8 @@ const cardClasses = computed(() => {
 
 <template>
   <div :class='cardClasses'
-       class='w-full bg-white rounded-xl shadow-lg'>
-    <h1 v-if='$slots["title"]'
-        class='w-full text-2xl text-center mb-5'>
-      <slot name='title'></slot>
-    </h1>
-    <div class='w-full text-base'>
-      <slot name='default'></slot>
-    </div>
+       class='flex-auto bg-white rounded-xl shadow-lg'>
+    <slot></slot>
   </div>
 </template>
 
