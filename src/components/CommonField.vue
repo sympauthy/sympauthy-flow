@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script lang='ts' setup>
 import { Field } from 'vee-validate'
 
 interface Props {
@@ -17,20 +17,19 @@ const props = withDefaults(defineProps<Props>(), {
 
 <template>
   <div>
-    <label
-      v-if='label'
-      :for='props.name'
-      class='text-gray-700 text-sm font-bold mb-2'>
+    <label v-if='label'
+           :for='props.name'
+           class='text-gray-700 text-sm font-bold mb-2'>
       {{ label }}
     </label>
-    <Field :name='props.name' v-slot='{field, errorMessage}'>
-      <input v-bind='field'
+    <Field v-slot='{field, errorMessage}' :name='props.name'>
+      <input :disabled='props.disabled'
              :type='props.type'
-             :disabled='props.disabled'
-             class='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none' />
+             class='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-1'
+             v-bind='field' />
       <span v-if='props.errorMessage ?? errorMessage'
-            style='color: var(--color-danger)'
-            class='text-sm'>
+            class='text-sm'
+            style='color: var(--color-danger)'>
         {{ props.errorMessage ?? errorMessage }}
       </span>
     </Field>

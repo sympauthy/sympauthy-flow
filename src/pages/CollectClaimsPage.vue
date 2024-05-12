@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script lang='ts' setup>
 import BaseCard from '@/components/BaseCard.vue'
 import BasePage from '@/components/BasePage.vue'
 import { useI18n } from 'vue-i18n'
@@ -11,7 +11,7 @@ import { Form } from 'vee-validate'
 import ClaimsInputGroup from '@/components/claim/group/ClaimsInputGroup.vue'
 import { claimServiceKey } from '@/services/ClaimsService'
 import { onMounted, ref } from 'vue'
-import { getErrorMessageOrThrow } from '@/exception/ApiException'
+import { getErrorMessageForProperties, getErrorMessageOrThrow } from '@/exception/ApiException'
 import { claimApiKey } from '@/client/api/ClaimApi'
 import type { FlowResultResource } from '@/client/model/FlowResultResource'
 
@@ -24,7 +24,9 @@ const configuration = injectRequired(configurationKey)
 
 const isLoading = ref<boolean>(false)
 const isSubmitting = ref<boolean>(false)
+
 const errorMessage = ref<string | undefined>(undefined)
+const fieldErrorMessages = ref<Record<string, string> | undefined>(undefined)
 
 const collectableClaims = claimService.getCollectableClaims(configuration)
 const claimSchemas = claimFormService.getSchemasForClaims(configuration, collectableClaims)
@@ -35,6 +37,10 @@ const validationSchema = object({
 const loadClaims = async () => {
   if (isLoading.value) return
   isLoading.value = true
+
+  errorMessage.value = undefined
+  fieldErrorMessages.value = undefined
+
   try {
     const claims = claimApi.fetchClaims()
     console.log(JSON.stringify(claims))
@@ -53,10 +59,14 @@ const onSubmit = async (values: any) => {
   if (isLoading.value || isSubmitting.value) return
   isSubmitting.value = true
 
+  errorMessage.value = undefined
+  fieldErrorMessages.value = undefined
+
   let result: FlowResultResource
   try {
     result = await claimApi.collectClaims(values)
   } catch (e) {
+    fieldErrorMessages.value = getErrorMessageForProperties(e)
     errorMessage.value = getErrorMessageOrThrow(e)
     return
   } finally {
@@ -76,14 +86,13 @@ const onSubmit = async (values: any) => {
           {{ t('pages.collect_claims.title') }}
         </template>
 
-        <Form @submit='onSubmit' :validation-schema='validationSchema'>
-          <claims-input-group
-            :claims='collectableClaims'
-            :disabled='isLoading'
-            class='mb-3'
-          />
+        <Form :validation-schema='validationSchema' @submit='onSubmit'>
+          <claims-input-group :claims='collectableClaims'
+                              :disabled='isLoading'
+                              :error-messages='fieldErrorMessages'
+                              class='mb-3' />
 
-          <button type='submit' class='btn btn-primary w-full mt-5'>
+          <button class='btn btn-primary w-full mt-5' type='submit'>
             {{ t('common.continue') }}
           </button>
         </Form>

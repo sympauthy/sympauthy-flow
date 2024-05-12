@@ -79,11 +79,14 @@ export class ClaimFormService {
   ): Schema {
     let claimSchema: Schema
     switch (claim.type) {
+      case 'email':
+        claimSchema = string()//.email()
+        break
       case 'string':
         claimSchema = string()
         break
-      case 'email':
-        claimSchema = string()//.email()
+      case 'timezone':
+        claimSchema = string()
         break
     }
     if (claim.required) {

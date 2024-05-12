@@ -17,7 +17,7 @@ const hasProvider = computed(() => {
 <template>
   <base-page>
     <div class='w-full flex justify-center items-center flex-col-reverse lg:flex-row lg:items-start'>
-      <by-provider-card v-if='hasProvider'></by-provider-card>
+      <by-provider-card v-if='hasProvider' class='me-3'></by-provider-card>
       <by-password-card></by-password-card>
     </div>
   </base-page>

@@ -26,8 +26,9 @@ const configuration = injectRequired(configurationKey)
 const signUpApi = injectRequired(signUpApiKey)
 
 const isSubmitting = ref<Boolean>(false)
-const submitError = ref<String>()
-const submitFieldErrors = ref<Record<string, string>>()
+
+const errorMessage = ref<String>()
+const fieldErrorMessages = ref<Record<string, string>>()
 
 const signUpClaims = claimService.getSignUpClaims(configuration)
 
@@ -42,8 +43,8 @@ const onSubmit = async (values: any) => {
   if (isSubmitting.value) return
   isSubmitting.value = true
 
-  submitError.value = undefined
-  submitFieldErrors.value = undefined
+  errorMessage.value = undefined
+  fieldErrorMessages.value = undefined
 
   const body = {
     ...filter((_: any, prop: string) => prop != 'confirm_password', values)
@@ -53,8 +54,8 @@ const onSubmit = async (values: any) => {
   try {
     result = await signUpApi.signUp(body)
   } catch (e) {
-    submitFieldErrors.value = getErrorMessageForProperties(e)
-    submitError.value = getErrorMessageOrThrow(e)
+    fieldErrorMessages.value = getErrorMessageForProperties(e)
+    errorMessage.value = getErrorMessageOrThrow(e)
     return
   } finally {
     isSubmitting.value = false
@@ -81,22 +82,22 @@ const onSubmit = async (values: any) => {
             </i18n-t>
           </div>
 
-          <common-alert v-if='submitError' class='mb-3'>
-            {{ submitError }}
+          <common-alert v-if='errorMessage' class='mb-3'>
+            {{ errorMessage }}
           </common-alert>
 
           <Form :validation-schema='validationSchema' @submit='onSubmit'>
             <claims-input-group :claims='signUpClaims'
-                                :error-messages='submitFieldErrors'
+                                :error-messages='fieldErrorMessages'
                                 class='mb-3' />
 
-            <common-field :error-message='submitFieldErrors?.["password"]'
+            <common-field :error-message='fieldErrorMessages?.["password"]'
                           :label="t('common.password')"
                           class='mb-3'
                           name='password'
                           type='password' />
 
-            <common-field :error-message='submitFieldErrors?.["confirm_password"]'
+            <common-field :error-message='fieldErrorMessages?.["confirm_password"]'
                           :label="t('common.confirm_password')"
                           class='mb-3'
                           name='confirm_password'

@@ -1,1 +1,1 @@
-export type ClaimType = 'string' | 'email' /* FIXME | 'phone_number' | 'date' */
+export type ClaimType = 'email' | 'string' | 'timezone' /* FIXME | 'phone_number' | 'date' */
