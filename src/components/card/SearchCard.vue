@@ -7,6 +7,7 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const model = defineModel<string>()
 
 const emit = defineEmits<{
   select: [item: any],
@@ -20,7 +21,8 @@ const emit = defineEmits<{
     <!-- Search -->
     <div class='w-full flex flex-row items-center shadow-sm text-gray-700 p-3'>
       <MagnifyingGlassIcon class='size-6' />
-      <input :placeholder='props.placeholder'
+      <input v-model='model'
+             :placeholder='props.placeholder'
              class='flex-auto py-2 px-3 appearance-none leading-tight outline-none'
              name='search'
              type='text' />

@@ -2,7 +2,7 @@
 import CommonSelect from '@/components/CommonSelect.vue'
 import type { ClaimInputFieldOptions } from '@/services/ClaimFormService'
 import { useI18n } from 'vue-i18n'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { injectRequired } from '@/utils/VueUtils'
 import { timeZoneApiKey } from '@/client/api/TimeZoneApi'
 import type { TimeZoneResource } from '@/client/model/TimeZoneResource'
@@ -23,6 +23,7 @@ const { t } = useI18n()
 const timeZoneApi = injectRequired(timeZoneApiKey)
 
 const isLoading = ref(false)
+const search = ref<string | undefined>(undefined)
 const timeZones = ref<Array<TimeZoneResource>>([])
 
 const loadTimeZone = async () => {
@@ -36,6 +37,13 @@ const loadTimeZone = async () => {
   }
 }
 
+const filteredTimeZones = computed(() => {
+  if (search.value === undefined) {
+    return timeZones.value
+  }
+  return timeZones.value?.filter(it => it.id.includes(search.value))
+})
+
 onMounted(async () => {
   await loadTimeZone()
 })
@@ -48,10 +56,11 @@ onMounted(async () => {
                  :label='props.options.claim.name'
                  :name='props.options.claim.id'>
     <template v-slot:default='{select, cancel}'>
-      <search-card :placeholder='t("components.tz_claim_input_field.placeholder")'
+      <search-card v-model='search'
+                   :placeholder='t("components.tz_claim_input_field.placeholder")'
                    class='h-2/3'
                    @close='cancel'>
-        <search-card-item v-for='timeZone in timeZones' :key='timeZone.id'
+        <search-card-item v-for='timeZone in filteredTimeZones' :key='timeZone.id'
                           @click='select(timeZone.id)'>
           {{ timeZone.id }}
         </search-card-item>
