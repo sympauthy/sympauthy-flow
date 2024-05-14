@@ -25,9 +25,7 @@ const name = toRef(props, 'name')
 const {
   value: inputValue,
   errorMessage,
-  handleBlur,
-  handleChange,
-  meta
+  handleChange
 } = useField(name, undefined, {
   initialValue: props.value
 })

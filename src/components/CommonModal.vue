@@ -2,7 +2,7 @@
 
 import { ref } from 'vue'
 
-const open = ref(true)
+const open = ref(false)
 
 const openModel = () => {
   open.value = true
