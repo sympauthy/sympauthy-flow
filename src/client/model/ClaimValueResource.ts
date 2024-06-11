@@ -1,6 +1,6 @@
 import type { JSONSchemaType } from 'ajv'
 
-export interface ClaimValueResource {
+export type ClaimValueResource = {
   claim: string
   collected: boolean
   value?: string // FIXME add other supported types

@@ -2,7 +2,7 @@ import type { ClaimValueResource } from '@/client/model/ClaimValueResource'
 import type { JSONSchemaType } from 'ajv'
 import { claimValueResourceSchema } from '@/client/model/ClaimValueResource'
 
-export interface ClaimsResource {
+export type ClaimsResource = {
   claims: Array<ClaimValueResource>
 }
 

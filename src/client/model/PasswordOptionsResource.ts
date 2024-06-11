@@ -1,6 +1,6 @@
 import type { JSONSchemaType } from 'ajv'
 
-export interface PasswordOptionsResource {
+export type PasswordOptionsResource = {
   sign_up_url?: string
   forgotten_password_url?: string
 }

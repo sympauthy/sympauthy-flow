@@ -1,13 +1,13 @@
 import type { JSONSchemaType } from 'ajv'
 
-export interface ErrorResource {
+export type ErrorResource = {
   error_code: string
   details?: string
   description?: string
   properties?: Array<PropertyErrorResource>
 }
 
-export interface PropertyErrorResource {
+export type PropertyErrorResource = {
   path: string
   description?: string
 }

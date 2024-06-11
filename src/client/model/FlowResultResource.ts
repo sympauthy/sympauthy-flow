@@ -1,6 +1,6 @@
 import type { JSONSchemaType } from 'ajv'
 
-export interface FlowResultResource {
+export type FlowResultResource = {
   redirect_url: string
 }
 

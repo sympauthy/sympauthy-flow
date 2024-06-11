@@ -1,6 +1,6 @@
 import type { JSONSchemaType } from 'ajv'
 
-export interface TimeZoneResource {
+export type TimeZoneResource = {
   id: string
   offset: string
 }
