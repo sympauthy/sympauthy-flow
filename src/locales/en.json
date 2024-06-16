@@ -18,7 +18,18 @@
     },
     "tz_claim_input_field": {
       "placeholder": "Search (country, offset, etc.)"
+    },
+    "validation_code_field": {
+      "description": "Enter the code you have received by {0}:",
+      "resend": {
+        "description": "You did not receive the code ? {0}",
+        "action": "Resend the code",
+        "waiting": "Wait {0}"
+      }
     }
+  },
+  "media": {
+    "EMAIL": "email"
   },
   "pages": {
     "base": {
@@ -31,6 +42,17 @@
     },
     "collect_claims": {
       "title": "Before you continue"
+    },
+    "validate_claims": {
+      "title": "Before you continue",
+      "description": "Those validation codes have been sent to you to verify the correctness of the information you completed previously.",
+      "email": {
+        "title": "By email:"
+      },
+      "resend": {
+        "description": "The code is expired or you did not receive it ? {0}",
+        "action": "Resend code"
+      }
     },
     "error": {
       "title": "Something went wrong"

@@ -10,7 +10,7 @@
     --color-on-body: theme(colors.gray.500);
 
     --color-danger: theme(colors.red.500);
-    --color-link: theme(colors.blue.500);
+    --color-link: var(--color-primary);
 
     --max-width-card: 480px;
     --max-width-large-card: 680px;
@@ -18,6 +18,12 @@
 
 body {
     color: var(--color-background);
+}
+
+/** Border **/
+
+.border-primary {
+    border-color: var(--color-primary);
 }
 
 /** Button **/

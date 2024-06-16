@@ -11,7 +11,8 @@ import SignInPage from '@/pages/SignInPage.vue'
 import SignUpPage from '@/pages/SignUpPage.vue'
 import type { I18n } from 'vue-i18n'
 import { merge } from 'ts-deepmerge'
-import CollectClaimsPage from '@/pages/CollectClaimsPage.vue'
+import CollectClaimsPage from '@/pages/claims/CollectClaimsPage.vue'
+import ValidateClaimsPage from '@/pages/claims/ValidateClaimsPage.vue'
 
 export function getStateQueryParam(route: RouteLocationNormalized): string | undefined {
   const stateQueryValues = route.query['state']
@@ -99,9 +100,17 @@ export function makeRouter(i18n: I18n): Router {
         }
       },
       {
-        path: '/collect-claims',
+        path: '/claims/edit',
         name: 'CollectClaims',
         component: CollectClaimsPage,
+        meta: {
+          stateRequired: true
+        }
+      },
+      {
+        path: '/claims/validate',
+        name: 'ValidateClaims',
+        component: ValidateClaimsPage,
         meta: {
           stateRequired: true
         }
