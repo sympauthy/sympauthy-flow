@@ -1,23 +1,22 @@
 <script lang='ts' setup>
 
 import type { ValidationCodeResource } from '@/client/model/ValidationCodeResource'
-import { useI18n } from 'vue-i18n'
-import { computed, ref } from 'vue'
-import { getErrorMessageOrThrow } from '@/exception/ApiException'
+import { computed } from 'vue'
+import { useField } from 'vee-validate'
 
 interface Props {
+  name: string,
   code: ValidationCodeResource | undefined,
   loading: boolean | undefined
+  disabled: boolean | undefined
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  loading: false
+  loading: false,
+  disabled: false
 })
 
-const { t } = useI18n()
-
-const isValidating = ref(false)
-const validationErrorMessage = ref<string | undefined>()
+const { value, errorMessage, setTouched } = useField<string>(() => props.name)
 
 const inputFieldNames = computed(() => {
   if (props.code) {
@@ -31,33 +30,9 @@ const inputFieldNames = computed(() => {
   }
 })
 
-const mediaName = computed(() => {
-  return t(`media.${props.code?.media}`)
-})
-
 const codeLength = computed(() => {
-  return 6
+  return 6 // FIXME Get code length from API.
 })
-
-const validateCode = async () => {
-  if (!isValidating.value) {
-    return
-  }
-  isValidating.value = true
-  validationErrorMessage.value = undefined
-
-  try {
-
-  } catch (e) {
-    validationErrorMessage.value = getErrorMessageOrThrow(e)
-  } finally {
-    isValidating.value = false
-  }
-
-  if (validationErrorMessage.value !== undefined) {
-    findInputFieldAtIndex(0)?.select()
-  }
-}
 
 const onKeyUp = async (event: KeyboardEvent) => {
   event.stopPropagation()
@@ -76,7 +51,8 @@ const onKeyUp = async (event: KeyboardEvent) => {
   if (nextField !== undefined) {
     nextField.select()
   } else {
-    await validateCode()
+    setTouched(true)
+    value.value = computeValue()
   }
 }
 
@@ -100,28 +76,35 @@ const isAlphaKey = (event: KeyboardEvent) => {
   return char >= '0' || char <= '9'
 }
 
+const computeValue = (): string => {
+  let value = ''
+  for (let i = 0; i < codeLength.value; i++) {
+    const input = findInputFieldAtIndex(i)
+    if (input instanceof HTMLInputElement) {
+      value += input.value
+    }
+  }
+  return value
+}
+
 </script>
 
 <template>
-  <div class='w-full px-5'>
-    <div class='w-full text-justify'>
-      <p>{{ t('components.validation_code_field.description', [mediaName]) }}</p>
-    </div>
-
-    <div class='w-full text-3xl py-3 flex flex-row justify-center'>
+  <div class='w-full'>
+    <div class='w-full text-3xl flex flex-row justify-center'>
       <template v-for='inputFieldName of inputFieldNames' :key='inputFieldName'>
-        <input :disabled='isValidating'
+        <input :disabled='disabled'
                :name='inputFieldName'
                autocomplete='off'
                class='w-0 flex-auto text-center p-1 md:p-3 mx-1 border-2 rounded border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2'
+               :class="{'border-danger': errorMessage!== undefined, 'border-gray-300': errorMessage === undefined}"
                maxlength='1'
                type='text'
                v-on:keyup='onKeyUp'>
       </template>
     </div>
-
-    <div class='w-full text-sm text-end'>
-      <a>{{ t('components.validation_code_field.resend.description') }}</a>
+    <div v-if='errorMessage' class='w-full pt-1 text-sm text-danger'>
+      {{ errorMessage }}
     </div>
   </div>
 </template>

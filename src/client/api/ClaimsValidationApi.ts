@@ -3,7 +3,10 @@ import type { Pinia } from 'pinia'
 import type { InjectionKey } from 'vue'
 import type { ClaimsValidationResource } from '@/client/model/ClaimsValidationResource'
 import { claimsValidationResourceSchema } from '@/client/model/ClaimsValidationResource'
-import { claimValidationResultResourceSchema } from '@/client/model/ClaimValidationResultResource'
+import {
+  type ClaimValidationResultResource,
+  claimValidationResultResourceSchema
+} from '@/client/model/ClaimValidationResultResource'
 import type { ErrorApiResponse } from '@/client/ErrorApiResponse'
 import type { SuccessApiResponse } from '@/client/SuccessApiResponse'
 
@@ -20,7 +23,7 @@ export class ClaimsValidationApi extends AbstractApi {
     })
   }
 
-  async validateClaim(body: { media: string, code: string }): Promise<SuccessApiResponse<ClaimsValidationResource> | ErrorApiResponse> {
+  async validateClaim(body: { media: string, code: string }): Promise<SuccessApiResponse<ClaimValidationResultResource> | ErrorApiResponse> {
     return this.post({
       authenticated: true,
       path: '/api/v1/flow/claims/validation-codes',

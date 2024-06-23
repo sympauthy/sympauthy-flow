@@ -26,6 +26,10 @@ body {
     border-color: var(--color-primary);
 }
 
+.border-dander {
+    border-color: var(--color-danger);
+}
+
 /** Button **/
 
 .btn {
@@ -41,4 +45,8 @@ body {
 
 .text-primary {
     color: var(--color-primary);
+}
+
+.text-danger {
+    color: var(--color-danger);
 }
