@@ -5,15 +5,16 @@ import { injectRequired, redirectOrReplace } from '@/utils/VueUtils'
 import { object, string } from 'yup'
 import { Form } from 'vee-validate'
 import { computed, ref } from 'vue'
-import { getErrorMessageOrThrow } from '@/exception/ApiException'
+import { getErrorMessage } from '@/client/ErrorApiResponse'
 import { useRouter } from 'vue-router'
 import CommonButton from '@/components/CommonButton.vue'
 import CommonAlert from '@/components/CommonAlert.vue'
-import CommonInput from '@/components/CommonField.vue'
+import CommonInput from '@/components/CommonInputField.vue'
 import { configurationKey } from '@/utils/ConfigurationUtils'
 import { or } from '@/utils/StringUtils'
 import { i18n } from '@/i18n'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
+import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 
 const signInApi = injectRequired(signInApiKey)
 const { t } = useI18n()
@@ -44,15 +45,14 @@ const onSubmit = async (values: any) => {
   isSubmitting.value = true
   submitError.value = undefined
 
-  try {
-    const result = await signInApi.signIn(values.login, values.password)
-    await redirectOrReplace(router, result.redirect_url)
-  } catch (e) {
-    submitError.value = getErrorMessageOrThrow(e)
-    return
-  } finally {
-    isSubmitting.value = false
+  const result = await signInApi.signIn(values.login, values.password)
+  if (result instanceof SuccessApiResponse) {
+    await redirectOrReplace(router, result.content.redirect_url)
+  } else {
+    submitError.value = getErrorMessage(result)
   }
+
+  isSubmitting.value = false
 }
 </script>
 

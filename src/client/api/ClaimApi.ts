@@ -1,9 +1,11 @@
 import type { ClaimsResource } from '@/client/model/ClaimsResource'
-import { AbstractApi } from '@/client/api/AbstractApi'
+import { AbstractApi } from '@/client/AbstractApi'
 import type { Pinia } from 'pinia'
 import { claimsResourceSchema } from '@/client/model/ClaimsResource'
 import type { InjectionKey } from 'vue'
 import { type FlowResultResource, flowResultResourceSchema } from '@/client/model/FlowResultResource'
+import type { ErrorApiResponse } from '@/client/ErrorApiResponse'
+import type { SuccessApiResponse } from '@/client/SuccessApiResponse'
 
 export class ClaimApi extends AbstractApi {
 
@@ -11,7 +13,7 @@ export class ClaimApi extends AbstractApi {
     super(pinia)
   }
 
-  async fetchClaims(): Promise<ClaimsResource> {
+  async fetchClaims(): Promise<SuccessApiResponse<ClaimsResource> | ErrorApiResponse> {
     return this.get<ClaimsResource>({
       authenticated: true,
       path: '/api/v1/flow/claims',
@@ -19,7 +21,7 @@ export class ClaimApi extends AbstractApi {
     })
   }
 
-  async collectClaims(body: any): Promise<FlowResultResource> {
+  async collectClaims(body: any): Promise<SuccessApiResponse<FlowResultResource> | ErrorApiResponse> {
     return this.post({
       authenticated: true,
       path: '/api/v1/flow/claims',

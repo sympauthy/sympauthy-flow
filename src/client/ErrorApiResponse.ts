@@ -1,7 +1,15 @@
 import { translateMessage } from '@/i18n'
 import type { ErrorResource } from '@/client/model/ErrorResource'
 
-export class ApiException {
+/**
+ *
+ *
+ * The causes of the failed may be one of the following:
+ * - the fetch did not reach the server.
+ * - the server responded with a non-success HTTP status.
+ * - the content responded by the server does not match the one expected by the client.
+ */
+export class ErrorApiResponse {
   constructor(
     /**
      * A code identifying the error.
@@ -24,27 +32,24 @@ export class ApiException {
      * The original response
      */
     readonly response?: Response
-  ) {}
+  ) {
+  }
 }
 
-export function makeApiException(errorCode: string, descriptionKey?: string): ApiException {
-  return new ApiException(
+export function makeErrorApiResponse(errorCode: string, descriptionKey?: string): ErrorApiResponse {
+  return new ErrorApiResponse(
     errorCode,
     translateMessage(errorCode),
     descriptionKey ? translateMessage(descriptionKey) : undefined
   )
 }
 
-export function getErrorMessageOrThrow(e: any): string {
-  if (e instanceof ApiException) {
-    return e.description ?? e.details ?? e.errorCode
-  } else {
-    throw e
-  }
+export function getErrorMessage(e: ErrorApiResponse): string {
+  return e.description ?? e.details ?? e.errorCode
 }
 
 export function getErrorMessageForProperties(e: any): Record<string, string> | undefined {
-  if (e instanceof ApiException && e.error?.properties !== undefined) {
+  if (e instanceof ErrorApiResponse && e.error?.properties !== undefined) {
     const errorMessages: Record<string, string> = {}
     for (const property of e.error.properties) {
       if (property.description !== undefined) {

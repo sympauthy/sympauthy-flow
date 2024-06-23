@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import type { ClaimInputFieldOptions } from '@/services/ClaimFormService'
-import CommonField from '@/components/CommonField.vue'
+import CommonField from '@/components/CommonInputField.vue'
 
 interface Props {
   options: ClaimInputFieldOptions

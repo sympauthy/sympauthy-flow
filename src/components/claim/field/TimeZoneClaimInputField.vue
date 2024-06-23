@@ -8,6 +8,7 @@ import { timeZoneApiKey } from '@/client/api/TimeZoneApi'
 import type { TimeZoneResource } from '@/client/model/TimeZoneResource'
 import SearchCard from '@/components/card/SearchCard.vue'
 import SearchCardItem from '@/components/card/SearchCardItem.vue'
+import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 
 interface Props {
   options: ClaimInputFieldOptions
@@ -30,11 +31,13 @@ const loadTimeZone = async () => {
   if (isLoading.value) return
   isLoading.value = true
 
-  try {
-    timeZones.value = await timeZoneApi.fetchTimeZones(props.options.claim.id)
-  } finally {
-    isLoading.value = false
+  const response = await timeZoneApi.fetchTimeZones(props.options.claim.id)
+  if (response instanceof SuccessApiResponse) {
+    timeZones.value = response.content
   }
+  // FIXME: Handle errors
+
+  isLoading.value = false
 }
 
 const filteredTimeZones = computed(() => {

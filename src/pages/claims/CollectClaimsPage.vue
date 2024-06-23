@@ -10,10 +10,10 @@ import { Form } from 'vee-validate'
 import ClaimsInputGroup from '@/components/claim/group/ClaimsInputGroup.vue'
 import { claimServiceKey } from '@/services/ClaimsService'
 import { onMounted, ref } from 'vue'
-import { getErrorMessageForProperties, getErrorMessageOrThrow } from '@/exception/ApiException'
+import { getErrorMessage, getErrorMessageForProperties } from '@/client/ErrorApiResponse'
 import { claimApiKey } from '@/client/api/ClaimApi'
-import type { FlowResultResource } from '@/client/model/FlowResultResource'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
+import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -41,19 +41,15 @@ const loadClaims = async () => {
   errorMessage.value = undefined
   fieldErrorMessages.value = undefined
 
-  try {
-    const claims = claimApi.fetchClaims()
-    console.log(JSON.stringify(claims))
-  } catch (e) {
-    errorMessage.value = getErrorMessageOrThrow(e)
-  } finally {
-    isLoading.value = false
+  const response = await claimApi.fetchClaims()
+  if (response instanceof SuccessApiResponse) {
+    console.log(JSON.stringify(response.content)) // FIXME Reload the claims into the form
+  } else {
+    errorMessage.value = getErrorMessage(response)
   }
-}
 
-onMounted(async () => {
-  await loadClaims()
-})
+  isLoading.value = false
+}
 
 const onSubmit = async (values: any) => {
   if (isLoading.value || isSubmitting.value) return
@@ -62,19 +58,20 @@ const onSubmit = async (values: any) => {
   errorMessage.value = undefined
   fieldErrorMessages.value = undefined
 
-  let result: FlowResultResource
-  try {
-    result = await claimApi.collectClaims(values)
-  } catch (e) {
-    fieldErrorMessages.value = getErrorMessageForProperties(e)
-    errorMessage.value = getErrorMessageOrThrow(e)
-    return
-  } finally {
-    isSubmitting.value = false
+  let response = await claimApi.collectClaims(values)
+  if (response instanceof SuccessApiResponse) {
+    await redirectOrReplace(router, response.content.redirect_url)
+  } else {
+    fieldErrorMessages.value = getErrorMessageForProperties(response)
+    errorMessage.value = getErrorMessage(response)
   }
 
-  await redirectOrReplace(router, result.redirect_url)
+  isSubmitting.value = false
 }
+
+onMounted(async () => {
+  await loadClaims()
+})
 
 </script>
 

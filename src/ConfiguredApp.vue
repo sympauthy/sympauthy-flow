@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterView, useRouter } from 'vue-router'
 import { useConfiguration } from '@/stores/ConfigurationStore'
-import { ApiException } from '@/exception/ApiException'
+import { ErrorApiResponse } from '@/client/ErrorApiResponse'
 import { makeErrorRoute } from '@/router'
 import { provide } from 'vue'
 import { configurationKey } from '@/utils/ConfigurationUtils'
@@ -15,7 +15,7 @@ try {
     provide(configurationKey, configuration)
   }
 } catch (e) {
-  if (e instanceof ApiException) {
+  if (e instanceof ErrorApiResponse) {
     const errorRoute = makeErrorRoute(e.errorCode, e.details, e.description)
     router.replace(errorRoute)
   } else {

@@ -8,15 +8,15 @@ import { signUpApiKey } from '@/client/api/SignUpApi'
 import ClaimsInputGroup from '@/components/claim/group/ClaimsInputGroup.vue'
 import { configurationKey } from '@/utils/ConfigurationUtils'
 import { claimFormServiceKey } from '@/services/ClaimFormService'
-import { getErrorMessageForProperties, getErrorMessageOrThrow } from '@/exception/ApiException'
+import { getErrorMessage, getErrorMessageForProperties } from '@/client/ErrorApiResponse'
 import { useRouter } from 'vue-router'
 import { filter } from 'rambda/immutable'
 import CommonAlert from '@/components/CommonAlert.vue'
-import CommonField from '@/components/CommonField.vue'
+import CommonField from '@/components/CommonInputField.vue'
 import { claimServiceKey } from '@/services/ClaimsService'
-import type { FlowResultResource } from '@/client/model/FlowResultResource'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import BasePage from '@/components/BasePage.vue'
+import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -50,18 +50,15 @@ const onSubmit = async (values: any) => {
     ...filter((_: any, prop: string) => prop != 'confirm_password', values)
   }
 
-  let result: FlowResultResource
-  try {
-    result = await signUpApi.signUp(body)
-  } catch (e) {
-    fieldErrorMessages.value = getErrorMessageForProperties(e)
-    errorMessage.value = getErrorMessageOrThrow(e)
-    return
-  } finally {
-    isSubmitting.value = false
+  const result = await signUpApi.signUp(body)
+  if (result instanceof SuccessApiResponse) {
+    await redirectOrReplace(router, result.content.redirect_url)
+  } else {
+    fieldErrorMessages.value = getErrorMessageForProperties(result)
+    errorMessage.value = getErrorMessage(result)
   }
 
-  await redirectOrReplace(router, result.redirect_url)
+  isSubmitting.value = false
 }
 
 </script>
