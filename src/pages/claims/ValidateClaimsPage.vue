@@ -8,11 +8,12 @@ import { useI18n } from 'vue-i18n'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
 import ValidationCodeField from '@/components/ValidationCodeInputField.vue'
 import type { ValidationCodeResource } from '@/client/model/ValidationCodeResource'
-import { useForm } from 'vee-validate'
+import { type SubmissionContext, useForm } from 'vee-validate'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { object, string } from 'yup'
 import CommonAlert from '@/components/CommonAlert.vue'
 import { useRouter } from 'vue-router'
+import type { ClaimsValidationFlowResultResource } from '@/client/model/ClaimsValidationFlowResultResource'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -45,20 +46,32 @@ const mediaName = computed(() => {
   return t(`media.${currentValidationCode.value.media}`)
 })
 
-const fetchValidationCodes = async () => {
+const fetchValidationFlowResult = async () => {
   if (isLoading.value) {
     return
   }
   isLoading.value = true
 
-  const response = await claimsValidationApi.fetchValidationCodes()
+  const response = await claimsValidationApi.fetchValidationFlowResult()
   if (response instanceof SuccessApiResponse) {
-    validationCodes.value = response.content.codes
+    await handleValidationFlowResult(response)
   } else {
     fetchErrorMessage.value = getErrorMessage(response)
   }
 
   isLoading.value = false
+}
+
+const handleValidationFlowResult = async (
+  response: SuccessApiResponse<ClaimsValidationFlowResultResource>,
+  ctx?: SubmissionContext
+) => {
+  if (response.content.redirect_url !== undefined) {
+    await redirectOrReplace(router, response.content.redirect_url)
+  } else {
+    validationCodes.value = response.content.codes
+    ctx?.resetForm()
+  }
 }
 
 
@@ -72,11 +85,8 @@ const onSubmit = handleSubmit(async (values, ctx) => {
     media: currentValidationCode.value.media,
     code: values['code']
   })
-  if (response instanceof SuccessApiResponse && response.content.redirect_url !== undefined) {
-    await redirectOrReplace(router, response.content.redirect_url)
-  } else if (response instanceof SuccessApiResponse) {
-    validationCodes.value = response.content.codes
-    ctx.resetForm()
+  if (response instanceof SuccessApiResponse) {
+    await handleValidationFlowResult(response, ctx)
   } else if (response.errorCode === 'flow.claim_validation.invalid_code') {
     ctx.resetForm()
     ctx.setFieldError('code', getErrorMessage(response))
@@ -86,7 +96,7 @@ const onSubmit = handleSubmit(async (values, ctx) => {
 })
 
 onMounted(async () => {
-  await fetchValidationCodes()
+  await fetchValidationFlowResult()
 })
 
 /**

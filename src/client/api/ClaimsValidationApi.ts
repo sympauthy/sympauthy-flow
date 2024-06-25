@@ -1,12 +1,10 @@
 import { AbstractApi } from '@/client/AbstractApi'
 import type { Pinia } from 'pinia'
 import type { InjectionKey } from 'vue'
-import type { ClaimsValidationResource } from '@/client/model/ClaimsValidationResource'
-import { claimsValidationResourceSchema } from '@/client/model/ClaimsValidationResource'
 import {
-  type ClaimValidationResultResource,
-  claimValidationResultResourceSchema
-} from '@/client/model/ClaimValidationResultResource'
+  type ClaimsValidationFlowResultResource,
+  claimValidationFlowResultResourceSchema
+} from '@/client/model/ClaimsValidationFlowResultResource'
 import type { ErrorApiResponse } from '@/client/ErrorApiResponse'
 import type { SuccessApiResponse } from '@/client/SuccessApiResponse'
 
@@ -15,20 +13,23 @@ export class ClaimsValidationApi extends AbstractApi {
     super(pinia)
   }
 
-  async fetchValidationCodes(): Promise<SuccessApiResponse<ClaimsValidationResource> | ErrorApiResponse> {
+  async fetchValidationFlowResult(): Promise<SuccessApiResponse<ClaimsValidationFlowResultResource> | ErrorApiResponse> {
     return this.get({
       authenticated: true,
-      path: '/api/v1/flow/claims/validation-codes',
-      schema: claimsValidationResourceSchema
+      path: '/api/v1/flow/claims/validation',
+      schema: claimValidationFlowResultResourceSchema
     })
   }
 
-  async validateClaim(body: { media: string, code: string }): Promise<SuccessApiResponse<ClaimValidationResultResource> | ErrorApiResponse> {
+  async validateClaim(body: {
+    media: string,
+    code: string
+  }): Promise<SuccessApiResponse<ClaimsValidationFlowResultResource> | ErrorApiResponse> {
     return this.post({
       authenticated: true,
-      path: '/api/v1/flow/claims/validation-codes',
+      path: '/api/v1/flow/claims/validation',
       body: body,
-      schema: claimValidationResultResourceSchema
+      schema: claimValidationFlowResultResourceSchema
     })
   }
 }
