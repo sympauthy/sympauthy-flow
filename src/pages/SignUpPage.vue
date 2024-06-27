@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import { Form } from 'vee-validate'
 import { object, string } from 'yup'
-import { injectRequired, redirectOrReplace } from '@/utils/VueUtils'
+import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { signUpApiKey } from '@/client/api/SignUpApi'
 import ClaimsInputGroup from '@/components/claim/group/ClaimsInputGroup.vue'
 import { configurationKey } from '@/utils/ConfigurationUtils'
@@ -52,7 +52,7 @@ const onSubmit = async (values: any) => {
 
   const result = await signUpApi.signUp(body)
   if (result instanceof SuccessApiResponse) {
-    await redirectOrReplace(router, result.content.redirect_url)
+    await redirectOrPush(router, result.content.redirect_url)
   } else {
     fieldErrorMessages.value = getErrorMessageForProperties(result)
     errorMessage.value = getErrorMessage(result)

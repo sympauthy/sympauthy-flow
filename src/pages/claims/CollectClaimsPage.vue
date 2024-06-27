@@ -2,11 +2,11 @@
 import BasePage from '@/components/BasePage.vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { injectRequired, redirectOrReplace } from '@/utils/VueUtils'
+import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { claimFormServiceKey } from '@/services/ClaimFormService'
 import { configurationKey } from '@/utils/ConfigurationUtils'
 import { object } from 'yup'
-import { Form } from 'vee-validate'
+import { useForm } from 'vee-validate'
 import ClaimsInputGroup from '@/components/claim/group/ClaimsInputGroup.vue'
 import { claimServiceKey } from '@/services/ClaimsService'
 import { onMounted, ref } from 'vue'
@@ -34,6 +34,10 @@ const validationSchema = object({
   ...claimSchemas
 })
 
+const {setFieldValue, handleSubmit} = useForm({
+  validationSchema: validationSchema,
+})
+
 const loadClaims = async () => {
   if (isLoading.value) return
   isLoading.value = true
@@ -43,7 +47,9 @@ const loadClaims = async () => {
 
   const response = await claimApi.fetchClaims()
   if (response instanceof SuccessApiResponse) {
-    console.log(JSON.stringify(response.content)) // FIXME Reload the claims into the form
+    response.content.claims
+      .filter(it => it.collected)
+      .forEach(it => setFieldValue(it.claim, it.value))
   } else {
     errorMessage.value = getErrorMessage(response)
   }
@@ -51,7 +57,7 @@ const loadClaims = async () => {
   isLoading.value = false
 }
 
-const onSubmit = async (values: any) => {
+const onSubmit = handleSubmit(async (values: any) => {
   if (isLoading.value || isSubmitting.value) return
   isSubmitting.value = true
 
@@ -60,14 +66,14 @@ const onSubmit = async (values: any) => {
 
   let response = await claimApi.collectClaims(values)
   if (response instanceof SuccessApiResponse) {
-    await redirectOrReplace(router, response.content.redirect_url)
+    await redirectOrPush(router, response.content.redirect_url)
   } else {
     fieldErrorMessages.value = getErrorMessageForProperties(response)
     errorMessage.value = getErrorMessage(response)
   }
 
   isSubmitting.value = false
-}
+})
 
 onMounted(async () => {
   await loadClaims()
@@ -83,7 +89,7 @@ onMounted(async () => {
           {{ t('pages.collect_claims.title') }}
         </template>
 
-        <Form :validation-schema='validationSchema' @submit='onSubmit'>
+        <form @submit='onSubmit'>
           <claims-input-group :claims='collectableClaims'
                               :disabled='isLoading'
                               :error-messages='fieldErrorMessages'
@@ -92,7 +98,7 @@ onMounted(async () => {
           <button class='btn btn-primary w-full mt-5' type='submit'>
             {{ t('common.continue') }}
           </button>
-        </Form>
+        </form>
       </title-content-card>
     </div>
   </base-page>

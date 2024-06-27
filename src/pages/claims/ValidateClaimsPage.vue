@@ -1,6 +1,6 @@
 <script lang='ts' setup>
 import BasePage from '@/components/BasePage.vue'
-import { injectRequired, redirectOrReplace } from '@/utils/VueUtils'
+import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { claimsValidationApiKey } from '@/client/api/ClaimsValidationApi'
 import { computed, onMounted, ref, watch } from 'vue'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
@@ -67,7 +67,7 @@ const handleValidationFlowResult = async (
   ctx?: SubmissionContext
 ) => {
   if (response.content.redirect_url !== undefined) {
-    await redirectOrReplace(router, response.content.redirect_url)
+    await redirectOrPush(router, response.content.redirect_url)
   } else {
     validationCodes.value = response.content.codes
     ctx?.resetForm()

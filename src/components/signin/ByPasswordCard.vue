@@ -1,7 +1,7 @@
 <script lang='ts' setup>
 import { useI18n } from 'vue-i18n'
 import { signInApiKey } from '@/client/api/SignInApi'
-import { injectRequired, redirectOrReplace } from '@/utils/VueUtils'
+import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { object, string } from 'yup'
 import { Form } from 'vee-validate'
 import { computed, ref } from 'vue'
@@ -47,7 +47,7 @@ const onSubmit = async (values: any) => {
 
   const result = await signInApi.signIn(values.login, values.password)
   if (result instanceof SuccessApiResponse) {
-    await redirectOrReplace(router, result.content.redirect_url)
+    await redirectOrPush(router, result.content.redirect_url)
   } else {
     submitError.value = getErrorMessage(result)
   }
