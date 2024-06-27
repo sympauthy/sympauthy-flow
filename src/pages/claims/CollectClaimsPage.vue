@@ -14,6 +14,8 @@ import { getErrorMessage, getErrorMessageForProperties } from '@/client/ErrorApi
 import { claimApiKey } from '@/client/api/ClaimApi'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
+import CommonButton from '@/components/CommonButton.vue'
+import { primaryTheme } from '@/styles/theme'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -23,7 +25,6 @@ const claimFormService = injectRequired(claimFormServiceKey)
 const configuration = injectRequired(configurationKey)
 
 const isLoading = ref<boolean>(false)
-const isSubmitting = ref<boolean>(false)
 
 const errorMessage = ref<string | undefined>(undefined)
 const fieldErrorMessages = ref<Record<string, string> | undefined>(undefined)
@@ -34,8 +35,8 @@ const validationSchema = object({
   ...claimSchemas
 })
 
-const {setFieldValue, handleSubmit} = useForm({
-  validationSchema: validationSchema,
+const { setFieldValue, handleSubmit, isSubmitting } = useForm({
+  validationSchema: validationSchema
 })
 
 const loadClaims = async () => {
@@ -58,9 +59,6 @@ const loadClaims = async () => {
 }
 
 const onSubmit = handleSubmit(async (values: any) => {
-  if (isLoading.value || isSubmitting.value) return
-  isSubmitting.value = true
-
   errorMessage.value = undefined
   fieldErrorMessages.value = undefined
 
@@ -71,8 +69,6 @@ const onSubmit = handleSubmit(async (values: any) => {
     fieldErrorMessages.value = getErrorMessageForProperties(response)
     errorMessage.value = getErrorMessage(response)
   }
-
-  isSubmitting.value = false
 })
 
 onMounted(async () => {
@@ -91,13 +87,16 @@ onMounted(async () => {
 
         <form @submit='onSubmit'>
           <claims-input-group :claims='collectableClaims'
-                              :disabled='isLoading'
+                              :disabled='isLoading || isSubmitting'
                               :error-messages='fieldErrorMessages'
                               class='mb-3' />
 
-          <button class='btn btn-primary w-full mt-5' type='submit'>
+          <common-button :loading='isLoading'
+                         :theme='primaryTheme'
+                         class='w-full mt-5'
+                         type='submit'>
             {{ t('common.continue') }}
-          </button>
+          </common-button>
         </form>
       </title-content-card>
     </div>
