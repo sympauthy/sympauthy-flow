@@ -23,16 +23,6 @@ body {
     color: var(--color-background);
 }
 
-/** Border **/
-
-.border-primary {
-    border-color: var(--color-primary);
-}
-
-.border-dander {
-    border-color: var(--color-danger);
-}
-
 /** Button **/
 
 .btn {
@@ -47,7 +37,6 @@ body {
 .btn-disabled {
     background-color: var(--color-disabled);
     color: var(--color-on-disabled);
-    @apply pointer-events-none;
 }
 
 /** Text **/

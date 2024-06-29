@@ -15,7 +15,7 @@ import { claimApiKey } from '@/client/api/ClaimApi'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import CommonButton from '@/components/CommonButton.vue'
-import { primaryTheme } from '@/styles/theme'
+import { primaryColoredButton } from '@/styles/ButtonStyle'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -92,7 +92,7 @@ onMounted(async () => {
                               class='mb-3' />
 
           <common-button :loading='isLoading'
-                         :theme='primaryTheme'
+                         :buttonStyle='primaryColoredButton'
                          class='w-full mt-5'
                          type='submit'>
             {{ t('common.continue') }}

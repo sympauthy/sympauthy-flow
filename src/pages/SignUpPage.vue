@@ -1,7 +1,6 @@
 <script lang='ts' setup>
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
-import { Form } from 'vee-validate'
 import { object, string } from 'yup'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { signUpApiKey } from '@/client/api/SignUpApi'
@@ -17,6 +16,8 @@ import { claimServiceKey } from '@/services/ClaimsService'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import BasePage from '@/components/BasePage.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
+import CommonButton from '@/components/CommonButton.vue'
+import { useForm } from 'vee-validate'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -24,8 +25,6 @@ const claimService = injectRequired(claimServiceKey)
 const claimFormService = injectRequired(claimFormServiceKey)
 const configuration = injectRequired(configurationKey)
 const signUpApi = injectRequired(signUpApiKey)
-
-const isSubmitting = ref<Boolean>(false)
 
 const errorMessage = ref<String>()
 const fieldErrorMessages = ref<Record<string, string>>()
@@ -39,10 +38,11 @@ const validationSchema = object({
   confirm_password: string().required()
 })
 
-const onSubmit = async (values: any) => {
-  if (isSubmitting.value) return
-  isSubmitting.value = true
+const { handleSubmit, isSubmitting } = useForm({
+  validationSchema: validationSchema
+})
 
+const onSubmit = handleSubmit(async (values: any) => {
   errorMessage.value = undefined
   fieldErrorMessages.value = undefined
 
@@ -57,9 +57,7 @@ const onSubmit = async (values: any) => {
     fieldErrorMessages.value = getErrorMessageForProperties(result)
     errorMessage.value = getErrorMessage(result)
   }
-
-  isSubmitting.value = false
-}
+})
 
 </script>
 
@@ -85,24 +83,34 @@ const onSubmit = async (values: any) => {
 
           <Form :validation-schema='validationSchema' @submit='onSubmit'>
             <claims-input-group :claims='signUpClaims'
+                                :disabled='isSubmitting'
                                 :error-messages='fieldErrorMessages'
                                 class='mb-3' />
 
-            <common-field :error-message='fieldErrorMessages?.["password"]'
+            <common-field :disabled='isSubmitting'
+                          :error-message='fieldErrorMessages?.["password"]'
                           :label="t('common.password')"
                           class='mb-3'
                           name='password'
                           type='password' />
 
-            <common-field :error-message='fieldErrorMessages?.["confirm_password"]'
+            <common-field :disabled='isSubmitting'
+                          :error-message='fieldErrorMessages?.["confirm_password"]'
                           :label="t('common.confirm_password')"
                           class='mb-3'
                           name='confirm_password'
                           type='password' />
 
-            <button class='btn btn-primary w-full mt-5' type='submit'>
-              {{ t('common.sign_up') }}
-            </button>
+            <common-button :loading='isSubmitting'
+                           class='w-full mt-5'
+                           type='submit'>
+              <template v-slot:default>
+                {{ t('common.sign_up') }}
+              </template>
+              <template v-slot:loading>
+                {{ t('pages.sign_up.signing_up') }}
+              </template>
+            </common-button>
           </Form>
         </template>
       </title-content-card>

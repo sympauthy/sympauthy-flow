@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
     <Field v-slot='{field, errorMessage}' :name='props.name'>
       <input :disabled='props.disabled'
              :type='props.type'
-             class='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-1'
+             class='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-1 disabled:outline-none disabled:pointer-events-none disabled:cursor-not-allowed'
              v-bind='field' />
       <span v-if='props.errorMessage ?? errorMessage'
             class='text-sm'

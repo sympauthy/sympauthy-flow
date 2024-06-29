@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n'
 import { signInApiKey } from '@/client/api/SignInApi'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { object, string } from 'yup'
-import { Form } from 'vee-validate'
+import { useForm } from 'vee-validate'
 import { computed, ref } from 'vue'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
 import { useRouter } from 'vue-router'
@@ -19,11 +19,30 @@ import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 const signInApi = injectRequired(signInApiKey)
 const { t } = useI18n()
 
-const isSubmitting = ref<boolean>(false)
 const submitError = ref<String>()
 
 const router = useRouter()
 const configuration = injectRequired(configurationKey)
+
+const validationSchema = object({
+  login: string().required(),
+  password: string().required()
+})
+
+const { handleSubmit, isSubmitting } = useForm({
+  validationSchema: validationSchema
+})
+
+const onSubmit = handleSubmit(async (values: any) => {
+  submitError.value = undefined
+
+  const result = await signInApi.signIn(values.login, values.password)
+  if (result instanceof SuccessApiResponse) {
+    await redirectOrPush(router, result.content.redirect_url)
+  } else {
+    submitError.value = getErrorMessage(result)
+  }
+})
 
 const loginLabel = computed(() => {
   const claims = configuration.claims || []
@@ -35,25 +54,6 @@ const loginLabel = computed(() => {
   return or(i18n, loginClaims)
 })
 
-const validationSchema = object({
-  login: string().required(),
-  password: string().required()
-})
-
-const onSubmit = async (values: any) => {
-  if (isSubmitting.value) return
-  isSubmitting.value = true
-  submitError.value = undefined
-
-  const result = await signInApi.signIn(values.login, values.password)
-  if (result instanceof SuccessApiResponse) {
-    await redirectOrPush(router, result.content.redirect_url)
-  } else {
-    submitError.value = getErrorMessage(result)
-  }
-
-  isSubmitting.value = false
-}
 </script>
 
 <template>
@@ -74,7 +74,7 @@ const onSubmit = async (values: any) => {
         {{ submitError }}
       </common-alert>
 
-      <Form :validation-schema='validationSchema' @submit='onSubmit'>
+      <form @submit='onSubmit'>
         <label class='form-label' for='login'></label>
         <common-input :disabled='isSubmitting'
                       :label='loginLabel'
@@ -82,7 +82,8 @@ const onSubmit = async (values: any) => {
                       name='login'
                       type='text' />
 
-        <common-input :label="t('common.password')"
+        <common-input :disabled='isSubmitting'
+                      :label="t('common.password')"
                       class='mb-3'
                       name='password'
                       type='password' />
@@ -91,10 +92,17 @@ const onSubmit = async (values: any) => {
           <a>{{ t('components.by_password_card.forgotten_password') }}</a>
         </div>
 
-        <common-button class='btn-primary w-full mt-5' type='submit'>
-          {{ t('common.sign_in') }}
+        <common-button :loading='isSubmitting'
+                       class='w-full mt-5'
+                       type='submit'>
+          <template v-slot:default>
+            {{ t('common.sign_in') }}
+          </template>
+          <template v-slot:loading>
+            {{ t('components.by_password_card.signing_in') }}
+          </template>
         </common-button>
-      </Form>
+      </form>
     </template>
   </title-content-card>
 </template>
