@@ -6,11 +6,13 @@ import TimeZoneClaimInputField from '@/components/claim/field/TimeZoneClaimInput
 interface Props {
   options: ClaimInputFieldOptions,
   errorMessage?: string,
-  disabled?: boolean
+  disabled?: boolean,
+  loading?: boolean,
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  disabled: false
+  disabled: false,
+  loading: false
 })
 
 const type = props.options.claim.type
@@ -20,12 +22,14 @@ const type = props.options.claim.type
   <template v-if="type === 'string' || type === 'email'">
     <string-claim-input-field :disabled='disabled'
                               :error-message='errorMessage'
+                              :loading='loading'
                               :options='options'
                               v-bind='$attrs' />
   </template>
   <template v-if="type === 'timezone'">
     <time-zone-claim-input-field :disabled='disabled'
                                  :error-message='errorMessage'
+                                 :loading='loading'
                                  :options='options'
                                  v-bind='$attrs' />
   </template>

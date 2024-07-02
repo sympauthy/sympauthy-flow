@@ -9,6 +9,7 @@ interface Props {
   claims: Array<string>
   errorMessages?: Record<string, string>
   disabled?: boolean
+  loading?: boolean
 }
 
 defineOptions({
@@ -16,7 +17,8 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<Props>(), {
-  disabled: false
+  disabled: false,
+  loading: false
 })
 
 const configuration = injectRequired(configurationKey)
@@ -30,12 +32,14 @@ const optionsArray = claimFormService.getOptionsForClaims(configuration, props.c
     <template v-if='options instanceof ClaimInputFieldOptions'>
       <claim-input-field :disabled='disabled'
                          :error-message='errorMessages?.[options.claim.id]'
+                         :loading='loading'
                          :options='options'
                          v-bind='$attrs' />
     </template>
     <template v-if="options instanceof ClaimInputGroupOptions && options.group === 'identity'">
       <identity-claims-input-group :disabled='disabled'
                                    :error-messages='errorMessages'
+                                   :loading='loading'
                                    :options='options'
                                    v-bind='$attrs' />
     </template>

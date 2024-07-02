@@ -24,7 +24,7 @@ const claimService = injectRequired(claimServiceKey)
 const claimFormService = injectRequired(claimFormServiceKey)
 const configuration = injectRequired(configurationKey)
 
-const isLoading = ref<boolean>(false)
+const isLoadingClaims = ref<boolean>(false)
 
 const errorMessage = ref<string | undefined>(undefined)
 const fieldErrorMessages = ref<Record<string, string> | undefined>(undefined)
@@ -40,8 +40,8 @@ const { setFieldValue, handleSubmit, isSubmitting } = useForm({
 })
 
 const loadClaims = async () => {
-  if (isLoading.value) return
-  isLoading.value = true
+  if (isLoadingClaims.value) return
+  isLoadingClaims.value = true
 
   errorMessage.value = undefined
   fieldErrorMessages.value = undefined
@@ -87,15 +87,22 @@ onMounted(async () => {
 
         <form @submit='onSubmit'>
           <claims-input-group :claims='collectableClaims'
-                              :disabled='isLoading || isSubmitting'
+                              :disabled='isSubmitting'
                               :error-messages='fieldErrorMessages'
+                              :loading='isLoadingClaims'
                               class='mb-3' />
 
-          <common-button :loading='isLoading'
-                         :buttonStyle='primaryColoredButton'
+          <common-button :buttonStyle='primaryColoredButton'
+                         :disabled='isLoadingClaims'
+                         :loading='isSubmitting'
                          class='w-full mt-5'
                          type='submit'>
-            {{ t('common.continue') }}
+            <template v-slot:default>
+              {{ t('common.continue') }}
+            </template>
+            <template v-slot:loading>
+              {{ t('pages.collect_claims.updating') }}
+            </template>
           </common-button>
         </form>
       </title-content-card>

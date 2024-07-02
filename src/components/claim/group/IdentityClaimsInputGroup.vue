@@ -8,6 +8,7 @@ interface Props {
   options: ClaimInputGroupOptions,
   errorMessages?: Record<string, string>,
   disabled?: boolean
+  loading?: boolean
 }
 
 defineOptions({
@@ -15,7 +16,8 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<Props>(), {
-  disabled: false
+  disabled: false,
+  loading: false
 })
 
 const nameOptions = computed(() => props.options.getClaimOptions(OpenIdClaim.NAME))
@@ -73,6 +75,7 @@ const shouldDisplaySplitName = computed(() => {
     <claim-input-field v-if='nameOptions'
                        :disabled='disabled'
                        :error-message='errorMessages?.[OpenIdClaim.NAME]'
+                       :loading='loading'
                        :options='nameOptions'
                        v-bind='$attrs' />
   </template>
@@ -80,18 +83,21 @@ const shouldDisplaySplitName = computed(() => {
     <claim-input-field v-if='givenNameOptions'
                        :disabled='disabled'
                        :error-message='errorMessages?.[OpenIdClaim.GIVEN_NAME]'
+                       :loading='loading'
                        :options='givenNameOptions'
                        class='md:me-3'
                        v-bind='$attrs' />
     <claim-input-field v-if='middleNameOptions'
                        :disabled='disabled'
                        :error-message='errorMessages?.[OpenIdClaim.MIDDLE_NAME]'
+                       :loading='loading'
                        :options='middleNameOptions'
                        class='md:me-3'
                        v-bind='$attrs' />
     <claim-input-field v-if='familyNameOptions'
                        :disabled='disabled'
                        :error-message='errorMessages?.[OpenIdClaim.FAMILY_NAME]'
+                       :loading='loading'
                        :options='familyNameOptions'
                        v-bind='$attrs' />
   </div>

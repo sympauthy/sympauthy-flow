@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script lang='ts' setup>
 import type { ClaimInputFieldOptions } from '@/services/ClaimFormService'
 import CommonField from '@/components/CommonInputField.vue'
 
@@ -6,18 +6,21 @@ interface Props {
   options: ClaimInputFieldOptions
   errorMessage?: string
   disabled?: boolean
+  loading?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  disabled: false
+withDefaults(defineProps<Props>(), {
+  disabled: false,
+  loading: false
 })
 </script>
 
 <template>
-  <common-field :name='props.options.claim.id'
-                :label='props.options.claim.name'
-                :disabled='props.disabled'
+  <common-field :disabled='disabled'
                 :error-message='errorMessage'
+                :label='options.claim.name'
+                :loading='loading'
+                :name='options.claim.id'
                 type='text' />
 </template>
 

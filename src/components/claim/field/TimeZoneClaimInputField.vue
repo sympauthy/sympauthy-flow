@@ -14,22 +14,24 @@ interface Props {
   options: ClaimInputFieldOptions
   errorMessage?: string
   disabled?: boolean
+  loading?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  disabled: false
+  disabled: false,
+  loading: false
 })
 
 const { t } = useI18n()
 const timeZoneApi = injectRequired(timeZoneApiKey)
 
-const isLoading = ref(false)
+const isLoadingTimeZones = ref(false)
 const search = ref<string | undefined>(undefined)
 const timeZones = ref<Array<TimeZoneResource>>([])
 
-const loadTimeZone = async () => {
-  if (isLoading.value) return
-  isLoading.value = true
+const loadTimeZones = async () => {
+  if (isLoadingTimeZones.value) return
+  isLoadingTimeZones.value = true
 
   const response = await timeZoneApi.fetchTimeZones(props.options.claim.id)
   if (response instanceof SuccessApiResponse) {
@@ -37,7 +39,7 @@ const loadTimeZone = async () => {
   }
   // FIXME: Handle errors
 
-  isLoading.value = false
+  isLoadingTimeZones.value = false
 }
 
 const filteredTimeZones = computed(() => {
@@ -48,16 +50,17 @@ const filteredTimeZones = computed(() => {
 })
 
 onMounted(async () => {
-  await loadTimeZone()
+  await loadTimeZones()
 })
 
 </script>
 
 <template>
-  <common-select :disabled='props.disabled'
+  <common-select :disabled='disabled'
                  :error-message='errorMessage'
-                 :label='props.options.claim.name'
-                 :name='props.options.claim.id'>
+                 :label='options.claim.name'
+                 :loading='loading'
+                 :name='options.claim.id'>
     <template v-slot:default='{select, cancel}'>
       <search-card v-model='search'
                    :placeholder='t("components.tz_claim_input_field.placeholder")'

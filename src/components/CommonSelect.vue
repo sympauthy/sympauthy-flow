@@ -2,6 +2,7 @@
 import { useField } from 'vee-validate'
 import { ref, toRef } from 'vue'
 import CommonModal from '@/components/CommonModal.vue'
+import CommonInputField from '@/components/CommonInputField.vue'
 
 interface Props {
   name: string,
@@ -9,10 +10,12 @@ interface Props {
   value?: string,
   errorMessage?: string,
   disabled?: boolean,
+  loading?: boolean,
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  disabled: false
+  disabled: false,
+  loading: false
 })
 
 // use `toRef` to create reactive references to `name` prop which is passed to `useField`
@@ -55,7 +58,7 @@ const cancel = () => {
     {{ label }}
   </label>
   <input :value='inputValue'
-         class='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none'
+         class='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-1 disabled:outline-none disabled:pointer-events-none disabled:cursor-not-allowed'
          type='text'
          v-on:click='openModal' />
   <span v-if='props.errorMessage ?? errorMessage'

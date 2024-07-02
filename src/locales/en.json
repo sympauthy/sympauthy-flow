@@ -35,7 +35,8 @@
       "sign_in_action": "Sign-in instead!"
     },
     "collect_claims": {
-      "title": "Before you continue"
+      "title": "Before you continue",
+      "updating": "Updating..."
     },
     "validate_claims": {
       "title": "Before you continue",
