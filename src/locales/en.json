@@ -20,6 +20,9 @@
     "tz_claim_input_field": {
       "placeholder": "Search (country, offset, etc.)"
     },
+    "validation_code_input_field": {
+      "submitting": "Validating..."
+    }
   },
   "media": {
     "EMAIL": "email"

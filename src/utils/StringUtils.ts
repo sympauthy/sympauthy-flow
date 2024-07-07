@@ -1,12 +1,17 @@
 import type { I18n } from 'vue-i18n'
 import { translateMessage } from '@/i18n'
 
-export function isBlankOrEmpty(value: string | undefined | null): boolean {
-  if (!value) {
-    return true
+export function isNotEmpty(value: string | undefined | null): value is string {
+  return value !== undefined && value !== null && value.length > 0
+}
+
+export function isNotBlankNorEmpty(value: string | undefined | null): value is string {
+  if (isNotEmpty(value)) {
+    const trimmedValue = value.trim()
+    return trimmedValue.length > 0
+  } else {
+    return false
   }
-  const trimmedValue = value.trim()
-  return trimmedValue.length == 0
 }
 
 export function or(i18n: I18n, values: Array<string>): string {

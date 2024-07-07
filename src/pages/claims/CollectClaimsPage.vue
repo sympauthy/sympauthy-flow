@@ -55,7 +55,7 @@ const loadClaims = async () => {
     errorMessage.value = getErrorMessage(response)
   }
 
-  isLoading.value = false
+  isLoadingClaims.value = false
 }
 
 const onSubmit = handleSubmit(async (values: any) => {

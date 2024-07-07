@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { isBlankOrEmpty } from '@/utils/StringUtils'
+import { isNotBlankNorEmpty } from '@/utils/StringUtils'
 
 export const useState = defineStore('state', () => {
   const state = (): string => {
@@ -12,10 +12,11 @@ export const useState = defineStore('state', () => {
       state = stateValues[0]
     }
 
-    if (state === undefined || isBlankOrEmpty(state)) {
+    if (isNotBlankNorEmpty(state)) {
+      return state
+    } else {
       throw new Error('state query param is missing or blank.')
     }
-    return state
   }
 
   /**

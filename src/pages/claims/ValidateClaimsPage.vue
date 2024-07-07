@@ -14,6 +14,7 @@ import { object, string } from 'yup'
 import CommonAlert from '@/components/CommonAlert.vue'
 import { useRouter } from 'vue-router'
 import type { ClaimsValidationFlowResultResource } from '@/client/model/ClaimsValidationFlowResultResource'
+import SkeletonText from '@/components/SkeletonText.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -128,12 +129,16 @@ watch(
               {{ fetchErrorMessage }}
             </common-alert>
 
-            <div class='w-full text-justify mb-3'>
-              <p>{{ t('pages.validate_claims.description_1', [mediaName]) }}</p>
-            </div>
+            <p v-if='!isLoading' class='w-full text-justify mb-7'>
+              {{ t('pages.validate_claims.description_1', [mediaName]) }}
+            </p>
+            <skeleton-text v-else class='mb-7'></skeleton-text>
+
             <validation-code-field :code='currentValidationCode'
-                                   :disabled='isSubmitting'
-                                   class='mb-3'
+                                   :loading='isLoading'
+                                   :loading-code-length='6'
+                                   :submitting='isSubmitting'
+                                   class='mb-7'
                                    name='code' />
 
             <p class='w-full mb-3 text-justify'>
