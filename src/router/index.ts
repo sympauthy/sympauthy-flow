@@ -52,22 +52,27 @@ export function makeErrorRoute(
 }
 
 export function makeTranslatedErrorRoute(
-  i18n: I18n,
   errorCode: string,
   detailsMessageId?: string,
   descriptionMessageId?: string
 ): RouteLocationRaw {
-  const t = i18n.global.t as (v: string) => string
-  return makeErrorRoute(
-    errorCode,
-    detailsMessageId !== undefined ? t(detailsMessageId) : undefined,
-    descriptionMessageId !== undefined ? t(descriptionMessageId) : undefined
-  )
+  const queryParams: Record<string, string> = {
+    error_code: errorCode
+  }
+  if (detailsMessageId !== undefined) {
+    queryParams['details_id'] = detailsMessageId
+  }
+  if (descriptionMessageId !== undefined) {
+    queryParams['description_id'] = descriptionMessageId
+  }
+  return {
+    name: 'Error',
+    query: queryParams
+  }
 }
 
-export function makeUnknownErrorRoute(i18n: I18n): RouteLocationRaw {
+export function makeUnknownErrorRoute(): RouteLocationRaw {
   return makeTranslatedErrorRoute(
-    i18n,
     'unknown',
     'errors.unknown.details',
     'errors.unknown.description'
@@ -142,7 +147,6 @@ export function makeRouter(i18n: I18n): Router {
       } else {
         // The state is missing, go to error page.
         return makeTranslatedErrorRoute(
-          i18n,
           'state.unauthorized',
           'errors.missing_state.details',
           'errors.missing_state.description'

@@ -12,17 +12,20 @@ import { type SubmissionContext, useForm } from 'vee-validate'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { object, string } from 'yup'
 import CommonAlert from '@/components/CommonAlert.vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import type { ClaimsValidationFlowResultResource } from '@/client/model/ClaimsValidationFlowResultResource'
 import SkeletonText from '@/components/SkeletonText.vue'
+import { makeUnknownErrorRoute } from '@/router'
 
 const { t } = useI18n()
+const route = useRoute()
 const router = useRouter()
 const claimsValidationApi = injectRequired(claimsValidationApiKey)
 
+const media = ref<string | undefined>(undefined)
 const isLoading = ref(false)
 const fetchErrorMessage = ref<string | undefined>(undefined)
-const validationCodes = ref<Array<ValidationCodeResource>>([])
+const validationCode = ref<ValidationCodeResource | undefined>(undefined)
 const submitErrorMessage = ref<string | undefined>(undefined)
 
 const validationSchema = object({
@@ -33,27 +36,20 @@ const { meta, handleSubmit, isSubmitting } = useForm({
   validationSchema: validationSchema
 })
 
-const currentValidationCode = computed(() => {
-  if (validationCodes.value.length === 0) {
-    return undefined
-  }
-  return validationCodes.value[0]
-})
-
 const mediaName = computed(() => {
-  if (currentValidationCode.value === undefined) {
+  if (media.value === undefined) {
     return undefined
   }
-  return t(`media.${currentValidationCode.value.media}`)
+  return t(`media.${media.value}`)
 })
 
-const fetchValidationFlowResult = async () => {
+const fetchValidationFlowResult = async (media: string) => {
   if (isLoading.value) {
     return
   }
   isLoading.value = true
 
-  const response = await claimsValidationApi.fetchValidationFlowResult()
+  const response = await claimsValidationApi.fetchValidationFlowResult(media)
   if (response instanceof SuccessApiResponse) {
     await handleValidationFlowResult(response)
   } else {
@@ -70,20 +66,20 @@ const handleValidationFlowResult = async (
   if (response.content.redirect_url !== undefined) {
     await redirectOrPush(router, response.content.redirect_url)
   } else {
-    validationCodes.value = response.content.codes
+    validationCode.value = response.content.code
     ctx?.resetForm()
   }
 }
 
 
 const onSubmit = handleSubmit(async (values, ctx) => {
-  if (currentValidationCode.value === undefined) {
+  if (validationCode.value === undefined) {
     return
   }
   submitErrorMessage.value = undefined
 
   const response = await claimsValidationApi.validateClaim({
-    media: currentValidationCode.value.media,
+    media: validationCode.value.media,
     code: values['code']
   })
   if (response instanceof SuccessApiResponse) {
@@ -97,7 +93,14 @@ const onSubmit = handleSubmit(async (values, ctx) => {
 })
 
 onMounted(async () => {
-  await fetchValidationFlowResult()
+  let mediaQueryParam = route.query.media?.toString()
+  if (mediaQueryParam === undefined) {
+    await router.replace(makeUnknownErrorRoute())
+    return
+  }
+  media.value = mediaQueryParam
+
+  await fetchValidationFlowResult(mediaQueryParam)
 })
 
 /**
@@ -106,7 +109,6 @@ onMounted(async () => {
 watch(
   () => meta.value.valid,
   (value, oldValue) => {
-    console.log(`Watch ${value} ${oldValue} ${isSubmitting.value}`)
     if (value != oldValue && value && !isSubmitting.value) {
       onSubmit()
     }
@@ -129,21 +131,21 @@ watch(
               {{ fetchErrorMessage }}
             </common-alert>
 
-            <p v-if='!isLoading' class='w-full text-justify mb-7'>
+            <p class='w-full mb-3 text-justify'>
               {{ t('pages.validate_claims.description_1', [mediaName]) }}
+            </p>
+
+            <p v-if='!isLoading' class='w-full text-justify mb-7'>
+              {{ t('pages.validate_claims.description_2', [mediaName]) }}
             </p>
             <skeleton-text v-else class='mb-7'></skeleton-text>
 
-            <validation-code-field :code='currentValidationCode'
+            <validation-code-field :code='validationCode'
                                    :loading='isLoading'
                                    :loading-code-length='6'
                                    :submitting='isSubmitting'
                                    class='mb-7'
                                    name='code' />
-
-            <p class='w-full mb-3 text-justify'>
-              {{ t('pages.validate_claims.description_2') }}
-            </p>
 
             <div class='w-full text-sm text-center'>
               <a>{{ t('pages.validate_claims.resend.description') }}</a>

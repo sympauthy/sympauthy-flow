@@ -7,16 +7,20 @@ import {
 } from '@/client/model/ClaimsValidationFlowResultResource'
 import type { ErrorApiResponse } from '@/client/ErrorApiResponse'
 import type { SuccessApiResponse } from '@/client/SuccessApiResponse'
+import type { FlowResultResource } from '@/client/model/FlowResultResource.ts'
+import { flowResultResourceSchema } from '@/client/model/FlowResultResource.ts'
 
 export class ClaimsValidationApi extends AbstractApi {
   constructor(pinia: Pinia) {
     super(pinia)
   }
 
-  async fetchValidationFlowResult(): Promise<SuccessApiResponse<ClaimsValidationFlowResultResource> | ErrorApiResponse> {
+  async fetchValidationFlowResult(
+    media: string
+  ): Promise<SuccessApiResponse<ClaimsValidationFlowResultResource> | ErrorApiResponse> {
     return this.get({
       authenticated: true,
-      path: '/api/v1/flow/claims/validation',
+      path: `/api/v1/flow/claims/validation/${media}`,
       schema: claimValidationFlowResultResourceSchema
     })
   }
@@ -24,12 +28,12 @@ export class ClaimsValidationApi extends AbstractApi {
   async validateClaim(body: {
     media: string,
     code: string
-  }): Promise<SuccessApiResponse<ClaimsValidationFlowResultResource> | ErrorApiResponse> {
+  }): Promise<SuccessApiResponse<FlowResultResource> | ErrorApiResponse> {
     return this.post({
       authenticated: true,
       path: '/api/v1/flow/claims/validation',
       body: body,
-      schema: claimValidationFlowResultResourceSchema
+      schema: flowResultResourceSchema
     })
   }
 }

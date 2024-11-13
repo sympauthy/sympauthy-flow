@@ -2,18 +2,15 @@ import { type ValidationCodeResource, validationCodeResourceSchema } from '@/cli
 import type { JSONSchemaType } from 'ajv'
 
 export type ClaimsValidationFlowResultResource = {
-  codes?: Array<ValidationCodeResource>
+  code?: ValidationCodeResource
   redirect_url?: string
 }
 
 export const claimValidationFlowResultResourceSchema: JSONSchemaType<ClaimsValidationFlowResultResource> = {
   type: 'object',
   properties: {
-    codes: {
-      type: 'array',
-      items: {
-        ...validationCodeResourceSchema
-      },
+    code: {
+      ...validationCodeResourceSchema,
       nullable: true
     },
     redirect_url: {
@@ -23,7 +20,7 @@ export const claimValidationFlowResultResourceSchema: JSONSchemaType<ClaimsValid
   },
   anyOf: [
     {
-      required: ['codes'],
+      required: ['code'],
     },
     {
       required: ['redirect_url'],

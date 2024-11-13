@@ -43,13 +43,13 @@
     },
     "validate_claims": {
       "title": "Before you continue",
-      "description_1": "Enter the code you have received by {0}:",
+      "description_1": "A validation codes has been sent to you by {0} to verify the correctness of the information you completed previously.",
+      "description_2": "Enter the code you have received by {0}:",
       "resend": {
         "description": "You did not receive the code ? {0}",
         "action": "Resend the code",
         "waiting": "Wait {0}"
-      },
-      "description_2": "The validation codes have been sent to you to verify the correctness of the information you completed previously."
+      }
     },
     "error": {
       "title": "Something went wrong"
@@ -59,6 +59,10 @@
     "missing_state": {
       "description": "You are not authorized to access the page. Please go back to your application and retry to sign-in.",
       "details": "A state issued by the authorization server must be passed as query param."
+    },
+    "unknown": {
+      "description": "An unexpected error occurred. Please go back to your application and retry to sign-in.",
+      "details": "An unexpected error occurred."
     }
   },
   "or": {
