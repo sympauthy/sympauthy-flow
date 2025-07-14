@@ -11,8 +11,8 @@ const props = withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <div class='w-full'>
-    <div v-for='i of props.count' :key='i' class='w-full animate-pulse h-2 bg-slate-200 rounded cursor-progress'></div>
+  <div>
+    <div v-for='i of props.count' :key='i' class='w-full animate-pulse h-2 bg-slate-300 rounded cursor-progress'></div>
   </div>
 </template>
 

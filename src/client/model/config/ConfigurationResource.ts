@@ -11,7 +11,7 @@ import {
 } from '@/client/model/config/PasswordConfigurationResource'
 
 export interface ConfigurationResource {
-  claims: Array<ClaimConfigurationResource>
+  claims?: Array<ClaimConfigurationResource>
   features: FeaturesConfigurationResource
   password?: PasswordConfigurationResource
   providers?: Array<ProviderConfigurationResource>
@@ -25,7 +25,8 @@ export const configurationResourceSchema: JSONSchemaType<ConfigurationResource> 
       type: 'array',
       items: {
         ...claimConfigurationResourceSchema
-      }
+      },
+      nullable: true
     },
     features: {
       ...featuresConfigurationResourceSchema
@@ -42,5 +43,5 @@ export const configurationResourceSchema: JSONSchemaType<ConfigurationResource> 
       nullable: true
     }
   },
-  required: ['claims', 'features']
+  required: ['features']
 }

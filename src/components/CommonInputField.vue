@@ -35,7 +35,7 @@ const inputClasses = 'shadow appearance-none border rounded w-full h-11 py-2 px-
       </template>
       <template v-else>
         <div :class='inputClasses' class='flex flex-col justify-center'>
-          <div class='animate-pulse max-w-[40%] h-4 bg-slate-200 rounded cursor-progress'></div>
+          <div class='animate-pulse max-w-[40%] h-4 bg-slate-300 rounded cursor-progress'></div>
         </div>
       </template>
 

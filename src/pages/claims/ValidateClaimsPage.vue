@@ -6,7 +6,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { useI18n } from 'vue-i18n'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
-import ValidationCodeField from '@/components/ValidationCodeInputField.vue'
+import ValidationCodeField from '@/components/validationcode/ValidationCodeInputField.vue'
 import type { ValidationCodeResource } from '@/client/model/ValidationCodeResource'
 import { type SubmissionContext, useForm } from 'vee-validate'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
@@ -16,14 +16,16 @@ import { useRoute, useRouter } from 'vue-router'
 import type { ClaimsValidationFlowResultResource } from '@/client/model/ClaimsValidationFlowResultResource'
 import SkeletonText from '@/components/SkeletonText.vue'
 import { makeUnknownErrorRoute } from '@/router'
+import CommonButton from '@/components/CommonButton.vue'
+import CommonActionableLink from '@/components/CommonActionableLink.vue'
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const claimsValidationApi = injectRequired(claimsValidationApiKey)
 
-const media = ref<string | undefined>(undefined)
 const isLoading = ref(false)
+const media = ref<string | undefined>(undefined)
 const fetchErrorMessage = ref<string | undefined>(undefined)
 const validationCode = ref<ValidationCodeResource | undefined>(undefined)
 const submitErrorMessage = ref<string | undefined>(undefined)
@@ -51,12 +53,12 @@ const fetchValidationFlowResult = async (media: string) => {
 
   const response = await claimsValidationApi.fetchValidationFlowResult(media)
   if (response instanceof SuccessApiResponse) {
-    await handleValidationFlowResult(response)
+    // await handleValidationFlowResult(response)
   } else {
     fetchErrorMessage.value = getErrorMessage(response)
   }
 
-  isLoading.value = false
+  // isLoading.value = false
 }
 
 const handleValidationFlowResult = async (
@@ -85,7 +87,6 @@ const onSubmit = handleSubmit(async (values, ctx) => {
   if (response instanceof SuccessApiResponse) {
     await handleValidationFlowResult(response, ctx)
   } else if (response.errorCode === 'flow.claim_validation.invalid_code') {
-    ctx.resetForm()
     ctx.setFieldError('code', getErrorMessage(response))
   } else {
     submitErrorMessage.value = getErrorMessage(response)
@@ -131,25 +132,42 @@ watch(
               {{ fetchErrorMessage }}
             </common-alert>
 
-            <p class='w-full mb-3 text-justify'>
-              {{ t('pages.validate_claims.description_1', [mediaName]) }}
+            <p class='w-full mb-7 text-justify'>
+              {{ t('pages.validate_claims.description.1', [mediaName]) }}
             </p>
 
-            <p v-if='!isLoading' class='w-full text-justify mb-7'>
-              {{ t('pages.validate_claims.description_2', [mediaName]) }}
+            <p v-if='!isLoading' class='w-full text-justify mb-5'>
+              {{ t('pages.validate_claims.description.2', [mediaName]) }}
             </p>
-            <skeleton-text v-else class='mb-7'></skeleton-text>
+            <skeleton-text class='mb-5 w-1/2'></skeleton-text>
 
             <validation-code-field :code='validationCode'
                                    :loading='isLoading'
                                    :loading-code-length='6'
-                                   :submitting='isSubmitting'
                                    class='mb-7'
                                    name='code' />
 
-            <div class='w-full text-sm text-center'>
-              <a>{{ t('pages.validate_claims.resend.description') }}</a>
-            </div>
+            <common-actionable-link :label='t("pages.validate_claims.resend.description")'
+                                    :loading='isLoading'
+                                    :disabled='isSubmitting'
+                                    class='text-sm'>
+              <a>{{ t('pages.validate_claims.resend.action') }}</a>
+            </common-actionable-link>
+
+            <common-button :loading='isLoading'
+                           :submitting='isSubmitting'
+                           class='w-full mt-5'
+                           type='submit'>
+              <template v-slot:default>
+                {{ t('common.submit') }}
+              </template>
+              <template v-slot:loading>
+                {{ t('common.loading') }}
+              </template>
+              <template v-slot:submitting>
+                {{ t('common.submitting') }}
+              </template>
+            </common-button>
           </template>
         </title-content-card>
       </div>

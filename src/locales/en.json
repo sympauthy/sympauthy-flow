@@ -7,7 +7,10 @@
     "confirm_password": "Confirm your password",
     "sign_in": "Sign-in",
     "sign_up": "Sign-up",
-    "continue": "Continue"
+    "continue": "Continue",
+    "submit": "Submit",
+    "submitting": "Submitting...",
+    "loading": "Loading..."
   },
   "components": {
     "by_password_card": {
@@ -43,10 +46,12 @@
     },
     "validate_claims": {
       "title": "Before you continue",
-      "description_1": "A validation codes has been sent to you by {0} to verify the correctness of the information you completed previously.",
-      "description_2": "Enter the code you have received by {0}:",
+      "description": {
+        "1": "Some validation codes may need to be sent to you to verify the correctness of the information you completed previously.",
+        "2": "Enter the code you have received by {0}:"
+      },
       "resend": {
-        "description": "You did not receive the code ? {0}",
+        "description": "You did not receive the code ?",
         "action": "Resend the code",
         "waiting": "Wait {0}"
       }
