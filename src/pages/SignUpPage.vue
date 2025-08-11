@@ -9,7 +9,6 @@ import { configurationKey } from '@/utils/ConfigurationUtils'
 import { claimFormServiceKey } from '@/services/ClaimFormService'
 import { getErrorMessage, getErrorMessageForProperties } from '@/client/ErrorApiResponse'
 import { useRouter } from 'vue-router'
-import { filter } from 'rambda/immutable'
 import CommonAlert from '@/components/CommonAlert.vue'
 import CommonField from '@/components/CommonInputField.vue'
 import { claimServiceKey } from '@/services/ClaimsService'
@@ -18,6 +17,7 @@ import BasePage from '@/components/BasePage.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import CommonButton from '@/components/CommonButton.vue'
 import { useForm } from 'vee-validate'
+import { filter, pipe } from 'rambda'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -46,8 +46,15 @@ const onSubmit = handleSubmit(async (values: any) => {
   errorMessage.value = undefined
   fieldErrorMessages.value = undefined
 
+  const signUpClaimValue = pipe(
+    values,
+    filter((it: any) => {
+      return it != 'confirm_password'
+    })
+  )
+
   const body = {
-    ...filter((_: any, prop: string) => prop != 'confirm_password', values)
+    ...signUpClaimValue
   }
 
   const result = await signUpApi.signUp(body)
