@@ -33,7 +33,7 @@ const onClick = () => {
         style="width: 5rem"
       ></p>
     </template>
-    <a @click="onClick" class="a a-primary">{{ props.text }}</a>
+    <a v-else @click="onClick" class="a a-primary">{{ props.text }}</a>
   </div>
 </template>
 

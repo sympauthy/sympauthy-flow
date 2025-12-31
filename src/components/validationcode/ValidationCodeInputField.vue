@@ -35,9 +35,6 @@ const inputFieldClasses = computed(() => {
   if (props.loading) {
     classes += ' border-[color:var(--color-danger)]'
   }
-  if (hasErrorMessage.value) {
-    classes += ' cursor-progress'
-  }
   return classes
 })
 
@@ -67,13 +64,13 @@ const onKeyDown = async (event: KeyboardEvent) => {
     // When user enters a number, override the input if there is already a number
     targetInputField.value = event.key
 
-    // Then select next field
+    // Then select the next field
     selectInputFieldAtIndex(index + 1)
   } else if (event.key == 'Backspace') {
     // Clean the value of the selected field
     targetInputField.value = ''
 
-    // Then select previous field
+    // Then select the previous field
     selectInputFieldAtIndex(index - 1)
   } else if (event.key == 'ArrowLeft') {
     selectInputFieldAtIndex(index - 1)
@@ -116,8 +113,8 @@ const findInputFieldAtIndex = (index: number): HTMLInputElement | undefined => {
  * @param newValue
  */
 const updateAllInputFieldsForValue = (newValue: string | undefined) => {
-  clearAllInputFields()
   if (isNotEmpty(newValue)) {
+    clearAllInputFields()
     for (let i = 0; i < newValue.length; i++) {
       const input = findInputFieldAtIndex(i)
       if (input instanceof HTMLInputElement) {

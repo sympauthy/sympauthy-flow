@@ -2,7 +2,7 @@
 import BasePage from '@/components/BasePage.vue'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { claimsValidationApiKey } from '@/client/api/ClaimsValidationApi'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { useI18n } from 'vue-i18n'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
@@ -17,6 +17,7 @@ import type { ClaimsValidationFlowResultResource } from '@/client/model/ClaimsVa
 import { makeUnknownErrorRoute } from '@/router'
 import CommonButton from '@/components/CommonButton.vue'
 import CommonActionableLink from '@/components/CommonActionableLink.vue'
+import SkeletonText from '@/components/SkeletonText.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -34,8 +35,14 @@ const validationSchema = object({
   code: string().required()
 })
 
-const { meta, handleSubmit, isSubmitting } = useForm({
+const { handleSubmit, defineField, isSubmitting } = useForm({
   validationSchema: validationSchema
+})
+defineField('code', {
+  validateOnBlur: false,
+  validateOnChange: false,
+  validateOnInput: false,
+  validateOnModelUpdate: false
 })
 
 const mediaName = computed(() => {
@@ -73,6 +80,28 @@ const handleValidationFlowResult = async (
   }
 }
 
+const onResend = async () => {
+  if (validationCode.value === undefined) {
+    return
+  }
+  if (isResending.value) {
+    return
+  }
+  isResending.value = true
+
+  const response = await claimsValidationApi.resendValidationCode({
+    media: validationCode.value.media
+  })
+  if (response instanceof SuccessApiResponse) {
+    if (response.content.resent && response.content.code !== undefined) {
+      validationCode.value = response.content.code
+    }
+  } else {
+    fetchErrorMessage.value = getErrorMessage(response)
+  }
+
+  isResending.value = false
+}
 
 const onSubmit = handleSubmit(async (values, ctx) => {
   if (validationCode.value === undefined) {
@@ -93,10 +122,6 @@ const onSubmit = handleSubmit(async (values, ctx) => {
   }
 })
 
-const onResend = async() => {
-
-}
-
 onMounted(async () => {
   let mediaQueryParam = route.query.media?.toString()
   if (mediaQueryParam === undefined) {
@@ -107,18 +132,6 @@ onMounted(async () => {
 
   await fetchValidationFlowResult(mediaQueryParam)
 })
-
-/**
- * Automagically submit the form once the user has entered the code.
- */
-watch(
-  () => meta.value.valid,
-  (value, oldValue) => {
-    if (value != oldValue && value && !isSubmitting.value) {
-      onSubmit()
-    }
-  }
-)
 
 </script>
 
@@ -143,24 +156,31 @@ watch(
             <p v-if='!isLoading' class='w-full text-justify mb-5'>
               {{ t('pages.validate_claims.description.2', [mediaName]) }}
             </p>
+            <skeleton-text v-else class='w-60 text-justify mb-5'></skeleton-text>
 
-            <validation-code-field :code='validationCode'
-                                   :loading='isLoading'
-                                   :loading-code-length='6'
-                                   class='mb-7'
-                                   name='code' />
+            <validation-code-field
+              :code='validationCode'
+              :loading='isLoading'
+              :loading-code-length='6'
+              class='mb-7'
+              name='code'
+            />
 
-            <common-actionable-link :disabled='isSubmitting'
-                                    :label='t("pages.validate_claims.resend.description")'
-                                    :loading='isLoading'
-                                    :text='t("pages.validate_claims.resend.action")'
-                                    @click='onResend'
-                                    class='text-sm' />
+            <common-actionable-link
+              :disabled='isSubmitting'
+              :label="t('pages.validate_claims.resend.description')"
+              :loading='isLoading'
+              :text="t('pages.validate_claims.resend.action')"
+              class='text-sm'
+              @click='onResend'
+            />
 
-            <common-button :loading='isLoading'
-                           :submitting='isSubmitting'
-                           class='w-full mt-5'
-                           type='submit'>
+            <common-button
+              :loading='isLoading || isResending'
+              :submitting='isSubmitting'
+              class='w-full mt-5'
+              type='submit'
+            >
               <template v-slot:default>
                 {{ t('common.submit') }}
               </template>
@@ -178,6 +198,4 @@ watch(
   </base-page>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
