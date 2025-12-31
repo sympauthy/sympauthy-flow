@@ -14,7 +14,6 @@ import { object, string } from 'yup'
 import CommonAlert from '@/components/CommonAlert.vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { ClaimsValidationFlowResultResource } from '@/client/model/ClaimsValidationFlowResultResource'
-import SkeletonText from '@/components/SkeletonText.vue'
 import { makeUnknownErrorRoute } from '@/router'
 import CommonButton from '@/components/CommonButton.vue'
 import CommonActionableLink from '@/components/CommonActionableLink.vue'
@@ -25,6 +24,7 @@ const router = useRouter()
 const claimsValidationApi = injectRequired(claimsValidationApiKey)
 
 const isLoading = ref(false)
+const isResending = ref(false)
 const media = ref<string | undefined>(undefined)
 const fetchErrorMessage = ref<string | undefined>(undefined)
 const validationCode = ref<ValidationCodeResource | undefined>(undefined)
@@ -53,12 +53,12 @@ const fetchValidationFlowResult = async (media: string) => {
 
   const response = await claimsValidationApi.fetchValidationFlowResult(media)
   if (response instanceof SuccessApiResponse) {
-    // await handleValidationFlowResult(response)
+    await handleValidationFlowResult(response)
   } else {
     fetchErrorMessage.value = getErrorMessage(response)
   }
 
-  // isLoading.value = false
+  isLoading.value = false
 }
 
 const handleValidationFlowResult = async (
@@ -92,6 +92,10 @@ const onSubmit = handleSubmit(async (values, ctx) => {
     submitErrorMessage.value = getErrorMessage(response)
   }
 })
+
+const onResend = async() => {
+
+}
 
 onMounted(async () => {
   let mediaQueryParam = route.query.media?.toString()
@@ -139,7 +143,6 @@ watch(
             <p v-if='!isLoading' class='w-full text-justify mb-5'>
               {{ t('pages.validate_claims.description.2', [mediaName]) }}
             </p>
-            <skeleton-text class='mb-5 w-1/2'></skeleton-text>
 
             <validation-code-field :code='validationCode'
                                    :loading='isLoading'
@@ -147,12 +150,12 @@ watch(
                                    class='mb-7'
                                    name='code' />
 
-            <common-actionable-link :label='t("pages.validate_claims.resend.description")'
+            <common-actionable-link :disabled='isSubmitting'
+                                    :label='t("pages.validate_claims.resend.description")'
                                     :loading='isLoading'
-                                    :disabled='isSubmitting'
-                                    class='text-sm'>
-              <a>{{ t('pages.validate_claims.resend.action') }}</a>
-            </common-actionable-link>
+                                    :text='t("pages.validate_claims.resend.action")'
+                                    @click='onResend'
+                                    class='text-sm' />
 
             <common-button :loading='isLoading'
                            :submitting='isSubmitting'
