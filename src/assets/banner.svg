@@ -1,0 +1,37 @@
+<svg width="1100" height="200" viewBox="0 0 1100 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- S -->
+  <path d="M100 55C85 55 60 60 60 80C60 100 80 105 95 110C110 115 130 120 130 140C130 160 110 165 95 165C80 165 60 160 60 145" stroke="#1e40af" stroke-width="12" fill="none" stroke-linecap="round"/>
+
+  <!-- Y -->
+  <path d="M170 50L200 105L200 170M230 50L200 105" stroke="#1e40af" stroke-width="12" stroke-linecap="round"/>
+
+  <!-- M -->
+  <path d="M270 170L270 50L310 110L350 50L350 170" stroke="#1e40af" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- P -->
+  <path d="M390 170L390 50L440 50Q465 50 465 80Q465 110 440 110L390 110" stroke="#1e40af" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- A (LOGO as the letter A) -->
+  <g transform="translate(505, 0)">
+    <!-- Padlock shackle -->
+    <path d="M 80 65 C 80 48 66.57 35 50 35 C 33.43 35 20 48 20 65 L 20 85 L 10 85 L 10 65 C 10 42.91 27.91 25 50 25 C 72.09 25 90 42.91 90 65 L 90 85 L 80 85 Z" fill="#1e40af"/>
+
+    <!-- Padlock body -->
+    <rect x="5" y="80" width="90" height="90" rx="8" fill="#1e40af"/>
+
+    <!-- Heart shape inside padlock -->
+    <path d="M50 145C50 145 25 130 25 110C25 102 30 97 37 97C42 97 46 100 50 105C54 100 58 97 63 97C70 97 75 102 75 110C75 130 50 145 50 145Z" fill="#ffffff"/>
+  </g>
+
+  <!-- U -->
+  <path d="M645 50L645 140Q645 170 680 170Q715 170 715 140L715 50" stroke="#1e40af" stroke-width="12" fill="none" stroke-linecap="round"/>
+
+  <!-- T -->
+  <path d="M755 50L815 50M785 50L785 170" stroke="#1e40af" stroke-width="12" stroke-linecap="round"/>
+
+  <!-- H -->
+  <path d="M855 50L855 170M855 110L905 110M905 50L905 170" stroke="#1e40af" stroke-width="12" stroke-linecap="round"/>
+
+  <!-- Y -->
+  <path d="M945 50L975 105L975 170M1005 50L975 105" stroke="#1e40af" stroke-width="12" stroke-linecap="round"/>
+</svg>
