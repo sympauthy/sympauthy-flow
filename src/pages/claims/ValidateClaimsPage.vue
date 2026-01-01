@@ -2,7 +2,7 @@
 import BasePage from '@/components/BasePage.vue'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { claimsValidationApiKey } from '@/client/api/ClaimsValidationApi'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { useI18n } from 'vue-i18n'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
@@ -32,9 +32,13 @@ const claimsValidationApi = injectRequired(claimsValidationApiKey)
 
 const isLoading = ref(false)
 const isResending = ref(false)
+
 const media = ref<string | undefined>(undefined)
-const fetchErrorMessage = ref<string | undefined>(undefined)
 const validationCode = ref<ValidationCodeResource | undefined>(undefined)
+const durationToWaitBeforeResend = ref<Temporal.Duration | undefined>(undefined)
+let refreshInterval: number | undefined = undefined
+
+const fetchErrorMessage = ref<string | undefined>(undefined)
 const submitErrorMessage = ref<string | undefined>(undefined)
 
 const validationSchema = object({
@@ -58,9 +62,20 @@ const mediaName = computed(() => {
   return t(`media.${media.value}`)
 })
 
-const durationToWaitBeforeResend = computed(() =>
-  getDurationToWaitBeforeResend(validationCode.value)
-)
+const updateDurationToWaitBeforeResend = () => {
+  durationToWaitBeforeResend.value = getDurationToWaitBeforeResend(validationCode.value)
+
+  // Start interval if duration is not undefined and interval is not already running
+  if (durationToWaitBeforeResend.value !== undefined && refreshInterval === undefined) {
+    refreshInterval = setInterval(() => {
+      updateDurationToWaitBeforeResend()
+      if (durationToWaitBeforeResend.value === undefined && refreshInterval !== undefined) {
+        clearInterval(refreshInterval)
+        refreshInterval = undefined
+      }
+    }, 1000)
+  }
+}
 
 const fetchValidationFlowResult = async (media: string) => {
   if (isLoading.value) {
@@ -86,6 +101,7 @@ const handleValidationFlowResult = async (
     await redirectOrPush(router, response.content.redirect_url)
   } else {
     validationCode.value = response.content.code
+    updateDurationToWaitBeforeResend()
     ctx?.resetForm()
   }
 }
@@ -105,6 +121,7 @@ const onResend = async () => {
   if (response instanceof SuccessApiResponse) {
     if (response.content.resent && response.content.code !== undefined) {
       validationCode.value = response.content.code
+      updateDurationToWaitBeforeResend()
     }
   } else {
     fetchErrorMessage.value = getErrorMessage(response)
@@ -141,6 +158,12 @@ onMounted(async () => {
   media.value = mediaQueryParam
 
   await fetchValidationFlowResult(mediaQueryParam)
+})
+
+onUnmounted(() => {
+  if (refreshInterval !== undefined) {
+    clearInterval(refreshInterval)
+  }
 })
 </script>
 
