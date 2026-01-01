@@ -52,8 +52,9 @@
       },
       "resend": {
         "description": "You did not receive the code ?",
+        "waiting": "Wait {0}.",
         "action": "Resend the code",
-        "waiting": "Wait {0}"
+        "resending": "Waiting for the code to be sent..."
       }
     },
     "error": {

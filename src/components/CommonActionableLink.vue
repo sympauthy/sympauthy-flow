@@ -13,6 +13,10 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false
 })
 
+const slots = defineSlots<{
+  default?: () => any
+}>()
+
 const emit = defineEmits<{
   click: []
 }>()
@@ -33,6 +37,7 @@ const onClick = () => {
         style="width: 5rem"
       ></p>
     </template>
+    <slot v-else-if="slots.default"></slot>
     <a v-else @click="onClick" class="a a-primary">{{ props.text }}</a>
   </div>
 </template>

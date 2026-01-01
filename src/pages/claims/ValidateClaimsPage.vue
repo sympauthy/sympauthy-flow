@@ -7,7 +7,7 @@ import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { useI18n } from 'vue-i18n'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
 import ValidationCodeField from '@/components/validationcode/ValidationCodeInputField.vue'
-import type { ValidationCodeResource } from '@/client/model/ValidationCodeResource'
+import { formatResendDuration, type ValidationCodeResource } from '@/client/model/ValidationCodeResource'
 import { type SubmissionContext, useForm } from 'vee-validate'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { object, string } from 'yup'
@@ -18,6 +18,8 @@ import { makeUnknownErrorRoute } from '@/router'
 import CommonButton from '@/components/CommonButton.vue'
 import CommonActionableLink from '@/components/CommonActionableLink.vue'
 import SkeletonText from '@/components/SkeletonText.vue'
+import { Temporal } from '@js-temporal/polyfill'
+import CommonSpinner from '@/components/CommonSpinner.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -51,6 +53,8 @@ const mediaName = computed(() => {
   }
   return t(`media.${media.value}`)
 })
+
+const formattedResendDuration = computed(() => formatResendDuration(validationCode.value))
 
 const fetchValidationFlowResult = async (media: string) => {
   if (isLoading.value) {
@@ -132,7 +136,6 @@ onMounted(async () => {
 
   await fetchValidationFlowResult(mediaQueryParam)
 })
-
 </script>
 
 <template>
@@ -172,8 +175,18 @@ onMounted(async () => {
               :loading='isLoading'
               :text="t('pages.validate_claims.resend.action')"
               class='text-sm'
-              @click='onResend'
-            />
+            >
+              <p v-if='formattedResendDuration'>
+                {{ t('pages.validate_claims.resend.waiting', [formattedResendDuration]) }}
+              </p>
+              <a v-else-if='!isResending' class='a a-primary' @click='onResend'>
+                {{ t('pages.validate_claims.resend.action') }}
+              </a>
+              <template v-else>
+                <p>{{ t('pages.validate_claims.resend.resending') }}</p>
+                <common-spinner class='h-2 w-2 border-1' />
+              </template>
+            </common-actionable-link>
 
             <common-button
               :loading='isLoading || isResending'
