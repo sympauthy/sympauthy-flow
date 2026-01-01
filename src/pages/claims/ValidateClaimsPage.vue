@@ -1,4 +1,4 @@
-<script lang='ts' setup>
+<script lang="ts" setup>
 import BasePage from '@/components/BasePage.vue'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { claimsValidationApiKey } from '@/client/api/ClaimsValidationApi'
@@ -7,7 +7,10 @@ import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { useI18n } from 'vue-i18n'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
 import ValidationCodeField from '@/components/validationcode/ValidationCodeInputField.vue'
-import { formatResendDuration, type ValidationCodeResource } from '@/client/model/ValidationCodeResource'
+import {
+  getDurationToWaitBeforeResend,
+  type ValidationCodeResource
+} from '@/client/model/ValidationCodeResource'
 import { type SubmissionContext, useForm } from 'vee-validate'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { object, string } from 'yup'
@@ -20,6 +23,7 @@ import CommonActionableLink from '@/components/CommonActionableLink.vue'
 import SkeletonText from '@/components/SkeletonText.vue'
 import { Temporal } from '@js-temporal/polyfill'
 import CommonSpinner from '@/components/CommonSpinner.vue'
+import { formatToHumanReadable } from '@/utils/DurationUtils.ts'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -54,7 +58,9 @@ const mediaName = computed(() => {
   return t(`media.${media.value}`)
 })
 
-const formattedResendDuration = computed(() => formatResendDuration(validationCode.value))
+const durationToWaitBeforeResend = computed(() =>
+  getDurationToWaitBeforeResend(validationCode.value)
+)
 
 const fetchValidationFlowResult = async (media: string) => {
   if (isLoading.value) {
@@ -140,59 +146,63 @@ onMounted(async () => {
 
 <template>
   <base-page>
-    <form @submit='onSubmit'>
-      <div class='flex justify-center w-100'>
-        <title-content-card size='default'>
+    <form @submit="onSubmit">
+      <div class="flex justify-center w-100">
+        <title-content-card size="default">
           <template v-slot:title>
             {{ t('pages.validate_claims.title') }}
           </template>
 
           <template v-slot:default>
-            <common-alert v-if='fetchErrorMessage' class='mb-3'>
+            <common-alert v-if="fetchErrorMessage" class="mb-3">
               {{ fetchErrorMessage }}
             </common-alert>
 
-            <p class='w-full mb-7 text-justify'>
+            <p class="w-full mb-7 text-justify">
               {{ t('pages.validate_claims.description.1', [mediaName]) }}
             </p>
 
-            <p v-if='!isLoading' class='w-full text-justify mb-5'>
+            <p v-if="!isLoading" class="w-full text-justify mb-5">
               {{ t('pages.validate_claims.description.2', [mediaName]) }}
             </p>
-            <skeleton-text v-else class='w-60 text-justify mb-5'></skeleton-text>
+            <skeleton-text v-else class="w-60 text-justify mb-5"></skeleton-text>
 
             <validation-code-field
-              :code='validationCode'
-              :loading='isLoading'
-              :loading-code-length='6'
-              class='mb-7'
-              name='code'
+              :code="validationCode"
+              :loading="isLoading"
+              :loading-code-length="6"
+              class="mb-7"
+              name="code"
             />
 
             <common-actionable-link
-              :disabled='isSubmitting'
+              :disabled="isSubmitting"
               :label="t('pages.validate_claims.resend.description')"
-              :loading='isLoading'
+              :loading="isLoading"
               :text="t('pages.validate_claims.resend.action')"
-              class='text-sm'
+              class="text-sm"
             >
-              <p v-if='formattedResendDuration'>
-                {{ t('pages.validate_claims.resend.waiting', [formattedResendDuration]) }}
+              <p v-if="durationToWaitBeforeResend">
+                {{
+                  t('pages.validate_claims.resend.waiting', [
+                    formatToHumanReadable(durationToWaitBeforeResend)
+                  ])
+                }}
               </p>
-              <a v-else-if='!isResending' class='a a-primary' @click='onResend'>
+              <a v-else-if="!isResending" class="a a-primary" @click="onResend">
                 {{ t('pages.validate_claims.resend.action') }}
               </a>
               <template v-else>
                 <p>{{ t('pages.validate_claims.resend.resending') }}</p>
-                <common-spinner class='h-2 w-2 border-1' />
+                <common-spinner class="h-2 w-2 border-1" />
               </template>
             </common-actionable-link>
 
             <common-button
-              :loading='isLoading || isResending'
-              :submitting='isSubmitting'
-              class='w-full mt-5'
-              type='submit'
+              :loading="isLoading || isResending"
+              :submitting="isSubmitting"
+              class="w-full mt-5"
+              type="submit"
             >
               <template v-slot:default>
                 {{ t('common.submit') }}

@@ -10,19 +10,19 @@ export type ValidationCodeResource = {
 }
 
 /**
- * Format duration between now and the resend date of the provided code in a human-readable format.
+ * Return the duration to wait before resending the provided code is possible.
  * Return undefined if the code has no resend date or if the resend date is already passed.
  */
-export const formatResendDuration = (code?: ValidationCodeResource): string | undefined => {
+export const getDurationToWaitBeforeResend = (code?: ValidationCodeResource): Temporal.Duration | undefined => {
   if (code === undefined || code.resendDate === undefined) {
     return undefined
   }
   const resendDate = Temporal.PlainDateTime.from(code.resendDate)
-  const duration = Temporal.Now.plainDateTimeISO().since(resendDate)
-  if (duration.sign < 1) {
+  const duration = resendDate.since(Temporal.Now.plainDateTimeISO('UTC'))
+  if (duration.sign < 0) {
     return undefined
   }
-  return formatToHumanReadable(duration)
+  return duration
 }
 
 export const validationCodeResourceSchema: JSONSchemaType<ValidationCodeResource> = {

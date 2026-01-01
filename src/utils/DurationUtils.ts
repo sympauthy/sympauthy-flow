@@ -12,9 +12,9 @@ import Duration = Temporal.Duration
 export const formatToHumanReadable = (duration: Duration) => {
   const parts: string[] = []
 
-  const hours = Math.floor(duration.total('hours'))
-  const minutes = Math.floor(duration.total('minutes')) % 60
-  const seconds = Math.floor(duration.total('seconds')) % 60
+  const hours = Math.floor(Math.abs(duration.total('hours')))
+  const minutes = Math.floor(Math.abs(duration.total('minutes'))) % 60
+  const seconds = Math.floor(Math.abs(duration.total('seconds'))) % 60
 
   if (hours > 0) {
     parts.push(`${hours}h`)
