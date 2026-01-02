@@ -16,7 +16,7 @@ import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import BasePage from '@/components/BasePage.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import CommonButton from '@/components/CommonButton.vue'
-import { Form, useForm } from 'vee-validate'
+import { useForm } from 'vee-validate'
 import { omit, pipe } from 'rambda'
 
 const { t } = useI18n()
