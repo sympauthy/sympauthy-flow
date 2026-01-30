@@ -11,6 +11,7 @@ import { ClaimService, claimServiceKey } from '@/services/ClaimsService'
 import { ClaimApi, claimApiKey } from '@/client/api/ClaimApi'
 import { TimeZoneApi, timeZoneApiKey } from '@/client/api/TimeZoneApi'
 import { ClaimsValidationApi, claimsValidationApiKey } from '@/client/api/ClaimsValidationApi'
+import { ErrorApi, errorApiKey } from '@/client/api/ErrorApi'
 
 const pinia = createPinia()
 const router = makeRouter(i18n)
@@ -24,6 +25,7 @@ createApp(App)
   .provide(claimApiKey, new ClaimApi(pinia))
   .provide(timeZoneApiKey, new TimeZoneApi(pinia))
   .provide(claimsValidationApiKey, new ClaimsValidationApi(pinia))
+  .provide(errorApiKey, new ErrorApi(pinia))
   .use(router)
   .use(i18n)
   .use(pinia)
