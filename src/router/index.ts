@@ -13,14 +13,16 @@ import type { I18n } from 'vue-i18n'
 import { merge } from 'ts-deepmerge'
 import CollectClaimsPage from '@/pages/claims/CollectClaimsPage.vue'
 import ValidateClaimsPage from '@/pages/claims/ValidateClaimsPage.vue'
+import { isArrayNotEmpty } from '@/utils/ArrayUtils.ts'
+import { isString } from '@/utils/StringUtils.ts'
 
 export function getStateQueryParam(route: RouteLocationNormalized): string | undefined {
   const stateQueryValues = route.query['state']
 
   let stateQueryValue: LocationQueryValue = null
-  if (stateQueryValues instanceof Array && stateQueryValues.length > 0) {
+  if (stateQueryValues instanceof Array && isArrayNotEmpty(stateQueryValues)) {
     stateQueryValue = stateQueryValues[0]
-  } else if (!(stateQueryValues instanceof Array)) {
+  } else if (isString(stateQueryValues)) {
     stateQueryValue = stateQueryValues
   }
 

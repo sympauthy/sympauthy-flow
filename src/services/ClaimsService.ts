@@ -16,7 +16,8 @@ export class ClaimService {
    */
   getCollectableClaims(configuration: ConfigurationResource): Array<string> {
     const signUpClaims = this.getSignUpClaims(configuration)
-    return configuration.claims
+    const claims = configuration.claims || []
+    return claims
       .filter(it => !signUpClaims.includes(it.id))
       .map(it => it.id)
   }

@@ -48,9 +48,13 @@ const loadClaims = async () => {
 
   const response = await claimApi.fetchClaims()
   if (response instanceof SuccessApiResponse) {
-    response.content.claims
-      .filter(it => it.collected)
-      .forEach(it => setFieldValue(it.claim, it.value))
+    if (response.content.claims !== undefined) {
+      response.content.claims
+        .filter((it) => it.collected)
+        .forEach((it) => setFieldValue(it.claim, it.value))
+    } else if (response.content.redirect_url !== undefined) {
+      await redirectOrPush(router, response.content.redirect_url)
+    }
   } else {
     errorMessage.value = getErrorMessage(response)
   }
@@ -74,7 +78,6 @@ const onSubmit = handleSubmit(async (values: any) => {
 onMounted(async () => {
   await loadClaims()
 })
-
 </script>
 
 <template>
@@ -86,17 +89,21 @@ onMounted(async () => {
         </template>
 
         <form @submit='onSubmit'>
-          <claims-input-group :claims='collectableClaims'
-                              :disabled='isSubmitting'
-                              :error-messages='fieldErrorMessages'
-                              :loading='isLoadingClaims'
-                              class='mb-3' />
+          <claims-input-group
+            :claims='collectableClaims'
+            :disabled='isSubmitting'
+            :error-messages='fieldErrorMessages'
+            :loading='isLoadingClaims'
+            class='mb-3'
+          />
 
-          <common-button :buttonStyle='primaryColoredButton'
-                         :disabled='isLoadingClaims'
-                         :loading='isSubmitting'
-                         class='w-full mt-5'
-                         type='submit'>
+          <common-button
+            :buttonStyle='primaryColoredButton'
+            :disabled='isLoadingClaims'
+            :loading='isSubmitting'
+            class='w-full mt-5'
+            type='submit'
+          >
             <template v-slot:default>
               {{ t('common.continue') }}
             </template>

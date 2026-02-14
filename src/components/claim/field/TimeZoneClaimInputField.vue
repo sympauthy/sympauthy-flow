@@ -1,4 +1,4 @@
-<script lang='ts' setup>
+<script lang="ts" setup>
 import CommonSelect from '@/components/CommonSelect.vue'
 import type { ClaimInputFieldOptions } from '@/services/ClaimFormService'
 import { useI18n } from 'vue-i18n'
@@ -43,31 +43,38 @@ const loadTimeZones = async () => {
 }
 
 const filteredTimeZones = computed(() => {
-  if (search.value === undefined) {
+  const searchedValue = search.value
+  if (searchedValue === undefined) {
     return timeZones.value
   }
-  return timeZones.value?.filter(it => it.id.includes(search.value))
+  return timeZones.value?.filter((it) => it.id.includes(searchedValue))
 })
 
 onMounted(async () => {
   await loadTimeZones()
 })
-
 </script>
 
 <template>
-  <common-select :disabled='disabled'
-                 :error-message='errorMessage'
-                 :label='options.claim.name'
-                 :loading='loading'
-                 :name='options.claim.id'>
-    <template v-slot:default='{select, cancel}'>
-      <search-card v-model='search'
-                   :placeholder='t("components.tz_claim_input_field.placeholder")'
-                   class='h-2/3'
-                   @close='cancel'>
-        <search-card-item v-for='timeZone in filteredTimeZones' :key='timeZone.id'
-                          @click='select(timeZone.id)'>
+  <common-select
+    :disabled="disabled"
+    :error-message="errorMessage"
+    :label="options.claim.name"
+    :loading="loading"
+    :name="options.claim.id"
+  >
+    <template v-slot:default="{ select, cancel }">
+      <search-card
+        v-model="search"
+        :placeholder="t('components.tz_claim_input_field.placeholder')"
+        class="h-2/3"
+        @close="cancel"
+      >
+        <search-card-item
+          v-for="timeZone in filteredTimeZones"
+          :key="timeZone.id"
+          @click="select(timeZone.id)"
+        >
           {{ timeZone.id }}
         </search-card-item>
       </search-card>
@@ -75,6 +82,4 @@ onMounted(async () => {
   </common-select>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

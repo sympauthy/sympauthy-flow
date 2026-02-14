@@ -3,7 +3,7 @@
 import type { ValidationCodeResource } from '@/client/model/ValidationCodeResource.ts'
 import { computed, watch } from 'vue'
 import { useField } from 'vee-validate'
-import { isNotEmpty } from '@/utils/StringUtils.ts'
+import { isStringNotEmpty } from '@/utils/StringUtils.ts'
 
 interface Props {
   name: string,
@@ -100,7 +100,11 @@ const findInputFieldAtIndex = (index: number): HTMLInputElement | undefined => {
   if (index < 0 || index >= inputFieldNames.value.length) {
     return undefined
   }
-  const elements = document.getElementsByName(inputFieldNames.value[index])
+  const inputFieldName = inputFieldNames.value[index]
+  if (inputFieldName === undefined) {
+    return undefined
+  }
+  const elements = document.getElementsByName(inputFieldName)
   if (elements.length > 0 && elements[0] instanceof HTMLInputElement) {
     return elements[0]
   } else {
@@ -113,7 +117,7 @@ const findInputFieldAtIndex = (index: number): HTMLInputElement | undefined => {
  * @param newValue
  */
 const updateAllInputFieldsForValue = (newValue: string | undefined) => {
-  if (isNotEmpty(newValue)) {
+  if (isStringNotEmpty(newValue)) {
     clearAllInputFields()
     for (let i = 0; i < newValue.length; i++) {
       const input = findInputFieldAtIndex(i)

@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 const props = withDefaults(
   defineProps<{
-    color: 'danger'
+    color?: 'danger'
   }>(),
   {
     color: 'danger'

@@ -44,14 +44,15 @@ export class ClaimFormService {
     configuration: ConfigurationResource,
     claims: Array<string>
   ): Array<ClaimConfigurationResource> {
-    const configs: Array<ClaimConfigurationResource> = []
+    const claimConfigs = configuration.claims || []
+    const filteredClaimConfigs: Array<ClaimConfigurationResource> = []
     for (const claim of claims) {
-      const claimConfig = configuration.claims.find((it) => it.id === claim)
+      const claimConfig = claimConfigs.find((it) => it.id === claim)
       if (claimConfig !== undefined) {
-        configs.push(claimConfig)
+        filteredClaimConfigs.push(claimConfig)
       }
     }
-    return configs
+    return filteredClaimConfigs
   }
 
   /**
