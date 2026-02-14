@@ -1,8 +1,8 @@
 import { AbstractApi } from '@/client/AbstractApi'
 import {
-  type FlowResultResource,
+  type FlowResource,
   flowResultResourceSchema
-} from '@/client/model/FlowResultResource'
+} from '@/client/model/FlowResource.ts'
 import type { Pinia } from 'pinia'
 import type { InjectionKey } from 'vue'
 import type { ErrorApiResponse } from '@/client/ErrorApiResponse'
@@ -13,7 +13,7 @@ export class SignInApi extends AbstractApi {
     super(pinia)
   }
 
-  async signIn(login: string, password: string): Promise<SuccessApiResponse<FlowResultResource> | ErrorApiResponse> {
+  async signIn(login: string, password: string): Promise<SuccessApiResponse<FlowResource> | ErrorApiResponse> {
     return this.post({
       authenticated: true,
       path: '/api/v1/flow/sign-in',

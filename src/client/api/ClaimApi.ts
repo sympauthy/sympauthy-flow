@@ -1,9 +1,9 @@
-import type { ClaimsResource } from '@/client/model/ClaimsResource'
+import type { ClaimsFlowResource } from '@/client/model/ClaimsFlowResource.ts'
 import { AbstractApi } from '@/client/AbstractApi'
 import type { Pinia } from 'pinia'
-import { claimsResourceSchema } from '@/client/model/ClaimsResource'
+import { claimsFlowResourceSchema } from '@/client/model/ClaimsFlowResource.ts'
 import type { InjectionKey } from 'vue'
-import { type FlowResultResource, flowResultResourceSchema } from '@/client/model/FlowResultResource'
+import { type FlowResource, flowResultResourceSchema } from '@/client/model/FlowResource.ts'
 import type { ErrorApiResponse } from '@/client/ErrorApiResponse'
 import type { SuccessApiResponse } from '@/client/SuccessApiResponse'
 
@@ -13,15 +13,15 @@ export class ClaimApi extends AbstractApi {
     super(pinia)
   }
 
-  async fetchClaims(): Promise<SuccessApiResponse<ClaimsResource> | ErrorApiResponse> {
-    return this.get<ClaimsResource>({
+  async fetchClaims(): Promise<SuccessApiResponse<ClaimsFlowResource> | ErrorApiResponse> {
+    return this.get<ClaimsFlowResource>({
       authenticated: true,
       path: '/api/v1/flow/claims',
-      schema: claimsResourceSchema
+      schema: claimsFlowResourceSchema
     })
   }
 
-  async collectClaims(body: any): Promise<SuccessApiResponse<FlowResultResource> | ErrorApiResponse> {
+  async collectClaims(body: any): Promise<SuccessApiResponse<FlowResource> | ErrorApiResponse> {
     return this.post({
       authenticated: true,
       path: '/api/v1/flow/claims',

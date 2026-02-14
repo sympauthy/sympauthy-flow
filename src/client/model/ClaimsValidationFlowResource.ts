@@ -1,12 +1,12 @@
 import { type ValidationCodeResource, validationCodeResourceSchema } from '@/client/model/ValidationCodeResource'
 import type { JSONSchemaType } from 'ajv'
 
-export type ClaimsValidationFlowResultResource = {
+export type ClaimsValidationFlowResource = {
   code?: ValidationCodeResource
   redirect_url?: string
 }
 
-export const claimValidationFlowResultResourceSchema: JSONSchemaType<ClaimsValidationFlowResultResource> = {
+export const claimValidationFlowResourceSchema: JSONSchemaType<ClaimsValidationFlowResource> = {
   type: 'object',
   properties: {
     code: {

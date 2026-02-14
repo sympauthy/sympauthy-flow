@@ -16,7 +16,7 @@ import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { object, string } from 'yup'
 import CommonAlert from '@/components/CommonAlert.vue'
 import { useRoute, useRouter } from 'vue-router'
-import type { ClaimsValidationFlowResultResource } from '@/client/model/ClaimsValidationFlowResultResource'
+import type { ClaimsValidationFlowResource } from '@/client/model/ClaimsValidationFlowResource.ts'
 import { makeUnknownErrorRoute } from '@/router'
 import CommonButton from '@/components/CommonButton.vue'
 import CommonActionableLink from '@/components/CommonActionableLink.vue'
@@ -94,7 +94,7 @@ const fetchValidationFlowResult = async (media: string) => {
 }
 
 const handleValidationFlowResult = async (
-  response: SuccessApiResponse<ClaimsValidationFlowResultResource>,
+  response: SuccessApiResponse<ClaimsValidationFlowResource>,
   ctx?: SubmissionContext
 ) => {
   if (response.content.redirect_url !== undefined) {

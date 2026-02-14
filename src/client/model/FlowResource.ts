@@ -1,10 +1,10 @@
 import type { JSONSchemaType } from 'ajv'
 
-export type FlowResultResource = {
+export type FlowResource = {
   redirect_url: string
 }
 
-export const flowResultResourceSchema: JSONSchemaType<FlowResultResource> = {
+export const flowResultResourceSchema: JSONSchemaType<FlowResource> = {
   type: 'object',
   properties: {
     redirect_url: {
