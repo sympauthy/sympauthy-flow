@@ -44,7 +44,7 @@ export class AbstractApi {
     options: QueryOptions,
     postOptions?: PostQueryOptions
   ): Promise<Response | ErrorApiResponse> {
-    const url = await this.getUrl(options)
+    const url = await this.getUrl(method, options)
     if (url instanceof ErrorApiResponse) {
       return url
     }
@@ -59,10 +59,10 @@ export class AbstractApi {
     }
   }
 
-  private async getUrl(options: QueryOptions): Promise<string | ErrorApiResponse> {
+  private async getUrl(method: string, options: QueryOptions): Promise<string | ErrorApiResponse> {
     const url = new URL(`${document.location.protocol}//${document.location.host}`)
     url.pathname = options.path
-    if (options.authenticated) {
+    if (options.authenticated && method === 'get') {
       const state = await this.getState()
       if (state instanceof ErrorApiResponse) {
         return state
@@ -99,7 +99,7 @@ export class AbstractApi {
   ): Promise<RequestInit> {
     const init: RequestInit = {
       method: method,
-      headers: await this.makeHeaders(options, postOptions),
+      headers: await this.makeHeaders(method, options, postOptions),
       credentials: 'omit'
     }
     if (postOptions?.body !== undefined) {
@@ -109,6 +109,7 @@ export class AbstractApi {
   }
 
   private async makeHeaders(
+    method: string,
     options: QueryOptions,
     postOptions?: PostQueryOptions
   ): Promise<Headers> {
@@ -116,6 +117,12 @@ export class AbstractApi {
     headers.set('Accept', 'application/json')
     if (postOptions?.body !== undefined) {
       headers.set('Content-Type', 'application/json')
+    }
+    if (options.authenticated && method !== 'get') {
+      const state = await this.getState()
+      if (!(state instanceof ErrorApiResponse)) {
+        headers.set('Authorization', `State ${state}`)
+      }
     }
     return headers
   }
