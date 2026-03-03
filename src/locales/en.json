@@ -57,6 +57,28 @@
         "resending": "Waiting for the code to be sent..."
       }
     },
+    "mfa": {
+      "title": "Two-factor authentication",
+      "description": "Choose a second factor to verify your identity.",
+      "skip": "Skip",
+      "methods": {
+        "TOTP": "Authenticator app"
+      }
+    },
+    "totp_challenge": {
+      "title": "Authenticator app",
+      "description": "Enter the 6-digit code from your authenticator app.",
+      "submit": "Verify",
+      "submitting": "Verifying..."
+    },
+    "totp_enroll": {
+      "title": "Set up authenticator app",
+      "scan_instructions": "Scan this QR code with your authenticator app (Google Authenticator, Authy, Bitwarden, 1Password, …)",
+      "manual_entry": "Or enter this key manually:",
+      "confirm_instructions": "Enter the 6-digit code shown by the app to confirm setup.",
+      "submit": "Confirm",
+      "submitting": "Confirming..."
+    },
     "error": {
       "title": "Something went wrong"
     }

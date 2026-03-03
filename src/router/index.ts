@@ -13,6 +13,9 @@ import type { I18n } from 'vue-i18n'
 import { merge } from 'ts-deepmerge'
 import CollectClaimsPage from '@/pages/claims/CollectClaimsPage.vue'
 import ValidateClaimsPage from '@/pages/claims/ValidateClaimsPage.vue'
+import MfaPage from '@/pages/mfa/MfaPage.vue'
+import TotpChallengePage from '@/pages/mfa/TotpChallengePage.vue'
+import TotpEnrollPage from '@/pages/mfa/TotpEnrollPage.vue'
 import { isArrayNotEmpty } from '@/utils/ArrayUtils.ts'
 import { isString } from '@/utils/StringUtils.ts'
 
@@ -118,6 +121,30 @@ export function makeRouter(i18n: I18n): Router {
         path: '/claims/validate',
         name: 'ValidateClaims',
         component: ValidateClaimsPage,
+        meta: {
+          stateRequired: true
+        }
+      },
+      {
+        path: '/mfa',
+        name: 'Mfa',
+        component: MfaPage,
+        meta: {
+          stateRequired: true
+        }
+      },
+      {
+        path: '/mfa/totp',
+        name: 'TotpChallenge',
+        component: TotpChallengePage,
+        meta: {
+          stateRequired: true
+        }
+      },
+      {
+        path: '/mfa/totp/enroll',
+        name: 'TotpEnroll',
+        component: TotpEnrollPage,
         meta: {
           stateRequired: true
         }
