@@ -41,7 +41,7 @@ onMounted(async () => {
 
 <template>
   <base-page>
-    <div class='flex justify-center w-100'>
+    <div class='flex justify-center w-full'>
       <base-card>
         <template v-slot:title>
           {{ t('pages.error.title') }}

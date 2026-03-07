@@ -170,7 +170,7 @@ onUnmounted(() => {
 <template>
   <base-page>
     <form @submit="onSubmit">
-      <div class="flex justify-center w-100">
+      <div class="flex justify-center w-full">
         <title-content-card size="default">
           <template v-slot:title>
             {{ t('pages.validate_claims.title') }}

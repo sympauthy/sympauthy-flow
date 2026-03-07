@@ -51,7 +51,7 @@ const onSubmit = handleSubmit(async (values, ctx) => {
 <template>
   <base-page>
     <form @submit="onSubmit">
-      <div class="flex justify-center w-100">
+      <div class="flex justify-center w-full">
         <title-content-card size="default">
           <template v-slot:title>
             {{ t('pages.totp_challenge.title') }}

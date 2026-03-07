@@ -62,7 +62,7 @@ const loginLabel = computed(() => {
       {{ t('components.by_password_card.title') }}
     </template>
     <template v-slot:default>
-      <div class='mb-3 w-100 text-center'>
+      <div class='mb-3 w-full text-center'>
         <i18n-t keypath='components.by_password_card.no_account'>
           <router-link :to="{ name: 'SignUp' }" class='text-primary underline'>
             {{ t('components.by_password_card.sign_up_action') }}
@@ -88,7 +88,7 @@ const loginLabel = computed(() => {
                       name='password'
                       type='password' />
 
-        <div class='w-100 text-end text-primary underline'>
+        <div class='w-full text-end text-primary underline'>
           <a>{{ t('components.by_password_card.forgotten_password') }}</a>
         </div>
 

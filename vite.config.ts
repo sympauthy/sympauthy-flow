@@ -16,8 +16,8 @@ export default defineConfig({
     }
   },
   plugins: [
-    vue(),
     tailwindcss(),
+    vue(),
     vueI18nPlugin({
       include: [path.resolve(__dirname, './src/locales/**')]
     })

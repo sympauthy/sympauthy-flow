@@ -82,7 +82,7 @@ onMounted(async () => {
 
 <template>
   <base-page>
-    <div class='flex justify-center w-100'>
+    <div class='flex justify-center w-full'>
       <title-content-card size='large'>
         <template v-slot:title>
           {{ t('pages.collect_claims.title') }}
