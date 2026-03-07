@@ -40,15 +40,15 @@ watch(() => props.uri, (newUri) => generateQrCode(newUri))
 
   <div class="flex justify-center mb-5">
     <img v-if="qrDataUrl && !loading" :src="qrDataUrl" alt="QR Code" class="w-48 h-48" />
-    <div v-else class="w-48 h-48 bg-gray-100 animate-pulse rounded" />
+    <div v-else class="w-48 h-48 bg-gray-100 animate-pulse rounded-sm" />
   </div>
 
   <p class="w-full mb-2 text-sm text-justify">
     {{ t('pages.totp_enroll.manual_entry') }}
   </p>
   <div class="w-full mb-5 flex justify-center">
-    <code v-if="!loading" class="text-sm break-all bg-gray-100 px-2 py-1 rounded">{{ secret }}</code>
-    <div v-else class="w-48 h-6 bg-gray-100 animate-pulse rounded" />
+    <code v-if="!loading" class="text-sm break-all bg-gray-100 px-2 py-1 rounded-sm">{{ secret }}</code>
+    <div v-else class="w-48 h-6 bg-gray-100 animate-pulse rounded-sm" />
   </div>
 </template>
 

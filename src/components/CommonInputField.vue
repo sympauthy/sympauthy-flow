@@ -15,7 +15,7 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false
 })
 
-const inputClasses = 'shadow appearance-none border rounded w-full h-11 py-2 px-3 text-gray-700 leading-tight focus:outline-1 disabled:outline-none disabled:pointer-events-none disabled:cursor-not-allowed'
+const inputClasses = 'shadow-sm appearance-none border rounded-sm w-full h-11 py-2 px-3 text-gray-700 leading-tight focus:outline-1 disabled:outline-hidden disabled:pointer-events-none disabled:cursor-not-allowed'
 
 </script>
 
@@ -35,7 +35,7 @@ const inputClasses = 'shadow appearance-none border rounded w-full h-11 py-2 px-
       </template>
       <template v-else>
         <div :class='inputClasses' class='flex flex-col justify-center'>
-          <div class='animate-pulse max-w-[40%] h-4 bg-slate-300 rounded cursor-progress'></div>
+          <div class='animate-pulse max-w-[40%] h-4 bg-slate-300 rounded-sm cursor-progress'></div>
         </div>
       </template>
 

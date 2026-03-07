@@ -10,12 +10,13 @@ const props = withDefaults(
 </script>
 
 <template>
-  <div class='border rounded w-full p-3' :class='props.color' role='alert'>
+  <div class='border rounded-sm w-full p-3' :class='props.color' role='alert'>
     <slot></slot>
   </div>
 </template>
 
 <style scoped>
+@reference "tailwindcss";
 
 /*noinspection CssUnusedSymbol*/
 .danger {

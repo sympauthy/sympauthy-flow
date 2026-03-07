@@ -58,7 +58,7 @@ const cancel = () => {
     {{ label }}
   </label>
   <input :value='inputValue'
-         class='shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-1 disabled:outline-none disabled:pointer-events-none disabled:cursor-not-allowed'
+         class='shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-1 disabled:outline-hidden disabled:pointer-events-none disabled:cursor-not-allowed'
          type='text'
          v-on:click='openModal' />
   <span v-if='props.errorMessage ?? errorMessage'

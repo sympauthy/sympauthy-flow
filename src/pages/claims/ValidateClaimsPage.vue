@@ -217,7 +217,7 @@ onUnmounted(() => {
               </a>
               <template v-else>
                 <p>{{ t('pages.validate_claims.resend.resending') }}</p>
-                <common-spinner class="h-2 w-2 border-1" />
+                <common-spinner class="h-2 w-2 border" />
               </template>
             </common-actionable-link>
 

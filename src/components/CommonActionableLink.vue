@@ -33,7 +33,7 @@ const onClick = () => {
     </template>
     <template v-if="loading">
       <p
-        class="animate-pulse h-2 bg-slate-300 rounded cursor-progress"
+        class="animate-pulse h-2 bg-slate-300 rounded-sm cursor-progress"
         style="width: 5rem"
       ></p>
     </template>
