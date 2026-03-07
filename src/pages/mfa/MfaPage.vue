@@ -34,7 +34,7 @@ onMounted(async () => {
 
 <template>
   <base-page>
-    <div class="flex justify-center w-100">
+    <div class="flex justify-center w-full">
       <common-alert v-if="fetchErrorMessage">
         {{ fetchErrorMessage }}
       </common-alert>

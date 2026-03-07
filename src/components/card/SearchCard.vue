@@ -19,11 +19,11 @@ const emit = defineEmits<{
 <template>
   <base-card class='flex flex-col' no-padding>
     <!-- Search -->
-    <div class='w-full flex flex-row items-center shadow-sm text-gray-700 p-3'>
+    <div class='w-full flex flex-row items-center shadow-xs text-gray-700 p-3'>
       <MagnifyingGlassIcon class='size-6' />
       <input v-model='model'
              :placeholder='props.placeholder'
-             class='flex-auto py-2 px-3 appearance-none leading-tight outline-none'
+             class='flex-auto py-2 px-3 appearance-none leading-tight outline-hidden'
              name='search'
              type='text' />
       <XMarkIcon class='size-6 cursor-pointer'

@@ -63,13 +63,13 @@ const onSubmit = handleSubmit(async (values: any) => {
 
 <template>
   <base-page>
-    <div class='flex justify-center w-100'>
+    <div class='flex justify-center w-full'>
       <title-content-card>
         <template v-slot:title>
           {{ t('pages.sign_up.title') }}
         </template>
         <template v-slot:default>
-          <div class='mb-3 w-100 text-center'>
+          <div class='mb-3 w-full text-center'>
             <i18n-t keypath='pages.sign_up.already_have_account'>
               <router-link :to="{ name: 'SignIn' }" class='text-primary underline'>
                 {{ t('pages.sign_up.sign_in_action') }}

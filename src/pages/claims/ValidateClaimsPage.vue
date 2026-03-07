@@ -170,7 +170,7 @@ onUnmounted(() => {
 <template>
   <base-page>
     <form @submit="onSubmit">
-      <div class="flex justify-center w-100">
+      <div class="flex justify-center w-full">
         <title-content-card size="default">
           <template v-slot:title>
             {{ t('pages.validate_claims.title') }}
@@ -217,7 +217,7 @@ onUnmounted(() => {
               </a>
               <template v-else>
                 <p>{{ t('pages.validate_claims.resend.resending') }}</p>
-                <common-spinner class="h-2 w-2 border-1" />
+                <common-spinner class="h-2 w-2 border" />
               </template>
             </common-actionable-link>
 
