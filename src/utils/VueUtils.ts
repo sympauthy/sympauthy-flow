@@ -12,9 +12,16 @@ export function injectRequired<T>(key: InjectionKey<T> | string): T {
 
 export function makeRouteFromRedirectUri(redirectUri: string): RouteLocationRaw {
   const redirectUrl = new URL(redirectUri)
+  // Strip the BASE_URL prefix from the pathname so Vue Router doesn't prepend it again.
+  // e.g. with BASE_URL=/flow, "/flow/admin/callback" becomes "/admin/callback".
+  const base = import.meta.env.BASE_URL?.replace(/\/+$/, '') ?? ''
+  let path = redirectUrl.pathname
+  if (base && path.startsWith(base)) {
+    path = path.slice(base.length) || '/'
+  }
 
   const route: RouteLocationRaw = {
-    path: redirectUrl.pathname
+    path
   }
   if (redirectUrl.searchParams.size > 0) {
     route.query = {}
@@ -27,14 +34,16 @@ export function makeRouteFromRedirectUri(redirectUri: string): RouteLocationRaw 
 
 /**
  * Redirect the end-user either:
- * - using
- *
- * @param router
- * @param redirectUri
+ * - via router.push if the URI is under the app's BASE_URL (same SPA),
+ * - via a full page redirect otherwise (external URL or same origin but outside BASE_URL).
  */
 export async function redirectOrPush(router: Router, redirectUri: string) {
-  const origin = document.location.origin
-  if (redirectUri.startsWith(origin)) {
+  // Only use router.push for URIs that fall under the app's base path (origin + BASE_URL).
+  // URIs on the same origin but outside the base (e.g. /admin/callback when base is /flow)
+  // must trigger a full page redirect to avoid Vue Router prepending the base path.
+  const base = import.meta.env.BASE_URL?.replace(/\/+$/, '') ?? ''
+  const baseUrl = document.location.origin + base
+  if (redirectUri.startsWith(baseUrl)) {
     await router.push(makeRouteFromRedirectUri(redirectUri))
   } else {
     document.location = redirectUri
