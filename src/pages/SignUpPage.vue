@@ -29,7 +29,7 @@ const signUpApi = injectRequired(signUpApiKey)
 const errorMessage = ref<String>()
 const fieldErrorMessages = ref<Record<string, string>>()
 
-const signUpClaims = claimService.getSignUpClaims(configuration)
+const signUpClaims = claimService.getIdentifierClaims(configuration)
 
 const claimSchemas = claimFormService.getSchemasForClaims(configuration, signUpClaims)
 const validationSchema = object({

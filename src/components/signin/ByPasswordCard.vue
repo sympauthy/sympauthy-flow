@@ -46,7 +46,7 @@ const onSubmit = handleSubmit(async (values: any) => {
 
 const loginLabel = computed(() => {
   const claims = configuration.claims || []
-  const loginClaims = (configuration.password?.login_claims || [])
+  const loginClaims = (configuration.password?.identifier_claims || [])
     .map((claim) => {
       return claims.find(it => it.id == claim)?.name
     })
