@@ -16,7 +16,7 @@ import { MfaApi, mfaApiKey } from '@/client/api/MfaApi'
 import { TotpApi, totpApiKey } from '@/client/api/TotpApi'
 
 const pinia = createPinia()
-const router = makeRouter(i18n)
+const router = makeRouter()
 
 createApp(App)
   .provide(claimServiceKey, new ClaimService())

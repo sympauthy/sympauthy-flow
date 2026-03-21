@@ -9,7 +9,6 @@ import {
 import ErrorPage from '@/pages/ErrorPage.vue'
 import SignInPage from '@/pages/SignInPage.vue'
 import SignUpPage from '@/pages/SignUpPage.vue'
-import type { I18n } from 'vue-i18n'
 import { merge } from 'ts-deepmerge'
 import CollectClaimsPage from '@/pages/claims/CollectClaimsPage.vue'
 import ValidateClaimsPage from '@/pages/claims/ValidateClaimsPage.vue'
@@ -84,7 +83,7 @@ export function makeUnknownErrorRoute(): RouteLocationRaw {
   )
 }
 
-export function makeRouter(i18n: I18n): Router {
+export function makeRouter(): Router {
   const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [

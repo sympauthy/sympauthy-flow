@@ -2,7 +2,7 @@
 import { useField } from 'vee-validate'
 import { ref, toRef } from 'vue'
 import CommonModal from '@/components/CommonModal.vue'
-import CommonInputField from '@/components/CommonInputField.vue'
+
 
 interface Props {
   name: string,

@@ -67,7 +67,7 @@ const updateDurationToWaitBeforeResend = () => {
 
   // Start interval if duration is not undefined and interval is not already running
   if (durationToWaitBeforeResend.value !== undefined && refreshInterval === undefined) {
-    refreshInterval = setInterval(() => {
+    refreshInterval = window.setInterval(() => {
       updateDurationToWaitBeforeResend()
       if (durationToWaitBeforeResend.value === undefined && refreshInterval !== undefined) {
         clearInterval(refreshInterval)
