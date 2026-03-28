@@ -93,6 +93,7 @@ const onSubmit = handleSubmit(async (values: any) => {
               :disabled='isSubmitting'
               :error-message="fieldErrorMessages?.['password']"
               :label="t('common.password')"
+              autocomplete='new-password'
               class='mb-3'
               name='password'
               type='password'
@@ -102,6 +103,7 @@ const onSubmit = handleSubmit(async (values: any) => {
               :disabled='isSubmitting'
               :error-message="fieldErrorMessages?.['confirm_password']"
               :label="t('common.confirm_password')"
+              autocomplete='new-password'
               class='mb-3'
               name='confirm_password'
               type='password'

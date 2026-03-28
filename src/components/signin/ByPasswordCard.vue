@@ -78,12 +78,14 @@ const loginLabel = computed(() => {
         <label class='form-label' for='login'></label>
         <common-input :disabled='isSubmitting'
                       :label='loginLabel'
+                      autocomplete='username'
                       class='mb-3'
                       name='login'
                       type='text' />
 
         <common-input :disabled='isSubmitting'
                       :label="t('common.password')"
+                      autocomplete='current-password'
                       class='mb-3'
                       name='password'
                       type='password' />

@@ -5,6 +5,7 @@ interface Props {
   name: string
   label: string | undefined
   type: 'text' | 'password'
+  autocomplete?: string
   errorMessage?: string
   disabled?: boolean
   loading?: boolean
@@ -28,7 +29,8 @@ const inputClasses = 'shadow-sm appearance-none border rounded-sm w-full h-11 py
     </label>
     <Field v-slot='{field, errorMessage}' :name='name'>
       <template v-if='!loading'>
-        <input :class='inputClasses'
+        <input :autocomplete='autocomplete'
+               :class='inputClasses'
                :disabled='disabled'
                :type='type'
                v-bind='field' />

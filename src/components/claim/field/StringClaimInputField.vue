@@ -21,6 +21,7 @@ withDefaults(defineProps<Props>(), {
                 :label='options.claim.name'
                 :loading='loading'
                 :name='options.claim.id'
+                autocomplete='off'
                 type='text' />
 </template>
 
