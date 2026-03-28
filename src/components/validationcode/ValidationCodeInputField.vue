@@ -50,6 +50,14 @@ const codeLength = computed(() => {
 })
 
 const onKeyDown = async (event: KeyboardEvent) => {
+  if (event.key === 'Enter') {
+    // Let Enter propagate to the form for submission
+    return
+  }
+
+  event.preventDefault()
+  event.stopPropagation()
+
   const targetInputField = event.target
   if (!(targetInputField instanceof HTMLInputElement)) {
     return
@@ -188,7 +196,7 @@ watch(value, (newValue: string, oldValue: string) => {
                autocomplete='off'
                maxlength='1'
                type='text'
-               v-on:keydown.stop.prevent='onKeyDown'>
+               v-on:keydown='onKeyDown'>
       </template>
     </div>
     <div v-if='hasErrorMessage'
