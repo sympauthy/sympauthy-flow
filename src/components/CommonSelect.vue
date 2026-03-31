@@ -51,26 +51,28 @@ const cancel = () => {
 </script>
 
 <template>
-  <label
-    v-if='label'
-    :for='props.name'
-    class='text-gray-700 text-sm font-bold mb-2'>
-    {{ label }}
-  </label>
-  <input :value='inputValue'
-         class='shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-1 disabled:outline-hidden disabled:pointer-events-none disabled:cursor-not-allowed'
-         type='text'
-         v-on:click='openModal' />
-  <span v-if='props.errorMessage ?? errorMessage'
-        class='text-sm'
-        style='color: var(--color-danger)'>
-      {{ props.errorMessage ?? errorMessage }}
-  </span>
+  <div>
+    <label
+      v-if='label'
+      :for='props.name'
+      class='text-gray-700 text-sm font-bold mb-2'>
+      {{ label }}
+    </label>
+    <input :value='inputValue'
+           class='shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-1 disabled:outline-hidden disabled:pointer-events-none disabled:cursor-not-allowed'
+           type='text'
+           v-on:click='openModal' />
+    <span v-if='props.errorMessage ?? errorMessage'
+          class='text-sm'
+          style='color: var(--color-danger)'>
+        {{ props.errorMessage ?? errorMessage }}
+    </span>
 
-  <common-modal ref='modal'>
-    <slot :cancel='cancel'
-          :select='select'></slot>
-  </common-modal>
+    <common-modal ref='modal'>
+      <slot :cancel='cancel'
+            :select='select'></slot>
+    </common-modal>
+  </div>
 </template>
 
 <style scoped>
