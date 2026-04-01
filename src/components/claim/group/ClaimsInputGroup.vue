@@ -3,6 +3,7 @@ import { ClaimFormService, ClaimInputFieldOptions, ClaimInputGroupOptions } from
 import { injectRequired } from '@/utils/VueUtils'
 import { configurationKey } from '@/utils/ConfigurationUtils'
 import IdentityClaimsInputGroup from '@/components/claim/group/IdentityClaimsInputGroup.vue'
+import AddressClaimsInputGroup from '@/components/claim/group/AddressClaimsInputGroup.vue'
 import ClaimInputField from '@/components/claim/field/ClaimInputField.vue'
 
 interface Props {
@@ -42,6 +43,13 @@ const optionsArray = claimFormService.getOptionsForClaims(configuration, props.c
                                    :loading='loading'
                                    :options='options'
                                    v-bind='$attrs' />
+    </template>
+    <template v-if="options instanceof ClaimInputGroupOptions && options.group === 'address'">
+      <address-claims-input-group :disabled='disabled'
+                                  :error-messages='errorMessages'
+                                  :loading='loading'
+                                  :options='options'
+                                  v-bind='$attrs' />
     </template>
   </template>
 </template>

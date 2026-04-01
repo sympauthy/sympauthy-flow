@@ -8,5 +8,11 @@ export enum OpenIdClaim {
   PROFILE = 'profile',
   PICTURE = 'picture',
   WEBSITE = 'website',
-  EMAIL = 'email'
+  EMAIL = 'email',
+  STREET_ADDRESS = 'street_address',
+  LOCALITY = 'locality',
+  REGION = 'region',
+  POSTAL_CODE = 'postal_code',
+  COUNTRY = 'country',
+  FORMATTED = 'formatted'
 }

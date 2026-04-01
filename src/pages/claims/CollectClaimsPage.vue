@@ -15,6 +15,7 @@ import { claimApiKey } from '@/client/api/ClaimApi'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import CommonButton from '@/components/CommonButton.vue'
+import CommonAlert from '@/components/CommonAlert.vue'
 import { primaryColoredButton } from '@/styles/ButtonStyle'
 
 const { t } = useI18n()
@@ -87,6 +88,10 @@ onMounted(async () => {
         <template v-slot:title>
           {{ t('pages.collect_claims.title') }}
         </template>
+
+        <common-alert v-if='errorMessage' class='mb-3'>
+            {{ errorMessage }}
+          </common-alert>
 
         <form @submit='onSubmit'>
           <claims-input-group
