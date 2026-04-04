@@ -132,6 +132,8 @@ const onResend = async () => {
 
 const onSubmit = handleSubmit(async (values, ctx) => {
   if (validationCode.value === undefined) {
+    console.error('Cannot submit validation code: validationCode is undefined. The server may have returned a redirect_url that was not handled.')
+    submitErrorMessage.value = t('common.unreachable_state')
     return
   }
   submitErrorMessage.value = undefined
@@ -179,6 +181,10 @@ onUnmounted(() => {
           <template v-slot:default>
             <common-alert v-if="fetchErrorMessage" class="mb-3">
               {{ fetchErrorMessage }}
+            </common-alert>
+
+            <common-alert v-if="submitErrorMessage" class="mb-3">
+              {{ submitErrorMessage }}
             </common-alert>
 
             <p class="w-full mb-7 text-justify">

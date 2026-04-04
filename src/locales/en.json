@@ -3,6 +3,7 @@
     "unknown": "An unknown error occurred while processing request."
   },
   "common": {
+    "unreachable_state": "An unexpected state has been reached. Please try again or contact support.",
     "password": "Password",
     "confirm_password": "Confirm your password",
     "sign_in": "Sign-in",
