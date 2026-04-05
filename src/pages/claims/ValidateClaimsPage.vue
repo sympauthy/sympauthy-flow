@@ -20,7 +20,6 @@ import type { ClaimsValidationFlowResource } from '@/client/model/ClaimsValidati
 import { makeUnknownErrorRoute } from '@/router'
 import CommonButton from '@/components/CommonButton.vue'
 import CommonActionableLink from '@/components/CommonActionableLink.vue'
-import SkeletonText from '@/components/SkeletonText.vue'
 import { Temporal } from '@js-temporal/polyfill'
 import CommonSpinner from '@/components/CommonSpinner.vue'
 import { formatToHumanReadable } from '@/utils/DurationUtils.ts'
@@ -124,7 +123,7 @@ const onResend = async () => {
       updateDurationToWaitBeforeResend()
     }
   } else {
-    fetchErrorMessage.value = getErrorMessage(response)
+    submitErrorMessage.value = getErrorMessage(response)
   }
 
   isResending.value = false
@@ -173,16 +172,12 @@ onUnmounted(() => {
   <base-page>
     <form @submit="onSubmit">
       <div class="flex justify-center w-full">
-        <title-content-card size="default">
+        <title-content-card size="default" :loading="isLoading" :error="fetchErrorMessage">
           <template v-slot:title>
             {{ t('pages.validate_claims.title') }}
           </template>
 
           <template v-slot:default>
-            <common-alert v-if="fetchErrorMessage" class="mb-3">
-              {{ fetchErrorMessage }}
-            </common-alert>
-
             <common-alert v-if="submitErrorMessage" class="mb-3">
               {{ submitErrorMessage }}
             </common-alert>
@@ -191,15 +186,11 @@ onUnmounted(() => {
               {{ t('pages.validate_claims.description.1', [mediaName]) }}
             </p>
 
-            <p v-if="!isLoading" class="w-full text-justify mb-5">
+            <p class="w-full text-justify mb-5">
               {{ t('pages.validate_claims.description.2', [mediaName]) }}
             </p>
-            <skeleton-text v-else class="w-60 text-justify mb-5"></skeleton-text>
 
             <validation-code-field
-              :code="validationCode"
-              :loading="isLoading"
-              :loading-code-length="6"
               class="mb-7"
               name="code"
             />
@@ -207,7 +198,6 @@ onUnmounted(() => {
             <common-actionable-link
               :disabled="isSubmitting"
               :label="t('pages.validate_claims.resend.description')"
-              :loading="isLoading"
               :text="t('pages.validate_claims.resend.action')"
               class="text-sm"
             >
@@ -228,7 +218,7 @@ onUnmounted(() => {
             </common-actionable-link>
 
             <common-button
-              :loading="isLoading || isResending"
+              :loading="isResending"
               :submitting="isSubmitting"
               class="w-full mt-5"
               type="submit"

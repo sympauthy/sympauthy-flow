@@ -27,7 +27,8 @@ const configuration = injectRequired(configurationKey)
 
 const isLoadingClaims = ref<boolean>(false)
 
-const errorMessage = ref<string | undefined>(undefined)
+const fetchErrorMessage = ref<string | undefined>(undefined)
+const submitErrorMessage = ref<string | undefined>(undefined)
 const fieldErrorMessages = ref<Record<string, string> | undefined>(undefined)
 
 const collectableClaims = claimService.getCollectableClaims(configuration)
@@ -44,8 +45,7 @@ const loadClaims = async () => {
   if (isLoadingClaims.value) return
   isLoadingClaims.value = true
 
-  errorMessage.value = undefined
-  fieldErrorMessages.value = undefined
+  fetchErrorMessage.value = undefined
 
   const response = await claimApi.fetchClaims()
   if (response instanceof SuccessApiResponse) {
@@ -57,14 +57,14 @@ const loadClaims = async () => {
       await redirectOrPush(router, response.content.redirect_url)
     }
   } else {
-    errorMessage.value = getErrorMessage(response)
+    fetchErrorMessage.value = getErrorMessage(response)
   }
 
   isLoadingClaims.value = false
 }
 
 const onSubmit = handleSubmit(async (values: any) => {
-  errorMessage.value = undefined
+  submitErrorMessage.value = undefined
   fieldErrorMessages.value = undefined
 
   let response = await claimApi.collectClaims(values)
@@ -72,7 +72,7 @@ const onSubmit = handleSubmit(async (values: any) => {
     await redirectOrPush(router, response.content.redirect_url)
   } else {
     fieldErrorMessages.value = getErrorMessageForProperties(response)
-    errorMessage.value = getErrorMessage(response)
+    submitErrorMessage.value = getErrorMessage(response)
   }
 })
 
@@ -84,27 +84,25 @@ onMounted(async () => {
 <template>
   <base-page>
     <div class='flex justify-center w-full'>
-      <title-content-card size='large'>
+      <title-content-card size='large' :loading='isLoadingClaims' :error='fetchErrorMessage'>
         <template v-slot:title>
           {{ t('pages.collect_claims.title') }}
         </template>
 
-        <common-alert v-if='errorMessage' class='mb-3'>
-            {{ errorMessage }}
-          </common-alert>
+        <common-alert v-if='submitErrorMessage' class='mb-3'>
+          {{ submitErrorMessage }}
+        </common-alert>
 
         <form @submit='onSubmit'>
           <claims-input-group
             :claims='collectableClaims'
             :disabled='isSubmitting'
             :error-messages='fieldErrorMessages'
-            :loading='isLoadingClaims'
             class='mb-3'
           />
 
           <common-button
             :buttonStyle='primaryColoredButton'
-            :disabled='isLoadingClaims'
             :loading='isSubmitting'
             class='w-full mt-5'
             type='submit'

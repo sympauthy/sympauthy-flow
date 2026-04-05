@@ -11,7 +11,8 @@
     "continue": "Continue",
     "submit": "Submit",
     "submitting": "Submitting...",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "loading_from_server": "Waiting for a response from the server."
   },
   "components": {
     "by_password_card": {

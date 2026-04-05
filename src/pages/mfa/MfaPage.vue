@@ -4,12 +4,14 @@ import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { mfaApiKey } from '@/client/api/MfaApi'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
-import CommonAlert from '@/components/CommonAlert.vue'
+import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import MfaMethodSelectionCard from '@/components/mfa/MfaMethodSelectionCard.vue'
 import type { MfaMethodResource } from '@/client/model/MfaFlowResource'
 
+const { t } = useI18n()
 const router = useRouter()
 const mfaApi = injectRequired(mfaApiKey)
 
@@ -35,15 +37,14 @@ onMounted(async () => {
 <template>
   <base-page>
     <div class="flex justify-center w-full">
-      <common-alert v-if="fetchErrorMessage">
-        {{ fetchErrorMessage }}
-      </common-alert>
-
       <mfa-method-selection-card
-        v-else-if="methods"
+        v-if="methods"
         :methods="methods"
         :skip-redirect-url="skipRedirectUrl"
       />
+      <title-content-card v-else :loading="!fetchErrorMessage" :error="fetchErrorMessage">
+        <template v-slot:title>{{ t('pages.mfa.title') }}</template>
+      </title-content-card>
     </div>
   </base-page>
 </template>

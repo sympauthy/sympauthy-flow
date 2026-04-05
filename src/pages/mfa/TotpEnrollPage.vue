@@ -66,12 +66,8 @@ const onSubmit = handleSubmit(async (values, ctx) => {
 <template>
   <base-page>
     <div class="flex justify-center w-full">
-      <common-alert v-if="fetchErrorMessage">
-        {{ fetchErrorMessage }}
-      </common-alert>
-
-      <form v-else @submit="onSubmit">
-        <title-content-card size="default">
+      <form @submit="onSubmit">
+        <title-content-card size="default" :loading="isLoading" :error="fetchErrorMessage">
           <template v-slot:title>
             {{ t('pages.totp_enroll.title') }}
           </template>
@@ -82,10 +78,10 @@ const onSubmit = handleSubmit(async (values, ctx) => {
             </common-alert>
 
             <totp-qr-code-card
-              v-if="enrollData || isLoading"
-              :uri="enrollData?.uri ?? ''"
-              :secret="enrollData?.secret ?? ''"
-              :loading="isLoading"
+              v-if="enrollData"
+              :uri="enrollData.uri"
+              :secret="enrollData.secret"
+              :loading="false"
             />
 
             <p class="w-full mt-5 mb-5 text-justify">
@@ -93,22 +89,18 @@ const onSubmit = handleSubmit(async (values, ctx) => {
             </p>
 
             <validation-code-field
+              :code-length="6"
               class="mb-7"
               name="code"
-              :loading="isLoading"
             />
 
             <common-button
-              :loading="isLoading"
               :submitting="isSubmitting"
               class="w-full mt-5"
               type="submit"
             >
               <template v-slot:default>
                 {{ t('pages.totp_enroll.submit') }}
-              </template>
-              <template v-slot:loading>
-                {{ t('common.loading') }}
               </template>
               <template v-slot:submitting>
                 {{ t('pages.totp_enroll.submitting') }}

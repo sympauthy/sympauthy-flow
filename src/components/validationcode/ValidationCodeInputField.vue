@@ -1,23 +1,18 @@
 <script lang='ts' setup>
 
-import type { ValidationCodeResource } from '@/client/model/ValidationCodeResource.ts'
 import { computed, watch } from 'vue'
 import { useField } from 'vee-validate'
 import { isStringNotEmpty } from '@/utils/StringUtils.ts'
 
 interface Props {
   name: string,
-  code?: ValidationCodeResource,
-  loading?: boolean,
-  loadingCodeLength?: number,
+  codeLength?: number,
   disabled?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  loading: false,
-  submitting: false,
-  disabled: false,
-  loadingCodeLength: 6
+  codeLength: 6,
+  disabled: false
 })
 
 const { value, errorMessage, setTouched } = useField<string>(() => props.name)
@@ -30,24 +25,13 @@ const inputFieldNames = computed(() => {
   return names
 })
 
-const inputFieldClasses = computed(() => {
-  let classes = 'w-0 h-[64px] p-1 md:p-3 mx-1 appearance-none rounded-sm flex-auto text-center border-2 text-gray-700 border-gray-300 focus:outline-1 disabled:outline-hidden disabled:pointer-events-none disabled:cursor-not-allowed'
-  if (props.loading) {
-    classes += ' border-(--color-danger)'
-  }
-  return classes
-})
+const inputFieldClasses = 'w-0 h-[64px] p-1 md:p-3 mx-1 appearance-none rounded-sm flex-auto text-center border-2 text-gray-700 border-gray-300 focus:outline-1 disabled:outline-hidden disabled:pointer-events-none disabled:cursor-not-allowed'
 
 const hasErrorMessage = computed(() => {
-  return !props.disabled && !props.loading && errorMessage.value !== undefined
+  return !props.disabled && errorMessage.value !== undefined
 })
 
-const codeLength = computed(() => {
-  if (props.loading) {
-    return props.loadingCodeLength ?? 6
-  }
-  return 6 // FIXME Get code length from API.
-})
+const codeLength = computed(() => props.codeLength)
 
 const onKeyDown = async (event: KeyboardEvent) => {
   if (event.key === 'Enter') {
@@ -191,7 +175,7 @@ watch(value, (newValue: string, oldValue: string) => {
     <div class='w-full text-3xl flex flex-row justify-center'>
       <template v-for='inputFieldName of inputFieldNames' :key='inputFieldName'>
         <input :class='inputFieldClasses'
-               :disabled='loading || disabled'
+               :disabled='disabled'
                :name='inputFieldName'
                autocomplete='off'
                maxlength='1'

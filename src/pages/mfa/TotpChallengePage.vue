@@ -67,6 +67,7 @@ const onSubmit = handleSubmit(async (values, ctx) => {
             </p>
 
             <validation-code-field
+              :code-length="6"
               class="mb-7"
               name="code"
             />
