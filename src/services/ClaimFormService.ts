@@ -89,6 +89,9 @@ export class ClaimFormService {
       case 'timezone':
         claimSchema = string()
         break
+      case 'date':
+        claimSchema = string()
+        break
     }
     if (claim.required) {
       claimSchema = claimSchema.required()
