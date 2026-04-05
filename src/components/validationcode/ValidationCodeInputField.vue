@@ -39,6 +39,11 @@ const onKeyDown = async (event: KeyboardEvent) => {
     return
   }
 
+  if ((event.ctrlKey || event.metaKey) && event.key === 'v') {
+    // Let Ctrl+V / Cmd+V propagate so the paste event fires
+    return
+  }
+
   event.preventDefault()
   event.stopPropagation()
 
@@ -161,6 +166,26 @@ const computeValue = (): string | undefined => {
   return value
 }
 
+const onPaste = (event: ClipboardEvent) => {
+  event.preventDefault()
+  const text = event.clipboardData?.getData('text') ?? ''
+  const digits = text.replace(/\D/g, '')
+  if (digits.length === 0) {
+    return
+  }
+
+  clearAllInputFields()
+  const length = Math.min(digits.length, codeLength.value)
+  for (let i = 0; i < length; i++) {
+    const input = findInputFieldAtIndex(i)
+    if (input instanceof HTMLInputElement) {
+      input.value = digits.charAt(i)
+    }
+  }
+  selectInputFieldAtIndex(Math.min(length, codeLength.value - 1))
+  updateTouchedAndValue()
+}
+
 watch(value, (newValue: string, oldValue: string) => {
   console.log(`watch ${newValue} ${oldValue}`)
   if (newValue !== oldValue) {
@@ -172,7 +197,7 @@ watch(value, (newValue: string, oldValue: string) => {
 
 <template>
   <div class='w-full'>
-    <div class='w-full text-3xl flex flex-row justify-center'>
+    <div class='w-full text-3xl flex flex-row justify-center' v-on:paste='onPaste'>
       <template v-for='inputFieldName of inputFieldNames' :key='inputFieldName'>
         <input :class='inputFieldClasses'
                :disabled='disabled'
