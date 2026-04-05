@@ -1,21 +1,29 @@
 <script lang='ts' setup>
 
-import { computed, watch } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { useField } from 'vee-validate'
 import { isStringNotEmpty } from '@/utils/StringUtils.ts'
 
 interface Props {
   name: string,
   codeLength?: number,
-  disabled?: boolean
+  disabled?: boolean,
+  autofocus?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   codeLength: 6,
-  disabled: false
+  disabled: false,
+  autofocus: false
 })
 
 const { value, errorMessage, setTouched } = useField<string>(() => props.name)
+
+onMounted(() => {
+  if (props.autofocus) {
+    findInputFieldAtIndex(0)?.focus()
+  }
+})
 
 const inputFieldNames = computed(() => {
   const names: Array<string> = []

@@ -191,6 +191,7 @@ onUnmounted(() => {
             </p>
 
             <validation-code-field
+              autofocus
               class="mb-7"
               name="code"
             />

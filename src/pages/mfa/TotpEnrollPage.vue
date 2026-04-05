@@ -89,6 +89,7 @@ const onSubmit = handleSubmit(async (values, ctx) => {
             </p>
 
             <validation-code-field
+              autofocus
               :code-length="6"
               class="mb-7"
               name="code"
