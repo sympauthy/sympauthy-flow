@@ -11,16 +11,6 @@ export class ClaimService {
     return configuration.password?.identifier_claims || []
   }
 
-  /**
-   * Return the claims that are collectable from the end-user.
-   */
-  getCollectableClaims(configuration: ConfigurationResource): Array<string> {
-    const identifierClaims = this.getIdentifierClaims(configuration)
-    const claims = configuration.claims || []
-    return claims
-      .filter(it => !identifierClaims.includes(it.id))
-      .map(it => it.id)
-  }
 }
 
 export const claimServiceKey: InjectionKey<ClaimService> = Symbol('ClaimService')

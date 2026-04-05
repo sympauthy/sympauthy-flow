@@ -1,6 +1,6 @@
 import type { ConfigurationResource } from '@/client/model/config/ConfigurationResource'
 import { Schema, string } from 'yup'
-import type { ClaimConfigurationResource } from '@/client/model/config/ClaimConfigurationResource'
+import type { ClaimConfiguration } from '@/client/model/ClaimConfiguration'
 import type { ClaimGroup } from '@/client/model/config/ClaimGroup'
 import type { InjectionKey } from 'vue'
 
@@ -10,7 +10,7 @@ export interface ClaimInputOptions {
 
 export class ClaimInputFieldOptions implements ClaimInputOptions {
   constructor(
-    readonly claim: ClaimConfigurationResource
+    readonly claim: ClaimConfiguration
   ) {
   }
 
@@ -43,9 +43,9 @@ export class ClaimFormService {
   getConfigForClaims(
     configuration: ConfigurationResource,
     claims: Array<string>
-  ): Array<ClaimConfigurationResource> {
+  ): Array<ClaimConfiguration> {
     const claimConfigs = configuration.claims || []
-    const filteredClaimConfigs: Array<ClaimConfigurationResource> = []
+    const filteredClaimConfigs: Array<ClaimConfiguration> = []
     for (const claim of claims) {
       const claimConfig = claimConfigs.find((it) => it.id === claim)
       if (claimConfig !== undefined) {
@@ -62,8 +62,17 @@ export class ClaimFormService {
     configuration: ConfigurationResource,
     claims: Array<string>
   ): Record<string, Schema> {
+    return this.getSchemasForClaimConfigs(this.getConfigForClaims(configuration, claims))
+  }
+
+  /**
+   * Return a list of Yup schema validating the provided claim configurations.
+   */
+  getSchemasForClaimConfigs(
+    claims: Array<ClaimConfiguration>
+  ): Record<string, Schema> {
     const schema: Record<string, Schema> = {}
-    for (const claim of this.getConfigForClaims(configuration, claims)) {
+    for (const claim of claims) {
       schema[claim.id] = this.getSchemaForClaim(claim)
     }
     return schema
@@ -73,10 +82,9 @@ export class ClaimFormService {
    * Return a Yup schema validating the provided end-user claim.
    *
    * @param claim The end-user claim to validate.
-   * @param config Additional config depending on the context where the claim is collected (sign-in, sign-up, etc.).
    */
   getSchemaForClaim(
-    claim: ClaimConfigurationResource
+    claim: ClaimConfiguration
   ): Schema {
     let claimSchema: Schema
     switch (claim.type) {
@@ -108,9 +116,19 @@ export class ClaimFormService {
     configuration: ConfigurationResource,
     claims: Array<string>
   ): Array<ClaimInputFieldOptions | ClaimInputGroupOptions> {
+    return this.getOptionsForClaimConfigs(this.getConfigForClaims(configuration, claims))
+  }
+
+  /**
+   * Return the list of input field and input group to display to the end-user.
+   *
+   * The list is sorted in the order they must be presented to the end-user.
+   */
+  getOptionsForClaimConfigs(
+    claimConfigs: Array<ClaimConfiguration>
+  ): Array<ClaimInputFieldOptions | ClaimInputGroupOptions> {
     const optionsArray: Array<ClaimInputFieldOptions | ClaimInputGroupOptions> = []
 
-    const claimConfigs = this.getConfigForClaims(configuration, claims)
     const sortedClaims: Array<string> = []
     for (const claim of claimConfigs) {
       if (!sortedClaims.includes(claim.id)) {
@@ -130,7 +148,7 @@ export class ClaimFormService {
 
   private createInputOptionsForGroup(
     group: ClaimGroup,
-    claimAndConfigPairs: Array<ClaimConfigurationResource>
+    claimAndConfigPairs: Array<ClaimConfiguration>
   ): ClaimInputGroupOptions {
     const claimsOptions = claimAndConfigPairs
       .filter((it) => it.group === group)
@@ -139,7 +157,7 @@ export class ClaimFormService {
   }
 
   private createInputOptionsForClaim(
-    claim: ClaimConfigurationResource
+    claim: ClaimConfiguration
   ): ClaimInputFieldOptions {
     return new ClaimInputFieldOptions(claim)
   }

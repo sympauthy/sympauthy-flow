@@ -4,12 +4,10 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { claimFormServiceKey } from '@/services/ClaimFormService'
-import { configurationKey } from '@/utils/ConfigurationUtils'
 import { object } from 'yup'
 import { useForm } from 'vee-validate'
 import ClaimsInputGroup from '@/components/claim/group/ClaimsInputGroup.vue'
-import { claimServiceKey } from '@/services/ClaimsService'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { getErrorMessage, getErrorMessageForProperties } from '@/client/ErrorApiResponse'
 import { claimApiKey } from '@/client/api/ClaimApi'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
@@ -17,13 +15,12 @@ import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import CommonButton from '@/components/CommonButton.vue'
 import CommonAlert from '@/components/CommonAlert.vue'
 import { primaryColoredButton } from '@/styles/ButtonStyle'
+import type { ClaimConfiguration } from '@/client/model/ClaimConfiguration'
 
 const { t } = useI18n()
 const router = useRouter()
 const claimApi = injectRequired(claimApiKey)
-const claimService = injectRequired(claimServiceKey)
 const claimFormService = injectRequired(claimFormServiceKey)
-const configuration = injectRequired(configurationKey)
 
 const isLoadingClaims = ref<boolean>(false)
 
@@ -31,14 +28,16 @@ const fetchErrorMessage = ref<string | undefined>(undefined)
 const submitErrorMessage = ref<string | undefined>(undefined)
 const fieldErrorMessages = ref<Record<string, string> | undefined>(undefined)
 
-const collectableClaims = claimService.getCollectableClaims(configuration)
-const claimSchemas = claimFormService.getSchemasForClaims(configuration, collectableClaims)
-const validationSchema = object({
-  ...claimSchemas
+const claimConfigs = ref<Array<ClaimConfiguration>>([])
+
+const validationSchema = computed(() => {
+  return object({
+    ...claimFormService.getSchemasForClaimConfigs(claimConfigs.value)
+  })
 })
 
-const { setFieldValue, handleSubmit, isSubmitting } = useForm({
-  validationSchema: validationSchema
+const { setValues, handleSubmit, isSubmitting } = useForm({
+  validationSchema
 })
 
 const loadClaims = async () => {
@@ -50,9 +49,18 @@ const loadClaims = async () => {
   const response = await claimApi.fetchClaims()
   if (response instanceof SuccessApiResponse) {
     if (response.content.claims !== undefined) {
-      response.content.claims
-        .filter((it) => it.collected)
-        .forEach((it) => setFieldValue(it.claim, it.value))
+      const claims = response.content.claims
+      claimConfigs.value = claims
+
+      const initialValues: Record<string, string | undefined> = {}
+      for (const claim of claims) {
+        if (claim.collected && claim.value !== undefined) {
+          initialValues[claim.id] = claim.value
+        } else if (claim.suggested_value !== undefined) {
+          initialValues[claim.id] = claim.suggested_value
+        }
+      }
+      setValues(initialValues)
     } else if (response.content.redirect_url !== undefined) {
       await redirectOrPush(router, response.content.redirect_url)
     }
@@ -95,7 +103,7 @@ onMounted(async () => {
 
         <form @submit='onSubmit'>
           <claims-input-group
-            :claims='collectableClaims'
+            :claims='claimConfigs'
             :disabled='isSubmitting'
             :error-messages='fieldErrorMessages'
             class='mb-3'

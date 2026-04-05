@@ -1,13 +1,12 @@
 <script lang='ts' setup>
 import { ClaimFormService, ClaimInputFieldOptions, ClaimInputGroupOptions } from '@/services/ClaimFormService'
-import { injectRequired } from '@/utils/VueUtils'
-import { configurationKey } from '@/utils/ConfigurationUtils'
 import IdentityClaimsInputGroup from '@/components/claim/group/IdentityClaimsInputGroup.vue'
 import AddressClaimsInputGroup from '@/components/claim/group/AddressClaimsInputGroup.vue'
 import ClaimInputField from '@/components/claim/field/ClaimInputField.vue'
+import type { ClaimConfiguration } from '@/client/model/ClaimConfiguration'
 
 interface Props {
-  claims: Array<string>
+  claims: Array<ClaimConfiguration>
   errorMessages?: Record<string, string>
   disabled?: boolean
   loading?: boolean
@@ -22,10 +21,9 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false
 })
 
-const configuration = injectRequired(configurationKey)
 const claimFormService = new ClaimFormService()
 
-const optionsArray = claimFormService.getOptionsForClaims(configuration, props.claims)
+const optionsArray = claimFormService.getOptionsForClaimConfigs(props.claims)
 </script>
 
 <template>

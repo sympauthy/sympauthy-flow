@@ -1,7 +1,9 @@
 import type { JSONSchemaType } from 'ajv'
+import type { ClaimType } from '@/client/model/config/ClaimType'
+import type { ClaimGroup } from '@/client/model/config/ClaimGroup'
+import type { ClaimConfiguration } from '@/client/model/ClaimConfiguration'
 
-export type ClaimValueResource = {
-  claim: string
+export type ClaimValueResource = ClaimConfiguration & {
   collected: boolean
   value?: string // FIXME add other supported types
   suggested_value?: string // FIXME add other supported types
@@ -10,8 +12,23 @@ export type ClaimValueResource = {
 export const claimValueResourceSchema: JSONSchemaType<ClaimValueResource> = {
   type: 'object',
   properties: {
-    claim: {
+    id: {
       type: ['string']
+    },
+    required: {
+      type: ['boolean']
+    },
+    name: {
+      type: ['string']
+    },
+    type: {
+      type: ['string'],
+      enum: ['email', 'string', 'timezone', 'date' /* FIXME , 'phone_number' */]
+    },
+    group: {
+      type: ['string'],
+      enum: ['identity', 'address'],
+      nullable: true
     },
     collected: {
       type: ['boolean']
@@ -25,6 +42,6 @@ export const claimValueResourceSchema: JSONSchemaType<ClaimValueResource> = {
       nullable: true
     }
   },
-  required: ['claim', 'collected'],
+  required: ['id', 'required', 'name', 'type', 'collected'],
   additionalProperties: true
 }
