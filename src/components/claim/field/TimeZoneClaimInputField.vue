@@ -37,7 +37,6 @@ const loadTimeZones = async () => {
   if (response instanceof SuccessApiResponse) {
     timeZones.value = response.content
   }
-  // FIXME: Handle errors
 
   isLoadingTimeZones.value = false
 }
