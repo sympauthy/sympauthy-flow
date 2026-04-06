@@ -5,8 +5,8 @@ import type { ClaimConfiguration } from '@/client/model/ClaimConfiguration'
 
 export type ClaimValueResource = ClaimConfiguration & {
   collected: boolean
-  value?: string // FIXME add other supported types
-  suggested_value?: string // FIXME add other supported types
+  value?: string
+  suggested_value?: string
 }
 
 export const claimValueResourceSchema: JSONSchemaType<ClaimValueResource> = {
