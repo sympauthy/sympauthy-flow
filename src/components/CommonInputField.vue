@@ -4,7 +4,7 @@ import { Field } from 'vee-validate'
 interface Props {
   name: string
   label: string | undefined
-  type: 'text' | 'password' | 'date'
+  type: 'text' | 'password' | 'date' | 'tel'
   autocomplete?: string
   errorMessage?: string
   disabled?: boolean

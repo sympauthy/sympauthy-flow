@@ -100,6 +100,12 @@ export class ClaimFormService {
       case 'date':
         claimSchema = string()
         break
+      case 'phone_number':
+        claimSchema = string().matches(
+          /^\+[1-9]\d{1,14}$/,
+          'Phone number must be in E.164 format (e.g. +15551234567)'
+        )
+        break
     }
     if (claim.required) {
       claimSchema = claimSchema.required()

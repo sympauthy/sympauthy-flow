@@ -3,6 +3,7 @@ import type { ClaimInputFieldOptions } from '@/services/ClaimFormService'
 import StringClaimInputField from '@/components/claim/field/StringClaimInputField.vue'
 import TimeZoneClaimInputField from '@/components/claim/field/TimeZoneClaimInputField.vue'
 import DateClaimInputField from '@/components/claim/field/DateClaimInputField.vue'
+import PhoneNumberClaimInputField from '@/components/claim/field/PhoneNumberClaimInputField.vue'
 
 interface Props {
   options: ClaimInputFieldOptions,
@@ -40,6 +41,13 @@ const type = props.options.claim.type
                             :loading='loading'
                             :options='options'
                             v-bind='$attrs' />
+  </template>
+  <template v-if="type === 'phone_number'">
+    <phone-number-claim-input-field :disabled='disabled'
+                                    :error-message='errorMessage'
+                                    :loading='loading'
+                                    :options='options'
+                                    v-bind='$attrs' />
   </template>
 </template>
 

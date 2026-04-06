@@ -25,7 +25,7 @@ export const claimConfigurationResourceSchema: JSONSchemaType<ClaimConfiguration
     },
     type: {
       type: ['string'],
-      enum: ['email', 'string', 'timezone', 'date' /* FIXME , 'phone_number' */]
+      enum: ['email', 'string', 'timezone', 'date', 'phone_number']
     },
     group: {
       type: ['string'],
