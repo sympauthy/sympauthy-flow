@@ -1,11 +1,7 @@
-<script setup lang='ts'>
-
-</script>
+<script setup lang="ts"></script>
 
 <template>
-<a>Resend the code</a>
+  <a>Resend the code</a>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -10,7 +10,9 @@ export class TimeZoneApi extends AbstractApi {
     super(pinia)
   }
 
-  async fetchTimeZones(claim: string): Promise<SuccessApiResponse<Array<TimeZoneResource>> | ErrorApiResponse> {
+  async fetchTimeZones(
+    claim: string
+  ): Promise<SuccessApiResponse<Array<TimeZoneResource>> | ErrorApiResponse> {
     return this.get({
       authenticated: true,
       path: `/api/v1/flow/claims/${claim}/timezones`,

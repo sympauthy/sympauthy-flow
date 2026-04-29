@@ -1,4 +1,7 @@
-import { type ValidationCodeResource, validationCodeResourceSchema } from '@/client/model/ValidationCodeResource.ts'
+import {
+  type ValidationCodeResource,
+  validationCodeResourceSchema
+} from '@/client/model/ValidationCodeResource.ts'
 import type { JSONSchemaType } from 'ajv'
 
 export type ResendClaimsValidationCodeResultResource = {
@@ -7,20 +10,21 @@ export type ResendClaimsValidationCodeResultResource = {
   code?: ValidationCodeResource
 }
 
-export const resendClaimsValidationCodeResultResourceSchema: JSONSchemaType<ResendClaimsValidationCodeResultResource> = {
-  type: 'object',
-  properties: {
-    media: {
-      type: 'string'
+export const resendClaimsValidationCodeResultResourceSchema: JSONSchemaType<ResendClaimsValidationCodeResultResource> =
+  {
+    type: 'object',
+    properties: {
+      media: {
+        type: 'string'
+      },
+      resent: {
+        type: 'boolean'
+      },
+      code: {
+        ...validationCodeResourceSchema,
+        nullable: true
+      }
     },
-    resent: {
-      type: 'boolean'
-    },
-    code: {
-      ...validationCodeResourceSchema,
-      nullable: true
-    }
-  },
-  required: ['media', 'resent'],
-  additionalProperties: true
-}
+    required: ['media', 'resent'],
+    additionalProperties: true
+  }

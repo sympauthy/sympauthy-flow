@@ -1,5 +1,4 @@
-<script lang='ts' setup>
-
+<script lang="ts" setup>
 import { computed } from 'vue'
 
 export interface BaseCardProps {
@@ -26,18 +25,15 @@ const cardClasses = computed(() => {
   }
   return classes
 })
-
 </script>
 
 <template>
-  <div :class='cardClasses'
-       class='flex-auto bg-white rounded-xl shadow-lg'>
+  <div :class="cardClasses" class="flex-auto bg-white rounded-xl shadow-lg">
     <slot></slot>
   </div>
 </template>
 
 <style scoped>
-
 .card {
   max-width: var(--max-width-card);
 }
@@ -45,5 +41,4 @@ const cardClasses = computed(() => {
 .card-large {
   max-width: var(--max-width-large-card);
 }
-
 </style>

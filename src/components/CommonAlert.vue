@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 const props = withDefaults(
   defineProps<{
     color?: 'danger'
@@ -10,7 +10,7 @@ const props = withDefaults(
 </script>
 
 <template>
-  <div class='border rounded-sm w-full p-3' :class='props.color' role='alert'>
+  <div class="border rounded-sm w-full p-3" :class="props.color" role="alert">
     <slot></slot>
   </div>
 </template>
@@ -22,5 +22,4 @@ const props = withDefaults(
 .danger {
   @apply border-red-50 text-red-700 bg-red-100;
 }
-
 </style>

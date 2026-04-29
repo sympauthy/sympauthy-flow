@@ -2,7 +2,6 @@ import type { ConfigurationResource } from '@/client/model/config/ConfigurationR
 import type { InjectionKey } from 'vue'
 
 export class ClaimService {
-
   /**
    * Return the claims that uniquely identify a user.
    * Used as login claims for password sign-in and as required claims during sign-up.
@@ -10,7 +9,6 @@ export class ClaimService {
   getIdentifierClaims(configuration: ConfigurationResource): Array<string> {
     return configuration.password?.identifier_claims || []
   }
-
 }
 
 export const claimServiceKey: InjectionKey<ClaimService> = Symbol('ClaimService')

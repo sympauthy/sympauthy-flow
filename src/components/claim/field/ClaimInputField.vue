@@ -1,4 +1,4 @@
-<script lang='ts' setup>
+<script lang="ts" setup>
 import type { ClaimInputFieldOptions } from '@/services/ClaimFormService'
 import StringClaimInputField from '@/components/claim/field/StringClaimInputField.vue'
 import TimeZoneClaimInputField from '@/components/claim/field/TimeZoneClaimInputField.vue'
@@ -6,10 +6,10 @@ import DateClaimInputField from '@/components/claim/field/DateClaimInputField.vu
 import PhoneNumberClaimInputField from '@/components/claim/field/PhoneNumberClaimInputField.vue'
 
 interface Props {
-  options: ClaimInputFieldOptions,
-  errorMessage?: string,
-  disabled?: boolean,
-  loading?: boolean,
+  options: ClaimInputFieldOptions
+  errorMessage?: string
+  disabled?: boolean
+  loading?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -22,32 +22,40 @@ const type = props.options.claim.type
 
 <template>
   <template v-if="type === 'string' || type === 'email'">
-    <string-claim-input-field :disabled='disabled'
-                              :error-message='errorMessage'
-                              :loading='loading'
-                              :options='options'
-                              v-bind='$attrs' />
+    <string-claim-input-field
+      :disabled="disabled"
+      :error-message="errorMessage"
+      :loading="loading"
+      :options="options"
+      v-bind="$attrs"
+    />
   </template>
   <template v-if="type === 'timezone'">
-    <time-zone-claim-input-field :disabled='disabled'
-                                 :error-message='errorMessage'
-                                 :loading='loading'
-                                 :options='options'
-                                 v-bind='$attrs' />
+    <time-zone-claim-input-field
+      :disabled="disabled"
+      :error-message="errorMessage"
+      :loading="loading"
+      :options="options"
+      v-bind="$attrs"
+    />
   </template>
   <template v-if="type === 'date'">
-    <date-claim-input-field :disabled='disabled'
-                            :error-message='errorMessage'
-                            :loading='loading'
-                            :options='options'
-                            v-bind='$attrs' />
+    <date-claim-input-field
+      :disabled="disabled"
+      :error-message="errorMessage"
+      :loading="loading"
+      :options="options"
+      v-bind="$attrs"
+    />
   </template>
   <template v-if="type === 'phone_number'">
-    <phone-number-claim-input-field :disabled='disabled'
-                                    :error-message='errorMessage'
-                                    :loading='loading'
-                                    :options='options'
-                                    v-bind='$attrs' />
+    <phone-number-claim-input-field
+      :disabled="disabled"
+      :error-message="errorMessage"
+      :loading="loading"
+      :options="options"
+      v-bind="$attrs"
+    />
   </template>
 </template>
 

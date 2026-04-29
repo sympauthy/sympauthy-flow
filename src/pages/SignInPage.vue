@@ -1,4 +1,4 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import ByPasswordCard from '@/components/signin/ByPasswordCard.vue'
 import ByProviderCard from '@/components/signin/ByProviderCard.vue'
 import { useConfiguration } from '@/stores/ConfigurationStore'
@@ -16,8 +16,10 @@ const hasProvider = computed(() => {
 
 <template>
   <base-page>
-    <div class='w-full flex justify-center items-center flex-col-reverse lg:flex-row lg:items-start'>
-      <by-provider-card v-if='hasProvider' class='me-3'></by-provider-card>
+    <div
+      class="w-full flex justify-center items-center flex-col-reverse lg:flex-row lg:items-start"
+    >
+      <by-provider-card v-if="hasProvider" class="me-3"></by-provider-card>
       <by-password-card></by-password-card>
     </div>
   </base-page>

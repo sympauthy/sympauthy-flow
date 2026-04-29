@@ -1,4 +1,4 @@
-<script lang='ts' setup>
+<script lang="ts" setup>
 import type { ClaimInputFieldOptions } from '@/services/ClaimFormService'
 import CommonField from '@/components/CommonInputField.vue'
 
@@ -16,13 +16,15 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <common-field :disabled='disabled'
-                :error-message='errorMessage'
-                :label='options.claim.name'
-                :loading='loading'
-                :name='options.claim.id'
-                autocomplete='off'
-                type='text' />
+  <common-field
+    :disabled="disabled"
+    :error-message="errorMessage"
+    :label="options.claim.name"
+    :loading="loading"
+    :name="options.claim.id"
+    autocomplete="off"
+    type="text"
+  />
 </template>
 
 <style scoped></style>

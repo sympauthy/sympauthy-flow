@@ -1,7 +1,6 @@
 import { inject, type InjectionKey } from 'vue'
 import type { RouteLocationRaw, Router } from 'vue-router'
 
-
 export function injectRequired<T>(key: InjectionKey<T> | string): T {
   const injected = inject(key)
   if (injected === undefined) {

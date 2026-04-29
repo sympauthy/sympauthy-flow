@@ -1,8 +1,5 @@
 import { AbstractApi } from '@/client/AbstractApi'
-import {
-  type FlowErrorResource,
-  flowErrorResourceSchema
-} from '@/client/model/FlowErrorResource'
+import { type FlowErrorResource, flowErrorResourceSchema } from '@/client/model/FlowErrorResource'
 import type { Pinia } from 'pinia'
 import type { InjectionKey } from 'vue'
 import type { ErrorApiResponse } from '@/client/ErrorApiResponse'

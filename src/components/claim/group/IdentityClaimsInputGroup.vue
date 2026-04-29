@@ -1,12 +1,12 @@
-<script lang='ts' setup>
+<script lang="ts" setup>
 import type { ClaimInputGroupOptions } from '@/services/ClaimFormService'
 import ClaimInputField from '@/components/claim/field/ClaimInputField.vue'
 import { OpenIdClaim } from '@/utils/OpenIdClaim'
 import { computed } from 'vue'
 
 interface Props {
-  options: ClaimInputGroupOptions,
-  errorMessages?: Record<string, string>,
+  options: ClaimInputGroupOptions
+  errorMessages?: Record<string, string>
   disabled?: boolean
   loading?: boolean
 }
@@ -24,7 +24,11 @@ const nameOptions = computed(() => props.options.getClaimOptions(OpenIdClaim.NAM
 const givenNameOptions = computed(() => props.options.getClaimOptions(OpenIdClaim.GIVEN_NAME))
 const middleNameOptions = computed(() => props.options.getClaimOptions(OpenIdClaim.MIDDLE_NAME))
 const familyNameOptions = computed(() => props.options.getClaimOptions(OpenIdClaim.FAMILY_NAME))
-const splitOptions = computed(() => [givenNameOptions.value, middleNameOptions.value, familyNameOptions.value])
+const splitOptions = computed(() => [
+  givenNameOptions.value,
+  middleNameOptions.value,
+  familyNameOptions.value
+])
 
 /**
  * True if the name claim is required.
@@ -34,13 +38,14 @@ const isNameRequired = computed(() => nameOptions.value?.claim?.required === tru
 /**
  * True if one of given_name, middle_name and family_name claims is collectable.
  */
-const isSplitCollectable = computed(() => splitOptions.value.some(it => it !== undefined))
+const isSplitCollectable = computed(() => splitOptions.value.some((it) => it !== undefined))
 
 /**
  * True if one of given_name, middle_name and family_name claims is required.
  */
-const isSplitRequired = computed(() => splitOptions.value.some(it => it?.claim?.required === true))
-
+const isSplitRequired = computed(() =>
+  splitOptions.value.some((it) => it?.claim?.required === true)
+)
 
 const shouldDisplayName = computed(() => {
   if (nameOptions.value === undefined) {
@@ -67,39 +72,46 @@ const shouldDisplaySplitName = computed(() => {
   }
   return !shouldDisplayName.value
 })
-
 </script>
 
 <template>
-  <template v-if='shouldDisplayName'>
-    <claim-input-field v-if='nameOptions'
-                       :disabled='disabled'
-                       :error-message='errorMessages?.[OpenIdClaim.NAME]'
-                       :loading='loading'
-                       :options='nameOptions'
-                       v-bind='$attrs' />
+  <template v-if="shouldDisplayName">
+    <claim-input-field
+      v-if="nameOptions"
+      :disabled="disabled"
+      :error-message="errorMessages?.[OpenIdClaim.NAME]"
+      :loading="loading"
+      :options="nameOptions"
+      v-bind="$attrs"
+    />
   </template>
-  <div v-if='shouldDisplaySplitName' class='md:flex md:flex-row'>
-    <claim-input-field v-if='givenNameOptions'
-                       :disabled='disabled'
-                       :error-message='errorMessages?.[OpenIdClaim.GIVEN_NAME]'
-                       :loading='loading'
-                       :options='givenNameOptions'
-                       class='md:me-3'
-                       v-bind='$attrs' />
-    <claim-input-field v-if='middleNameOptions'
-                       :disabled='disabled'
-                       :error-message='errorMessages?.[OpenIdClaim.MIDDLE_NAME]'
-                       :loading='loading'
-                       :options='middleNameOptions'
-                       class='md:me-3'
-                       v-bind='$attrs' />
-    <claim-input-field v-if='familyNameOptions'
-                       :disabled='disabled'
-                       :error-message='errorMessages?.[OpenIdClaim.FAMILY_NAME]'
-                       :loading='loading'
-                       :options='familyNameOptions'
-                       v-bind='$attrs' />
+  <div v-if="shouldDisplaySplitName" class="md:flex md:flex-row">
+    <claim-input-field
+      v-if="givenNameOptions"
+      :disabled="disabled"
+      :error-message="errorMessages?.[OpenIdClaim.GIVEN_NAME]"
+      :loading="loading"
+      :options="givenNameOptions"
+      class="md:me-3"
+      v-bind="$attrs"
+    />
+    <claim-input-field
+      v-if="middleNameOptions"
+      :disabled="disabled"
+      :error-message="errorMessages?.[OpenIdClaim.MIDDLE_NAME]"
+      :loading="loading"
+      :options="middleNameOptions"
+      class="md:me-3"
+      v-bind="$attrs"
+    />
+    <claim-input-field
+      v-if="familyNameOptions"
+      :disabled="disabled"
+      :error-message="errorMessages?.[OpenIdClaim.FAMILY_NAME]"
+      :loading="loading"
+      :options="familyNameOptions"
+      v-bind="$attrs"
+    />
   </div>
 </template>
 

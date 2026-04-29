@@ -13,7 +13,9 @@ export class TotpApi extends AbstractApi {
     super(pinia)
   }
 
-  async fetchEnrollmentData(): Promise<SuccessApiResponse<TotpEnrollFlowResource> | ErrorApiResponse> {
+  async fetchEnrollmentData(): Promise<
+    SuccessApiResponse<TotpEnrollFlowResource> | ErrorApiResponse
+  > {
     return this.get({
       authenticated: true,
       path: '/api/v1/flow/mfa/totp/enroll',
@@ -21,7 +23,9 @@ export class TotpApi extends AbstractApi {
     })
   }
 
-  async confirmEnrollment(code: string): Promise<SuccessApiResponse<FlowResource> | ErrorApiResponse> {
+  async confirmEnrollment(
+    code: string
+  ): Promise<SuccessApiResponse<FlowResource> | ErrorApiResponse> {
     return this.post({
       authenticated: true,
       path: '/api/v1/flow/mfa/totp/enroll',
@@ -30,7 +34,9 @@ export class TotpApi extends AbstractApi {
     })
   }
 
-  async submitChallenge(code: string): Promise<SuccessApiResponse<FlowResource> | ErrorApiResponse> {
+  async submitChallenge(
+    code: string
+  ): Promise<SuccessApiResponse<FlowResource> | ErrorApiResponse> {
     return this.post({
       authenticated: true,
       path: '/api/v1/flow/mfa/totp',

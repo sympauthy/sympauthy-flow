@@ -1,4 +1,7 @@
-import { type ValidationCodeResource, validationCodeResourceSchema } from '@/client/model/ValidationCodeResource'
+import {
+  type ValidationCodeResource,
+  validationCodeResourceSchema
+} from '@/client/model/ValidationCodeResource'
 import type { JSONSchemaType } from 'ajv'
 
 export type ClaimsValidationFlowResource = {
@@ -20,10 +23,10 @@ export const claimValidationFlowResourceSchema: JSONSchemaType<ClaimsValidationF
   },
   anyOf: [
     {
-      required: ['code'],
+      required: ['code']
     },
     {
-      required: ['redirect_url'],
+      required: ['redirect_url']
     }
   ],
   additionalProperties: true

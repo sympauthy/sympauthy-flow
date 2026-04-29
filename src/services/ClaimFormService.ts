@@ -9,10 +9,7 @@ export interface ClaimInputOptions {
 }
 
 export class ClaimInputFieldOptions implements ClaimInputOptions {
-  constructor(
-    readonly claim: ClaimConfiguration
-  ) {
-  }
+  constructor(readonly claim: ClaimConfiguration) {}
 
   getId(): string {
     return this.claim.id
@@ -23,8 +20,7 @@ export class ClaimInputGroupOptions implements ClaimInputOptions {
   constructor(
     readonly group: ClaimGroup,
     readonly options: Array<ClaimInputFieldOptions>
-  ) {
-  }
+  ) {}
 
   getId(): string {
     return this.group
@@ -68,9 +64,7 @@ export class ClaimFormService {
   /**
    * Return a list of Yup schema validating the provided claim configurations.
    */
-  getSchemasForClaimConfigs(
-    claims: Array<ClaimConfiguration>
-  ): Record<string, Schema> {
+  getSchemasForClaimConfigs(claims: Array<ClaimConfiguration>): Record<string, Schema> {
     const schema: Record<string, Schema> = {}
     for (const claim of claims) {
       schema[claim.id] = this.getSchemaForClaim(claim)
@@ -83,13 +77,11 @@ export class ClaimFormService {
    *
    * @param claim The end-user claim to validate.
    */
-  getSchemaForClaim(
-    claim: ClaimConfiguration
-  ): Schema {
+  getSchemaForClaim(claim: ClaimConfiguration): Schema {
     let claimSchema: Schema
     switch (claim.type) {
       case 'email':
-        claimSchema = string()//.email()
+        claimSchema = string() //.email()
         break
       case 'string':
         claimSchema = string()
@@ -162,9 +154,7 @@ export class ClaimFormService {
     return new ClaimInputGroupOptions(group, claimsOptions)
   }
 
-  private createInputOptionsForClaim(
-    claim: ClaimConfiguration
-  ): ClaimInputFieldOptions {
+  private createInputOptionsForClaim(claim: ClaimConfiguration): ClaimInputFieldOptions {
     return new ClaimInputFieldOptions(claim)
   }
 }

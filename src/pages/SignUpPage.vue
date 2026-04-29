@@ -1,4 +1,4 @@
-<script lang='ts' setup>
+<script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import { object, string } from 'yup'
@@ -26,7 +26,7 @@ const claimFormService = injectRequired(claimFormServiceKey)
 const configuration = injectRequired(configurationKey)
 const signUpApi = injectRequired(signUpApiKey)
 
-const errorMessage = ref<String>()
+const errorMessage = ref<string>()
 const fieldErrorMessages = ref<Record<string, string>>()
 
 const signUpClaimIds = claimService.getIdentifierClaims(configuration)
@@ -47,10 +47,7 @@ const onSubmit = handleSubmit(async (values: any) => {
   errorMessage.value = undefined
   fieldErrorMessages.value = undefined
 
-  const body = pipe(
-    values,
-    omit(['confirm_password'])
-  )
+  const body = pipe(values, omit(['confirm_password']))
 
   const result = await signUpApi.signUp(body)
   if (result instanceof SuccessApiResponse) {
@@ -64,53 +61,53 @@ const onSubmit = handleSubmit(async (values: any) => {
 
 <template>
   <base-page>
-    <div class='flex justify-center w-full'>
+    <div class="flex justify-center w-full">
       <title-content-card>
         <template v-slot:title>
           {{ t('pages.sign_up.title') }}
         </template>
         <template v-slot:default>
-          <div class='mb-3 w-full text-center'>
-            <i18n-t keypath='pages.sign_up.already_have_account'>
-              <router-link :to="{ name: 'SignIn' }" class='text-primary underline'>
+          <div class="mb-3 w-full text-center">
+            <i18n-t keypath="pages.sign_up.already_have_account">
+              <router-link :to="{ name: 'SignIn' }" class="text-primary underline">
                 {{ t('pages.sign_up.sign_in_action') }}
               </router-link>
             </i18n-t>
           </div>
 
-          <common-alert v-if='errorMessage' class='mb-3'>
+          <common-alert v-if="errorMessage" class="mb-3">
             {{ errorMessage }}
           </common-alert>
 
-          <form @submit='onSubmit'>
+          <form @submit="onSubmit">
             <claims-input-group
-              :claims='signUpClaims'
-              :disabled='isSubmitting'
-              :error-messages='fieldErrorMessages'
-              class='mb-3'
+              :claims="signUpClaims"
+              :disabled="isSubmitting"
+              :error-messages="fieldErrorMessages"
+              class="mb-3"
             />
 
             <common-field
-              :disabled='isSubmitting'
+              :disabled="isSubmitting"
               :error-message="fieldErrorMessages?.['password']"
               :label="t('common.password')"
-              autocomplete='new-password'
-              class='mb-3'
-              name='password'
-              type='password'
+              autocomplete="new-password"
+              class="mb-3"
+              name="password"
+              type="password"
             />
 
             <common-field
-              :disabled='isSubmitting'
+              :disabled="isSubmitting"
               :error-message="fieldErrorMessages?.['confirm_password']"
               :label="t('common.confirm_password')"
-              autocomplete='new-password'
-              class='mb-3'
-              name='confirm_password'
-              type='password'
+              autocomplete="new-password"
+              class="mb-3"
+              name="confirm_password"
+              type="password"
             />
 
-            <common-button :loading='isSubmitting' class='w-full mt-5' type='submit'>
+            <common-button :loading="isSubmitting" class="w-full mt-5" type="submit">
               <template v-slot:default>
                 {{ t('common.sign_up') }}
               </template>
