@@ -30,7 +30,10 @@ const generateQrCode = async (uri: string) => {
 
 onMounted(() => generateQrCode(props.uri))
 
-watch(() => props.uri, (newUri) => generateQrCode(newUri))
+watch(
+  () => props.uri,
+  (newUri) => generateQrCode(newUri)
+)
 </script>
 
 <template>
@@ -47,7 +50,9 @@ watch(() => props.uri, (newUri) => generateQrCode(newUri))
     {{ t('pages.totp_enroll.manual_entry') }}
   </p>
   <div class="w-full mb-5 flex justify-center">
-    <code v-if="!loading" class="text-sm break-all bg-gray-100 px-2 py-1 rounded-sm">{{ secret }}</code>
+    <code v-if="!loading" class="text-sm break-all bg-gray-100 px-2 py-1 rounded-sm">{{
+      secret
+    }}</code>
     <div v-else class="w-48 h-6 bg-gray-100 animate-pulse rounded-sm" />
   </div>
 </template>

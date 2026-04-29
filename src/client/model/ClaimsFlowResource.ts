@@ -22,9 +22,6 @@ export const claimsFlowResourceSchema: JSONSchemaType<ClaimsFlowResource> = {
       nullable: true
     }
   },
-  oneOf: [
-    { required: ['claims'] },
-    { required: ['redirect_url'] }
-  ],
+  oneOf: [{ required: ['claims'] }, { required: ['redirect_url'] }],
   additionalProperties: true
 }

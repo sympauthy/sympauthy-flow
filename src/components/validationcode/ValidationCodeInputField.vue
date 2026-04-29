@@ -1,13 +1,12 @@
-<script lang='ts' setup>
-
+<script lang="ts" setup>
 import { computed, onMounted, watch } from 'vue'
 import { useField } from 'vee-validate'
 import { isStringNotEmpty } from '@/utils/StringUtils.ts'
 
 interface Props {
-  name: string,
-  codeLength?: number,
-  disabled?: boolean,
+  name: string
+  codeLength?: number
+  disabled?: boolean
   autofocus?: boolean
 }
 
@@ -33,7 +32,8 @@ const inputFieldNames = computed(() => {
   return names
 })
 
-const inputFieldClasses = 'w-0 h-[64px] p-1 md:p-3 mx-1 appearance-none rounded-sm flex-auto text-center border-2 text-gray-700 border-gray-300 focus:outline-1 disabled:outline-hidden disabled:pointer-events-none disabled:cursor-not-allowed'
+const inputFieldClasses =
+  'w-0 h-[64px] p-1 md:p-3 mx-1 appearance-none rounded-sm flex-auto text-center border-2 text-gray-700 border-gray-300 focus:outline-1 disabled:outline-hidden disabled:pointer-events-none disabled:cursor-not-allowed'
 
 const hasErrorMessage = computed(() => {
   return !props.disabled && errorMessage.value !== undefined
@@ -200,24 +200,24 @@ watch(value, (newValue: string, oldValue: string) => {
     updateAllInputFieldsForValue(newValue)
   }
 })
-
 </script>
 
 <template>
-  <div class='w-full'>
-    <div class='w-full text-3xl flex flex-row justify-center' v-on:paste='onPaste'>
-      <template v-for='inputFieldName of inputFieldNames' :key='inputFieldName'>
-        <input :class='inputFieldClasses'
-               :disabled='disabled'
-               :name='inputFieldName'
-               autocomplete='off'
-               maxlength='1'
-               type='text'
-               v-on:keydown='onKeyDown'>
+  <div class="w-full">
+    <div class="w-full text-3xl flex flex-row justify-center" v-on:paste="onPaste">
+      <template v-for="inputFieldName of inputFieldNames" :key="inputFieldName">
+        <input
+          :class="inputFieldClasses"
+          :disabled="disabled"
+          :name="inputFieldName"
+          autocomplete="off"
+          maxlength="1"
+          type="text"
+          v-on:keydown="onKeyDown"
+        />
       </template>
     </div>
-    <div v-if='hasErrorMessage'
-         class='w-full pt-1 text-sm text-danger'>
+    <div v-if="hasErrorMessage" class="w-full pt-1 text-sm text-danger">
       {{ errorMessage }}
     </div>
   </div>

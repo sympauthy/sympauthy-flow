@@ -15,8 +15,6 @@ import {
   resendClaimsValidationCodeResultResourceSchema
 } from '@/client/model/ResendClaimsValidationCodeResultResource.ts'
 
-
-
 export class ClaimsValidationApi extends AbstractApi {
   constructor(pinia: Pinia) {
     super(pinia)
@@ -58,4 +56,5 @@ export class ClaimsValidationApi extends AbstractApi {
   }
 }
 
-export const claimsValidationApiKey: InjectionKey<ClaimsValidationApi> = Symbol('ClaimsValidationApi')
+export const claimsValidationApiKey: InjectionKey<ClaimsValidationApi> =
+  Symbol('ClaimsValidationApi')

@@ -8,7 +8,6 @@ import type { ErrorApiResponse } from '@/client/ErrorApiResponse'
 import type { SuccessApiResponse } from '@/client/SuccessApiResponse'
 
 export class ClaimApi extends AbstractApi {
-
   constructor(pinia: Pinia) {
     super(pinia)
   }

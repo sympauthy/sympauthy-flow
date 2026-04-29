@@ -38,9 +38,6 @@ export const mfaFlowResourceSchema: JSONSchemaType<MfaFlowResource> = {
       nullable: true
     }
   },
-  anyOf: [
-    { required: ['redirect_url'] },
-    { required: ['methods'] }
-  ],
+  anyOf: [{ required: ['redirect_url'] }, { required: ['methods'] }],
   additionalProperties: true
 }

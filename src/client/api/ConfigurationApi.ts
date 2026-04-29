@@ -11,7 +11,9 @@ export class ConfigurationApi extends AbstractApi {
     super(pinia)
   }
 
-  async fetchConfiguration(): Promise<SuccessApiResponse<ConfigurationResource> | ErrorApiResponse> {
+  async fetchConfiguration(): Promise<
+    SuccessApiResponse<ConfigurationResource> | ErrorApiResponse
+  > {
     return this.get({
       path: '/api/v1/flow/configuration',
       schema: configurationResourceSchema

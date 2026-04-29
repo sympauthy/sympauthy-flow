@@ -41,30 +41,28 @@ onMounted(async () => {
 
 <template>
   <base-page>
-    <div class='flex justify-center w-full'>
+    <div class="flex justify-center w-full">
       <base-card>
         <template v-slot:title>
           {{ t('pages.error.title') }}
         </template>
 
-        <p v-if="fetchErrorMessage" class='mb-3 text-red-600'>
+        <p v-if="fetchErrorMessage" class="mb-3 text-red-600">
           {{ fetchErrorMessage }}
         </p>
 
         <template v-if="isLoading">
-          <skeleton-text :count="3" class='mb-3'></skeleton-text>
-          <hr class='m-3'>
-          <skeleton-text class='text-sm'></skeleton-text>
+          <skeleton-text :count="3" class="mb-3"></skeleton-text>
+          <hr class="m-3" />
+          <skeleton-text class="text-sm"></skeleton-text>
         </template>
 
         <template v-else>
-          <p class='mb-3'>
+          <p class="mb-3">
             {{ description }}
           </p>
-          <hr class='m-3'>
-          <p class='text-sm' style='color: var(--color-on-body);'>
-            {{ errorCode }} - {{ details }}
-          </p>
+          <hr class="m-3" />
+          <p class="text-sm" style="color: var(--color-on-body)">{{ errorCode }} - {{ details }}</p>
         </template>
       </base-card>
     </div>

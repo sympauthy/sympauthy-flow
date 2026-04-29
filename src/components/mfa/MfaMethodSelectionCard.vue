@@ -51,12 +51,7 @@ const onSkip = async () => {
           </template>
         </common-button>
 
-        <common-button
-          v-if="skipRedirectUrl"
-          class="w-full"
-          type="button"
-          @click="onSkip"
-        >
+        <common-button v-if="skipRedirectUrl" class="w-full" type="button" @click="onSkip">
           <template v-slot:default>
             {{ t('pages.mfa.skip') }}
           </template>

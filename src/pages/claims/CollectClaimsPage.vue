@@ -1,4 +1,4 @@
-<script lang='ts' setup>
+<script lang="ts" setup>
 import BasePage from '@/components/BasePage.vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
@@ -91,29 +91,29 @@ onMounted(async () => {
 
 <template>
   <base-page>
-    <div class='flex justify-center w-full'>
-      <title-content-card size='large' :loading='isLoadingClaims' :error='fetchErrorMessage'>
+    <div class="flex justify-center w-full">
+      <title-content-card size="large" :loading="isLoadingClaims" :error="fetchErrorMessage">
         <template v-slot:title>
           {{ t('pages.collect_claims.title') }}
         </template>
 
-        <common-alert v-if='submitErrorMessage' class='mb-3'>
+        <common-alert v-if="submitErrorMessage" class="mb-3">
           {{ submitErrorMessage }}
         </common-alert>
 
-        <form @submit='onSubmit'>
+        <form @submit="onSubmit">
           <claims-input-group
-            :claims='claimConfigs'
-            :disabled='isSubmitting'
-            :error-messages='fieldErrorMessages'
-            class='mb-3'
+            :claims="claimConfigs"
+            :disabled="isSubmitting"
+            :error-messages="fieldErrorMessages"
+            class="mb-3"
           />
 
           <common-button
-            :buttonStyle='primaryColoredButton'
-            :loading='isSubmitting'
-            class='w-full mt-5'
-            type='submit'
+            :buttonStyle="primaryColoredButton"
+            :loading="isSubmitting"
+            class="w-full mt-5"
+            type="submit"
           >
             <template v-slot:default>
               {{ t('common.continue') }}

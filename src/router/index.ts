@@ -76,11 +76,7 @@ export function makeTranslatedErrorRoute(
 }
 
 export function makeUnknownErrorRoute(): RouteLocationRaw {
-  return makeTranslatedErrorRoute(
-    'unknown',
-    'errors.unknown.details',
-    'errors.unknown.description'
-  )
+  return makeTranslatedErrorRoute('unknown', 'errors.unknown.details', 'errors.unknown.description')
 }
 
 export function makeRouter(): Router {

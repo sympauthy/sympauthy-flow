@@ -29,12 +29,16 @@ export class AbstractApi {
     this.state = stateStore.state
   }
 
-  async get<T>(options: QueryOptions & JsonQueryOptions<T>): Promise<SuccessApiResponse<T> | ErrorApiResponse> {
+  async get<T>(
+    options: QueryOptions & JsonQueryOptions<T>
+  ): Promise<SuccessApiResponse<T> | ErrorApiResponse> {
     const response = await this.fetch('get', options)
     return this.parseResponseContent(response, options)
   }
 
-  async post<T>(options: QueryOptions & PostQueryOptions & JsonQueryOptions<T>): Promise<SuccessApiResponse<T> | ErrorApiResponse> {
+  async post<T>(
+    options: QueryOptions & PostQueryOptions & JsonQueryOptions<T>
+  ): Promise<SuccessApiResponse<T> | ErrorApiResponse> {
     const response = await this.fetch('post', options, options)
     return this.parseResponseContent(response, options)
   }
@@ -141,7 +145,9 @@ export class AbstractApi {
     }
 
     const contentTypeCheckResult = await this.checkContentType(
-      response, options, 'application/json'
+      response,
+      options,
+      'application/json'
     )
     if (contentTypeCheckResult !== undefined) {
       return contentTypeCheckResult
@@ -163,13 +169,20 @@ export class AbstractApi {
     return new SuccessApiResponse(content)
   }
 
-  async checkResponseOk(response: Response, options: QueryOptions): Promise<ErrorApiResponse | undefined> {
+  async checkResponseOk(
+    response: Response,
+    options: QueryOptions
+  ): Promise<ErrorApiResponse | undefined> {
     if (!response.ok) {
       return this.parseErrorResponseContent(response, options)
     }
   }
 
-  async checkContentType(response: Response, options: QueryOptions, expectedContentType: string): Promise<ErrorApiResponse | undefined> {
+  async checkContentType(
+    response: Response,
+    options: QueryOptions,
+    expectedContentType: string
+  ): Promise<ErrorApiResponse | undefined> {
     const contentType = response.headers.get('Content-Type')
     if (!contentType || !contentType.includes(expectedContentType)) {
       console.error(
@@ -181,7 +194,9 @@ export class AbstractApi {
 
   private async parseErrorResponseContent(response: Response, options: QueryOptions) {
     const checkContentTypeResult = await this.checkContentType(
-      response, options, 'application/json'
+      response,
+      options,
+      'application/json'
     )
     if (checkContentTypeResult !== undefined) {
       return checkContentTypeResult

@@ -66,18 +66,9 @@ const onSubmit = handleSubmit(async (values, ctx) => {
               {{ t('pages.totp_challenge.description') }}
             </p>
 
-            <validation-code-field
-              autofocus
-              :code-length="6"
-              class="mb-7"
-              name="code"
-            />
+            <validation-code-field autofocus :code-length="6" class="mb-7" name="code" />
 
-            <common-button
-              :submitting="isSubmitting"
-              class="w-full mt-5"
-              type="submit"
-            >
+            <common-button :submitting="isSubmitting" class="w-full mt-5" type="submit">
               <template v-slot:default>
                 {{ t('pages.totp_challenge.submit') }}
               </template>

@@ -131,7 +131,9 @@ const onResend = async () => {
 
 const onSubmit = handleSubmit(async (values, ctx) => {
   if (validationCode.value === undefined) {
-    console.error('Cannot submit validation code: validationCode is undefined. The server may have returned a redirect_url that was not handled.')
+    console.error(
+      'Cannot submit validation code: validationCode is undefined. The server may have returned a redirect_url that was not handled.'
+    )
     submitErrorMessage.value = t('common.unreachable_state')
     return
   }
@@ -190,11 +192,7 @@ onUnmounted(() => {
               {{ t('pages.validate_claims.description.2', [mediaName]) }}
             </p>
 
-            <validation-code-field
-              autofocus
-              class="mb-7"
-              name="code"
-            />
+            <validation-code-field autofocus class="mb-7" name="code" />
 
             <common-actionable-link
               :disabled="isSubmitting"
