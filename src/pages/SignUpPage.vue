@@ -26,7 +26,7 @@ const claimFormService = injectRequired(claimFormServiceKey)
 const configuration = injectRequired(configurationKey)
 const signUpApi = injectRequired(signUpApiKey)
 
-const errorMessage = ref<String>()
+const errorMessage = ref<string>()
 const fieldErrorMessages = ref<Record<string, string>>()
 
 const signUpClaimIds = claimService.getIdentifierClaims(configuration)

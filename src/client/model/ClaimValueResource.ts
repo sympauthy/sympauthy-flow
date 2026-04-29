@@ -1,6 +1,4 @@
 import type { JSONSchemaType } from 'ajv'
-import type { ClaimType } from '@/client/model/config/ClaimType'
-import type { ClaimGroup } from '@/client/model/config/ClaimGroup'
 import type { ClaimConfiguration } from '@/client/model/ClaimConfiguration'
 
 export type ClaimValueResource = ClaimConfiguration & {

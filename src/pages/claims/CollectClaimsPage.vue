@@ -75,7 +75,7 @@ const onSubmit = handleSubmit(async (values: any) => {
   submitErrorMessage.value = undefined
   fieldErrorMessages.value = undefined
 
-  let response = await claimApi.collectClaims(values)
+  const response = await claimApi.collectClaims(values)
   if (response instanceof SuccessApiResponse) {
     await redirectOrPush(router, response.content.redirect_url)
   } else {

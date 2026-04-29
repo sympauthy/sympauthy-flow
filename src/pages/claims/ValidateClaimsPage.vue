@@ -151,7 +151,7 @@ const onSubmit = handleSubmit(async (values, ctx) => {
 })
 
 onMounted(async () => {
-  let mediaQueryParam = route.query.media?.toString()
+  const mediaQueryParam = route.query.media?.toString()
   if (mediaQueryParam === undefined) {
     await router.replace(makeUnknownErrorRoute())
     return

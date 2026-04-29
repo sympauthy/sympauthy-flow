@@ -19,7 +19,7 @@ import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 const signInApi = injectRequired(signInApiKey)
 const { t } = useI18n()
 
-const submitError = ref<String>()
+const submitError = ref<string>()
 
 const router = useRouter()
 const configuration = injectRequired(configurationKey)
