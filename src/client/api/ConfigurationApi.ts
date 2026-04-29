@@ -16,7 +16,8 @@ export class ConfigurationApi extends AbstractApi {
   > {
     return this.get({
       path: '/api/v1/flow/configuration',
-      schema: configurationResourceSchema
+      schema: configurationResourceSchema,
+      authenticated: true
     })
   }
 }
