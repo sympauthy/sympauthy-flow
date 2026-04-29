@@ -6,6 +6,10 @@ Vue 3 SPA implementing an OAuth2-compatible authentication flow (sign-in, sign-u
 
 [VSCode](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
 
+## Prerequisites
+
+This project uses [nvm](https://github.com/nvm-sh/nvm) to manage the Node.js version. Run `nvm use` to activate the correct version from `.nvmrc`.
+
 ## Project Setup
 
 ```sh

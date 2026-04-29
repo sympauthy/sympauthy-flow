@@ -9,8 +9,8 @@ sympauthy-flow is a Vue 3 SPA implementing an OAuth2-compatible authentication f
 ## Commands
 
 ```bash
-# All commands require Node.js >= 20. Use nvm:
-source ~/.nvm/nvm.sh && nvm use 20
+# Use nvm to activate the correct Node.js version:
+source ~/.nvm/nvm.sh && nvm use
 
 # Development server (proxies /api to localhost:8080)
 npm run dev
