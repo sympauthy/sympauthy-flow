@@ -34,7 +34,7 @@ No test framework is configured.
 
 ### Stack
 
-- **Vue 3** (Composition API, `<script setup>`) + **TypeScript 5.9**
+- **Vue 3** (Composition API, `<script setup>`) + **TypeScript 6**
 - **Vite 7** with `@vitejs/plugin-vue`, `@tailwindcss/vite`, `@intlify/unplugin-vue-i18n`
 - **Pinia** for state management, **Vue Router 5**, **Vue-i18n**
 - **Tailwind CSS v4** with custom `@utility` directives in `src/styles/style.css`
@@ -84,3 +84,4 @@ Vite proxies `/api` requests to `http://localhost:8080` (the sympauthy backend).
 - Prettier: 2-space indent, no trailing commas, 100 char line width, single quotes
 - ESLint: Vue 3 recommended + TypeScript + Prettier integration
 - Components use `<script setup lang="ts">` with Composition API
+- **Always run `npm run format` before committing** to ensure all files pass the CI format check
