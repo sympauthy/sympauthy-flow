@@ -61,7 +61,7 @@ const loginLabel = computed(() => {
       {{ t('components.by_password_card.title') }}
     </template>
     <template v-slot:default>
-      <div class="mb-3 w-full text-center">
+      <div v-if="configuration.features.sign_up_enabled !== false" class="mb-3 w-full text-center">
         <i18n-t keypath="components.by_password_card.no_account">
           <router-link :to="{ name: 'SignUp' }" class="text-primary underline">
             {{ t('components.by_password_card.sign_up_action') }}
