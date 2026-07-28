@@ -1,12 +1,7 @@
 <script lang="ts" setup>
-import ConfiguredApp from '@/ConfiguredApp.vue'
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <Suspense>
-    <template #default>
-      <ConfiguredApp />
-    </template>
-    <template #fallback> FIXME: loading... </template>
-  </Suspense>
+  <RouterView />
 </template>

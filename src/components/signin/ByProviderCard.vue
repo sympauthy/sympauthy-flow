@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { useConfiguration } from '@/stores/ConfigurationStore'
-import { storeToRefs } from 'pinia'
 import ProviderButton from '@/components/signin/ProviderButton.vue'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
+import type { ProviderResource } from '@/client/model/ProviderResource'
 
-const configurationStore = useConfiguration()
-const { configuration } = storeToRefs(configurationStore)
+defineProps<{
+  providers: Array<ProviderResource>
+}>()
 </script>
 
 <template>
@@ -13,7 +13,7 @@ const { configuration } = storeToRefs(configurationStore)
     <template v-slot:title> Login using social account to get quick access. </template>
     <template v-slot:default>
       <provider-button
-        v-for="provider of configuration?.providers"
+        v-for="provider of providers"
         v-bind:key="provider.id"
         size="default"
         v-bind:provider="provider"

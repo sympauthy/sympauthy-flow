@@ -10,11 +10,16 @@ import { useRouter } from 'vue-router'
 import CommonButton from '@/components/CommonButton.vue'
 import CommonAlert from '@/components/CommonAlert.vue'
 import CommonInput from '@/components/CommonInputField.vue'
-import { configurationKey } from '@/utils/ConfigurationUtils'
 import { or } from '@/utils/StringUtils'
 import { i18n } from '@/i18n'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
+import type { PasswordResource } from '@/client/model/PasswordResource'
+
+const props = defineProps<{
+  password: PasswordResource
+  signUpRedirectUrl?: string
+}>()
 
 const signInApi = injectRequired(signInApiKey)
 const { t } = useI18n()
@@ -22,7 +27,6 @@ const { t } = useI18n()
 const submitError = ref<string>()
 
 const router = useRouter()
-const configuration = injectRequired(configurationKey)
 
 const validationSchema = object({
   login: string().required(),
@@ -44,15 +48,13 @@ const onSubmit = handleSubmit(async (values: any) => {
   }
 })
 
-const loginLabel = computed(() => {
-  const claims = configuration.claims || []
-  const loginClaims = (configuration.password?.identifier_claims || [])
-    .map((claim) => {
-      return claims.find((it) => it.id == claim)?.name
-    })
-    .filter((it): it is string => !!it)
-  return or(i18n, loginClaims)
-})
+const loginLabel = computed(() => or(i18n, props.password.identifier_claims ?? []))
+
+async function onSignUpClick() {
+  if (props.signUpRedirectUrl) {
+    await redirectOrPush(router, props.signUpRedirectUrl)
+  }
+}
 </script>
 
 <template>
@@ -61,11 +63,11 @@ const loginLabel = computed(() => {
       {{ t('components.by_password_card.title') }}
     </template>
     <template v-slot:default>
-      <div v-if="configuration.features.sign_up_enabled !== false" class="mb-3 w-full text-center">
+      <div v-if="signUpRedirectUrl" class="mb-3 w-full text-center">
         <i18n-t keypath="components.by_password_card.no_account">
-          <router-link :to="{ name: 'SignUp' }" class="text-primary underline">
+          <a class="text-primary underline cursor-pointer" @click="onSignUpClick">
             {{ t('components.by_password_card.sign_up_action') }}
-          </router-link>
+          </a>
         </i18n-t>
       </div>
 

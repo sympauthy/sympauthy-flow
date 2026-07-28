@@ -1,4 +1,3 @@
-import type { ConfigurationResource } from '@/client/model/config/ConfigurationResource'
 import { Schema, string } from 'yup'
 import type { ClaimConfiguration } from '@/client/model/ClaimConfiguration'
 import type { ClaimGroup } from '@/client/model/config/ClaimGroup'
@@ -32,35 +31,6 @@ export class ClaimInputGroupOptions implements ClaimInputOptions {
 }
 
 export class ClaimFormService {
-  /**
-   * Return a list of configuration for the provided claims.
-   * If a claim is not found for a configuration, we ignore it.
-   */
-  getConfigForClaims(
-    configuration: ConfigurationResource,
-    claims: Array<string>
-  ): Array<ClaimConfiguration> {
-    const claimConfigs = configuration.claims || []
-    const filteredClaimConfigs: Array<ClaimConfiguration> = []
-    for (const claim of claims) {
-      const claimConfig = claimConfigs.find((it) => it.id === claim)
-      if (claimConfig !== undefined) {
-        filteredClaimConfigs.push(claimConfig)
-      }
-    }
-    return filteredClaimConfigs
-  }
-
-  /**
-   * Return a list of Yup schema validating the provided end-user claims.
-   */
-  getSchemasForClaims(
-    configuration: ConfigurationResource,
-    claims: Array<string>
-  ): Record<string, Schema> {
-    return this.getSchemasForClaimConfigs(this.getConfigForClaims(configuration, claims))
-  }
-
   /**
    * Return a list of Yup schema validating the provided claim configurations.
    */
@@ -103,18 +73,6 @@ export class ClaimFormService {
       claimSchema = claimSchema.required()
     }
     return claimSchema
-  }
-
-  /**
-   * Return the list of input field and input group to display to the end-user.
-   *
-   * The list is sorted in the order they must be presented to the end-user.
-   */
-  getOptionsForClaims(
-    configuration: ConfigurationResource,
-    claims: Array<string>
-  ): Array<ClaimInputFieldOptions | ClaimInputGroupOptions> {
-    return this.getOptionsForClaimConfigs(this.getConfigForClaims(configuration, claims))
   }
 
   /**
