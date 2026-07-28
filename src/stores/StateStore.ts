@@ -19,18 +19,5 @@ export const useState = defineStore('state', () => {
     }
   }
 
-  /**
-   * Redirect the end-user to an external url that is protected by the state.
-   *
-   * This function will automatically append the state before redirecting the user.
-   *
-   * @param url
-   */
-  const redirectToAuthenticatedUrl = (url: string) => {
-    const uri = new URL(url)
-    uri.searchParams.append('state', state())
-    document.location = uri.toString()
-  }
-
-  return { state, redirectToAuthenticatedUrl }
+  return { state }
 })

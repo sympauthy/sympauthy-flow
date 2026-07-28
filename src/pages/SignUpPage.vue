@@ -1,42 +1,46 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
-import { ref } from 'vue'
-import { object, string } from 'yup'
+import { computed, onMounted, ref } from 'vue'
+import { object, string, type Schema } from 'yup'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { signUpApiKey } from '@/client/api/SignUpApi'
 import ClaimsInputGroup from '@/components/claim/group/ClaimsInputGroup.vue'
-import { configurationKey } from '@/utils/ConfigurationUtils'
 import { claimFormServiceKey } from '@/services/ClaimFormService'
 import { getErrorMessage, getErrorMessageForProperties } from '@/client/ErrorApiResponse'
 import { useRouter } from 'vue-router'
 import CommonAlert from '@/components/CommonAlert.vue'
 import CommonField from '@/components/CommonInputField.vue'
-import { claimServiceKey } from '@/services/ClaimsService'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import BasePage from '@/components/BasePage.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import CommonButton from '@/components/CommonButton.vue'
 import { useForm } from 'vee-validate'
 import { omit, pipe } from 'rambda'
+import type { ClaimConfiguration } from '@/client/model/ClaimConfiguration'
+import { makeErrorRoute } from '@/router'
 
 const { t } = useI18n()
 const router = useRouter()
-const claimService = injectRequired(claimServiceKey)
 const claimFormService = injectRequired(claimFormServiceKey)
-const configuration = injectRequired(configurationKey)
 const signUpApi = injectRequired(signUpApiKey)
 
+const isLoading = ref(true)
 const errorMessage = ref<string>()
 const fieldErrorMessages = ref<Record<string, string>>()
 
-const signUpClaimIds = claimService.getIdentifierClaims(configuration)
-const signUpClaims = claimFormService.getConfigForClaims(configuration, signUpClaimIds)
+const signUpClaims = ref<Array<ClaimConfiguration>>([])
+const passwordEnabled = ref(false)
+const signInRedirectUrl = ref<string>()
 
-const claimSchemas = claimFormService.getSchemasForClaimConfigs(signUpClaims)
-const validationSchema = object({
-  ...claimSchemas,
-  password: string().required(),
-  confirm_password: string().required()
+const validationSchema = computed(() => {
+  const schema: Record<string, Schema> = {
+    ...claimFormService.getSchemasForClaimConfigs(signUpClaims.value)
+  }
+  if (passwordEnabled.value) {
+    schema.password = string().required()
+    schema.confirm_password = string().required()
+  }
+  return object(schema)
 })
 
 const { handleSubmit, isSubmitting } = useForm({
@@ -57,21 +61,44 @@ const onSubmit = handleSubmit(async (values: any) => {
     errorMessage.value = getErrorMessage(result)
   }
 })
+
+async function onSignInClick() {
+  if (signInRedirectUrl.value) {
+    await redirectOrPush(router, signInRedirectUrl.value)
+  }
+}
+
+onMounted(async () => {
+  const response = await signUpApi.fetchSignUp()
+  if (response instanceof SuccessApiResponse) {
+    // The sign-up step does not apply: the server tells us where to go instead.
+    if (response.content.redirect_url) {
+      await redirectOrPush(router, response.content.redirect_url)
+      return
+    }
+    signUpClaims.value = response.content.claims ?? []
+    passwordEnabled.value = response.content.password != null
+    signInRedirectUrl.value = response.content.sign_in_redirect_url
+    isLoading.value = false
+  } else {
+    await router.replace(makeErrorRoute(response.errorCode, response.details, response.description))
+  }
+})
 </script>
 
 <template>
   <base-page>
     <div class="flex justify-center w-full">
-      <title-content-card>
+      <title-content-card :loading="isLoading">
         <template v-slot:title>
           {{ t('pages.sign_up.title') }}
         </template>
         <template v-slot:default>
-          <div class="mb-3 w-full text-center">
+          <div v-if="signInRedirectUrl" class="mb-3 w-full text-center">
             <i18n-t keypath="pages.sign_up.already_have_account">
-              <router-link :to="{ name: 'SignIn' }" class="text-primary underline">
+              <a class="text-primary underline cursor-pointer" @click="onSignInClick">
                 {{ t('pages.sign_up.sign_in_action') }}
-              </router-link>
+              </a>
             </i18n-t>
           </div>
 
@@ -87,25 +114,27 @@ const onSubmit = handleSubmit(async (values: any) => {
               class="mb-3"
             />
 
-            <common-field
-              :disabled="isSubmitting"
-              :error-message="fieldErrorMessages?.['password']"
-              :label="t('common.password')"
-              autocomplete="new-password"
-              class="mb-3"
-              name="password"
-              type="password"
-            />
+            <template v-if="passwordEnabled">
+              <common-field
+                :disabled="isSubmitting"
+                :error-message="fieldErrorMessages?.['password']"
+                :label="t('common.password')"
+                autocomplete="new-password"
+                class="mb-3"
+                name="password"
+                type="password"
+              />
 
-            <common-field
-              :disabled="isSubmitting"
-              :error-message="fieldErrorMessages?.['confirm_password']"
-              :label="t('common.confirm_password')"
-              autocomplete="new-password"
-              class="mb-3"
-              name="confirm_password"
-              type="password"
-            />
+              <common-field
+                :disabled="isSubmitting"
+                :error-message="fieldErrorMessages?.['confirm_password']"
+                :label="t('common.confirm_password')"
+                autocomplete="new-password"
+                class="mb-3"
+                name="confirm_password"
+                type="password"
+              />
+            </template>
 
             <common-button :loading="isSubmitting" class="w-full mt-5" type="submit">
               <template v-slot:default>

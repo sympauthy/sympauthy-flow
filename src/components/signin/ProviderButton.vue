@@ -1,17 +1,14 @@
 <script lang="ts" setup>
-import type { ProviderConfigurationResource } from '@/client/model/config/ProviderConfigurationResource'
-import { useState } from '@/stores/StateStore'
-
-const stateStore = useState()
-const { redirectToAuthenticatedUrl } = stateStore
+import type { ProviderResource } from '@/client/model/ProviderResource'
 
 const props = defineProps<{
   size: 'small' | 'default'
-  provider: ProviderConfigurationResource
+  provider: ProviderResource
 }>()
 
 function onClick() {
-  redirectToAuthenticatedUrl(props.provider.authorize_url)
+  // The server already appended the flow state to the authorize URL.
+  document.location.href = props.provider.authorize_url
 }
 </script>
 
