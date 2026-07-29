@@ -11,10 +11,20 @@ export class MfaApi extends AbstractApi {
     super(pinia)
   }
 
-  async fetchMfaStep(): Promise<SuccessApiResponse<MfaFlowResource> | ErrorApiResponse> {
+  async fetchEnrollmentSelection(): Promise<
+    SuccessApiResponse<MfaFlowResource> | ErrorApiResponse
+  > {
     return this.get({
       authenticated: true,
-      path: '/api/v1/flow/mfa',
+      path: '/api/v1/flow/mfa/enrollment',
+      schema: mfaFlowResourceSchema
+    })
+  }
+
+  async fetchChallengeSelection(): Promise<SuccessApiResponse<MfaFlowResource> | ErrorApiResponse> {
+    return this.get({
+      authenticated: true,
+      path: '/api/v1/flow/mfa/challenge',
       schema: mfaFlowResourceSchema
     })
   }

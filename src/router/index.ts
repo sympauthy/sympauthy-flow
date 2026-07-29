@@ -12,7 +12,7 @@ import SignUpPage from '@/pages/SignUpPage.vue'
 import { merge } from 'ts-deepmerge'
 import CollectClaimsPage from '@/pages/claims/CollectClaimsPage.vue'
 import ValidateClaimsPage from '@/pages/claims/ValidateClaimsPage.vue'
-import MfaPage from '@/pages/mfa/MfaPage.vue'
+import MfaSelectionPage from '@/pages/mfa/MfaSelectionPage.vue'
 import TotpChallengePage from '@/pages/mfa/TotpChallengePage.vue'
 import TotpEnrollPage from '@/pages/mfa/TotpEnrollPage.vue'
 import { isArrayNotEmpty } from '@/utils/ArrayUtils.ts'
@@ -121,11 +121,21 @@ export function makeRouter(): Router {
         }
       },
       {
-        path: '/mfa',
-        name: 'Mfa',
-        component: MfaPage,
+        path: '/mfa/enrollment',
+        name: 'MfaEnrollmentSelection',
+        component: MfaSelectionPage,
         meta: {
-          stateRequired: true
+          stateRequired: true,
+          mfaKind: 'enrollment'
+        }
+      },
+      {
+        path: '/mfa/challenge',
+        name: 'MfaChallengeSelection',
+        component: MfaSelectionPage,
+        meta: {
+          stateRequired: true,
+          mfaKind: 'challenge'
         }
       },
       {

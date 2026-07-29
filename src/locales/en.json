@@ -60,8 +60,14 @@
       }
     },
     "mfa": {
-      "title": "Two-factor authentication",
-      "description": "Choose a second factor to verify your identity.",
+      "enrollment": {
+        "title": "Set up two-factor authentication",
+        "description": "Choose a second factor to secure your account."
+      },
+      "challenge": {
+        "title": "Two-factor authentication",
+        "description": "Choose a second factor to verify your identity."
+      },
       "skip": "Skip",
       "methods": {
         "TOTP": "Authenticator app"

@@ -8,6 +8,8 @@ import type { MfaMethodResource } from '@/client/model/MfaFlowResource'
 
 interface Props {
   methods: MfaMethodResource[]
+  titleKey: string
+  descriptionKey: string
   skipRedirectUrl?: string
 }
 
@@ -30,12 +32,12 @@ const onSkip = async () => {
 <template>
   <title-content-card size="default">
     <template v-slot:title>
-      {{ t('pages.mfa.title') }}
+      {{ t(titleKey) }}
     </template>
 
     <template v-slot:default>
       <p class="w-full mb-7 text-justify">
-        {{ t('pages.mfa.description') }}
+        {{ t(descriptionKey) }}
       </p>
 
       <div class="flex flex-col gap-3 w-full">
