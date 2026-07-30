@@ -48,7 +48,12 @@ const onSubmit = handleSubmit(async (values: any) => {
   }
 })
 
-const loginLabel = computed(() => or(i18n, props.password.identifier_claims ?? []))
+const loginLabel = computed(() =>
+  or(
+    i18n,
+    (props.password.identifier_claims ?? []).map((claim) => claim.name)
+  )
+)
 
 async function onSignUpClick() {
   if (props.signUpRedirectUrl) {

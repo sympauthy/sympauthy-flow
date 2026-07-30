@@ -76,7 +76,7 @@ onMounted(async () => {
       await redirectOrPush(router, response.content.redirect_url)
       return
     }
-    signUpClaims.value = response.content.claims ?? []
+    signUpClaims.value = response.content.password?.identifier_claims ?? []
     passwordEnabled.value = response.content.password != null
     signInRedirectUrl.value = response.content.sign_in_redirect_url
     isLoading.value = false
