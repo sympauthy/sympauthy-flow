@@ -1,4 +1,6 @@
 import type { JSONSchemaType } from 'ajv'
+import type { CollectableClaimResource } from '@/client/model/CollectableClaimResource'
+import { collectableClaimResourceSchema } from '@/client/model/CollectableClaimResource'
 
 /**
  * Password authentication configuration for a flow step.
@@ -7,7 +9,11 @@ import type { JSONSchemaType } from 'ajv'
  * A `null` value means the password method is disabled for that step.
  */
 export interface PasswordResource {
-  identifier_claims: Array<string>
+  /**
+   * Claims that uniquely identify a user. Used as the login during sign-in and
+   * as the required claims collected during sign-up.
+   */
+  identifier_claims: Array<CollectableClaimResource>
 }
 
 export const passwordResourceSchema: JSONSchemaType<PasswordResource> = {
@@ -16,7 +22,7 @@ export const passwordResourceSchema: JSONSchemaType<PasswordResource> = {
     identifier_claims: {
       type: 'array',
       items: {
-        type: 'string'
+        ...collectableClaimResourceSchema
       }
     }
   },

@@ -1,8 +1,6 @@
 import type { JSONSchemaType } from 'ajv'
 import type { PasswordResource } from '@/client/model/PasswordResource'
 import { passwordResourceSchema } from '@/client/model/PasswordResource'
-import type { CollectableClaimResource } from '@/client/model/CollectableClaimResource'
-import { collectableClaimResourceSchema } from '@/client/model/CollectableClaimResource'
 
 /**
  * Configuration of the sign-up step.
@@ -17,10 +15,11 @@ import { collectableClaimResourceSchema } from '@/client/model/CollectableClaimR
  * the flow `state` already appended.
  */
 export interface SignUpFlowResource {
-  /** Password sign-up configuration; null/absent when password sign-up is disabled. */
+  /**
+   * Password sign-up configuration; null/absent when password sign-up is disabled.
+   * The claims to collect at sign-up are exposed as `password.identifier_claims`.
+   */
   password?: PasswordResource
-  /** Claims to collect at sign-up. */
-  claims?: Array<CollectableClaimResource>
   /** Link to the sign-in step; present iff sign-in is allowed (absent during an invitation flow). */
   sign_in_redirect_url?: string
   /** Set when sign-up does not apply; the end-user should be redirected there. */
@@ -32,13 +31,6 @@ export const signUpFlowResourceSchema: JSONSchemaType<SignUpFlowResource> = {
   properties: {
     password: {
       ...passwordResourceSchema,
-      nullable: true
-    },
-    claims: {
-      type: 'array',
-      items: {
-        ...collectableClaimResourceSchema
-      },
       nullable: true
     },
     sign_in_redirect_url: {
