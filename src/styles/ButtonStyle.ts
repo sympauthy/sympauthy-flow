@@ -23,3 +23,10 @@ export const primaryColoredButton: ButtonStyle = Object.freeze({
   submittingClasses: 'bg-(--color-primary) text-(--color-on-primary) cursor-wait',
   disabledClasses: 'bg-(--color-disabled) text-(--color-on-disabled) pointer-events-none'
 })
+
+export const secondaryButton: ButtonStyle = Object.freeze({
+  activeClasses: 'bg-transparent text-(--color-primary) border-(--color-primary)',
+  loadingClasses: 'bg-transparent text-(--color-primary) border-(--color-primary) cursor-wait',
+  submittingClasses: 'bg-transparent text-(--color-primary) border-(--color-primary) cursor-wait',
+  disabledClasses: 'bg-(--color-disabled) text-(--color-on-disabled) pointer-events-none'
+})

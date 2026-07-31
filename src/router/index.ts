@@ -15,6 +15,7 @@ import ValidateClaimsPage from '@/pages/claims/ValidateClaimsPage.vue'
 import MfaSelectionPage from '@/pages/mfa/MfaSelectionPage.vue'
 import TotpChallengePage from '@/pages/mfa/TotpChallengePage.vue'
 import TotpEnrollPage from '@/pages/mfa/TotpEnrollPage.vue'
+import ConfirmPage from '@/pages/ConfirmPage.vue'
 import { isArrayNotEmpty } from '@/utils/ArrayUtils.ts'
 import { isString } from '@/utils/StringUtils.ts'
 
@@ -87,6 +88,14 @@ export function makeRouter(): Router {
         path: '/',
         name: 'Home',
         redirect: '/sign-in'
+      },
+      {
+        path: '/confirm',
+        name: 'Confirm',
+        component: ConfirmPage,
+        meta: {
+          stateRequired: true
+        }
       },
       {
         path: '/sign-in',
