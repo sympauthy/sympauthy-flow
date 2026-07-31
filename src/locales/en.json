@@ -87,6 +87,18 @@
       "submit": "Confirm",
       "submitting": "Confirming..."
     },
+    "confirm": {
+      "title": "Did you request this?",
+      "description": "{client} asked to {action} on your account. Only continue if you started this action.",
+      "description_no_client": "You have been asked to {action} on your account. Only continue if you started this action.",
+      "actions": {
+        "ENROLL_MFA": "set up two-factor authentication"
+      },
+      "confirm": "Yes, continue",
+      "confirming": "Confirming...",
+      "cancel": "No, cancel",
+      "cancelling": "Cancelling..."
+    },
     "error": {
       "title": "Something went wrong"
     }
