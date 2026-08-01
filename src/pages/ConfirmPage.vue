@@ -27,14 +27,14 @@ const isConfirming = ref(false)
 const isCancelling = ref(false)
 
 // The action code is machine-readable (e.g. ENROLL_MFA); resolve a human label, falling back to the raw code.
-const description = computed(() => {
+const request = computed(() => {
   if (action.value === undefined) {
     return ''
   }
   const actionLabel = t(`pages.confirm.actions.${action.value}`, action.value)
   return initiatingClientId.value !== undefined
-    ? t('pages.confirm.description', { client: initiatingClientId.value, action: actionLabel })
-    : t('pages.confirm.description_no_client', { action: actionLabel })
+    ? t('pages.confirm.request', { client: initiatingClientId.value, action: actionLabel })
+    : t('pages.confirm.request_no_client', { action: actionLabel })
 })
 
 onMounted(async () => {
@@ -92,8 +92,12 @@ const onCancel = async () => {
             {{ submitErrorMessage }}
           </common-alert>
 
-          <p class="w-full mb-7 text-justify">
-            {{ description }}
+          <p class="w-full mb-3 text-justify">
+            {{ request }}
+          </p>
+
+          <p class="w-full mb-7 text-justify font-semibold">
+            {{ t('pages.confirm.warning') }}
           </p>
 
           <div class="flex flex-col gap-3 w-full">
