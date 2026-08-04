@@ -2,6 +2,7 @@ import type { JSONSchemaType } from 'ajv'
 
 export type ConfirmFlowResource = {
   action?: string
+  requires_reauthentication?: boolean
   initiating_client_id?: string
   redirect_url?: string
 }
@@ -11,6 +12,10 @@ export const confirmFlowResourceSchema: JSONSchemaType<ConfirmFlowResource> = {
   properties: {
     action: {
       type: 'string',
+      nullable: true
+    },
+    requires_reauthentication: {
+      type: 'boolean',
       nullable: true
     },
     initiating_client_id: {

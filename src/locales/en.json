@@ -91,9 +91,11 @@
       "title": "Verify this request",
       "request": "{client} has requested to {action} on your account.",
       "request_no_client": "A request has been made to {action} on your account.",
+      "reauthentication_notice": "Because this is a security-sensitive operation, you will be asked to sign in again to confirm your identity before it is completed.",
       "warning": "To protect your account, do not continue unless you initiated this request.",
       "actions": {
-        "ENROLL_MFA": "set up two-factor authentication"
+        "ENROLL_MFA": "set up two-factor authentication",
+        "LINK_PROVIDER": "link an identity provider"
       },
       "confirm": "Yes, continue",
       "confirming": "Confirming...",
