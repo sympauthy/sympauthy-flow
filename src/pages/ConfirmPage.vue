@@ -20,6 +20,7 @@ const cancelApi = injectRequired(cancelApiKey)
 
 const fetchErrorMessage = ref<string | undefined>(undefined)
 const action = ref<string | undefined>(undefined)
+const requiresReauthentication = ref(false)
 const initiatingClientId = ref<string | undefined>(undefined)
 
 const submitErrorMessage = ref<string | undefined>(undefined)
@@ -45,6 +46,7 @@ onMounted(async () => {
       await redirectOrPush(router, response.content.redirect_url)
     } else {
       action.value = response.content.action
+      requiresReauthentication.value = response.content.requires_reauthentication ?? false
       initiatingClientId.value = response.content.initiating_client_id
     }
   } else {
@@ -94,6 +96,10 @@ const onCancel = async () => {
 
           <p class="w-full mb-3 text-justify">
             {{ request }}
+          </p>
+
+          <p v-if="requiresReauthentication" class="w-full mb-3 text-justify">
+            {{ t('pages.confirm.reauthentication_notice') }}
           </p>
 
           <p class="w-full mb-7 text-justify font-semibold">
