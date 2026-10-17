@@ -73,6 +73,26 @@ Routes use `meta.stateRequired` to indicate OAuth state is needed. A `beforeEach
 
 Vite proxies `/api` requests to `http://localhost:8080` (the sympauthy backend).
 
+## Git Workflow
+
+- **Merge PRs with the squash strategy.** `--delete-branch` removes both the remote branch and the local branch as part of the merge:
+
+  ```bash
+  gh pr merge --squash --delete-branch
+  ```
+
+- After the merge, switch back to `main` and pull the squashed commit:
+
+  ```bash
+  git checkout main && git pull
+  ```
+
+- If the PR was merged via the GitHub web UI (remote branch already deleted), clean up the local branch too:
+
+  ```bash
+  git branch -d <branch>
+  ```
+
 ## Documentation
 
 - **Functional documentation**: https://sympauthy.github.io/documentation/functional/
