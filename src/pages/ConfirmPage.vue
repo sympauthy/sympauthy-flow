@@ -27,7 +27,7 @@ const submitErrorMessage = ref<string | undefined>(undefined)
 const isConfirming = ref(false)
 const isCancelling = ref(false)
 
-// The action code is machine-readable (e.g. ENROLL_MFA); resolve a human label, falling back to the raw code.
+// The action code is machine-readable (e.g. enroll_mfa); resolve a human label, falling back to the raw code.
 const request = computed(() => {
   if (action.value === undefined) {
     return ''

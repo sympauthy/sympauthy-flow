@@ -5,7 +5,7 @@ export type ValidationCodeResource = {
   id: string
   media: string
   reasons: Array<string>
-  resendDate?: string
+  resend_date?: string
 }
 
 /**
@@ -15,10 +15,10 @@ export type ValidationCodeResource = {
 export const getDurationToWaitBeforeResend = (
   code?: ValidationCodeResource
 ): Temporal.Duration | undefined => {
-  if (code === undefined || code.resendDate === undefined) {
+  if (code === undefined || code.resend_date === undefined) {
     return undefined
   }
-  const resendDate = Temporal.PlainDateTime.from(code.resendDate)
+  const resendDate = Temporal.PlainDateTime.from(code.resend_date)
   const duration = resendDate.since(Temporal.Now.plainDateTimeISO('UTC'))
   if (duration.sign < 0) {
     return undefined
@@ -41,7 +41,7 @@ export const validationCodeResourceSchema: JSONSchemaType<ValidationCodeResource
         type: ['string']
       }
     },
-    resendDate: {
+    resend_date: {
       type: 'string',
       nullable: true
     }

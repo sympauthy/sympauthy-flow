@@ -30,7 +30,8 @@
     }
   },
   "media": {
-    "EMAIL": "email"
+    "email": "email",
+    "sms": "SMS"
   },
   "pages": {
     "base": {
@@ -70,7 +71,7 @@
       },
       "skip": "Skip",
       "methods": {
-        "TOTP": "Authenticator app"
+        "totp": "Authenticator app"
       }
     },
     "totp_challenge": {
@@ -94,8 +95,8 @@
       "reauthentication_notice": "Because this is a security-sensitive operation, you will be asked to sign in again to confirm your identity before it is completed.",
       "warning": "To protect your account, do not continue unless you initiated this request.",
       "actions": {
-        "ENROLL_MFA": "set up two-factor authentication",
-        "LINK_PROVIDER": "link an identity provider"
+        "enroll_mfa": "set up two-factor authentication",
+        "link_provider": "link an identity provider"
       },
       "confirm": "Yes, continue",
       "confirming": "Confirming...",
