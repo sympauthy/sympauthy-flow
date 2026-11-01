@@ -32,10 +32,10 @@ const onClick = () => {
       <p class="me-3">{{ props.label }}</p>
     </template>
     <template v-if="loading">
-      <p class="animate-pulse h-2 bg-slate-300 rounded-sm cursor-progress" style="width: 5rem"></p>
+      <p class="animate-pulse h-2 bg-gray-300 rounded-sm cursor-progress" style="width: 5rem"></p>
     </template>
     <slot v-else-if="slots.default"></slot>
-    <a v-else @click="onClick" class="a a-primary">{{ props.text }}</a>
+    <a v-else @click="onClick" class="link">{{ props.text }}</a>
   </div>
 </template>
 

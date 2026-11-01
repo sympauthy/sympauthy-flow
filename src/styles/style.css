@@ -1,4 +1,7 @@
 @import 'tailwindcss';
+@import '@sympauthy/design/theme.css';
+@import '@sympauthy/design/components.css';
+@source '../../node_modules/@sympauthy/design/src';
 
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
@@ -16,59 +19,12 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
   }
-}
 
-@utility btn {
-  @apply border rounded-sm p-2;
-}
-@utility btn-primary {
-  background-color: var(--color-primary);
-  color: var(--color-on-primary);
-}
-@utility btn-disabled {
-  background-color: var(--color-disabled);
-  color: var(--color-on-disabled);
-}
-
-/** Text **/
-@utility text-primary {
-  color: var(--color-primary);
-}
-@utility text-danger {
-  color: var(--color-danger);
-}
-
-/** Link **/
-@utility a {
-  @apply underline cursor-pointer;
-}
-@utility a-primary {
-  color: var(--color-primary);
-  &:hover {
-    @media (hover: hover) {
-      color: var(--color-hover-primary);
-    }
+  body {
+    @apply bg-body font-sans text-gray-900;
   }
 }
 
-:root {
-  --color-primary: var(--color-blue-800);
-  --color-hover-primary: var(--color-blue-900);
-  --color-on-primary: var(--color-white);
-
-  --color-body: var(--color-gray-100);
-  --color-on-body: var(--color-gray-500);
-
-  --color-disabled: var(--color-gray-400);
-  --color-on-disabled: var(--color-white);
-
-  --color-danger: var(--color-red-500);
-  --color-link: var(--color-primary);
-
-  --max-width-card: 480px;
-  --max-width-large-card: 680px;
-}
-
-body {
-  color: var(--color-background);
+@utility link {
+  @apply cursor-pointer text-primary underline hover:text-primary-hover;
 }

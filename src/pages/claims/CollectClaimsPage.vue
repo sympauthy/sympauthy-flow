@@ -12,9 +12,7 @@ import { getErrorMessage, getErrorMessageForProperties } from '@/client/ErrorApi
 import { claimApiKey } from '@/client/api/ClaimApi'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
-import CommonButton from '@/components/CommonButton.vue'
-import CommonAlert from '@/components/CommonAlert.vue'
-import { primaryColoredButton } from '@/styles/ButtonStyle'
+import { CommonAlert, CommonButton } from '@sympauthy/design'
 import type { ClaimConfiguration } from '@/client/model/ClaimConfiguration'
 
 const { t } = useI18n()
@@ -97,24 +95,18 @@ onMounted(async () => {
           {{ t('pages.collect_claims.title') }}
         </template>
 
-        <common-alert v-if="submitErrorMessage" class="mb-3">
+        <common-alert v-if="submitErrorMessage">
           {{ submitErrorMessage }}
         </common-alert>
 
-        <form @submit="onSubmit">
+        <form class="flex flex-col gap-4" @submit="onSubmit">
           <claims-input-group
             :claims="claimConfigs"
             :disabled="isSubmitting"
             :error-messages="fieldErrorMessages"
-            class="mb-3"
           />
 
-          <common-button
-            :buttonStyle="primaryColoredButton"
-            :loading="isSubmitting"
-            class="w-full mt-5"
-            type="submit"
-          >
+          <common-button :loading="isSubmitting" size="large" type="submit">
             <template v-slot:default>
               {{ t('common.continue') }}
             </template>

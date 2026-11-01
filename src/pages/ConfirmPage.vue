@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import BasePage from '@/components/BasePage.vue'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
-import CommonAlert from '@/components/CommonAlert.vue'
-import CommonButton from '@/components/CommonButton.vue'
+import { ShieldCheckIcon } from '@heroicons/vue/20/solid'
+import { CommonAlert, CommonButton, outlineColoredButton } from '@sympauthy/design'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { confirmApiKey } from '@/client/api/ConfirmApi'
 import { cancelApiKey } from '@/client/api/CancelApi'
@@ -11,7 +11,6 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
-import { secondaryButton } from '@/styles/ButtonStyle'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -28,15 +27,9 @@ const isConfirming = ref(false)
 const isCancelling = ref(false)
 
 // The action code is machine-readable (e.g. enroll_mfa); resolve a human label, falling back to the raw code.
-const request = computed(() => {
-  if (action.value === undefined) {
-    return ''
-  }
-  const actionLabel = t(`pages.confirm.actions.${action.value}`, action.value)
-  return initiatingClientId.value !== undefined
-    ? t('pages.confirm.request', { client: initiatingClientId.value, action: actionLabel })
-    : t('pages.confirm.request_no_client', { action: actionLabel })
-})
+const actionLabel = computed(() =>
+  action.value === undefined ? '' : t(`pages.confirm.actions.${action.value}`, action.value)
+)
 
 onMounted(async () => {
   const response = await confirmApi.fetchConfirmation()
@@ -90,54 +83,61 @@ const onCancel = async () => {
         </template>
 
         <template v-slot:default>
-          <common-alert v-if="submitErrorMessage" class="mb-3">
+          <common-alert v-if="submitErrorMessage">
             {{ submitErrorMessage }}
           </common-alert>
 
-          <p class="w-full mb-3 text-justify">
-            {{ request }}
-          </p>
+          <div
+            class="flex items-start gap-3 rounded-md bg-primary-subtle p-3 text-on-primary-subtle"
+          >
+            <ShieldCheckIcon class="mt-0.5 size-5 shrink-0" />
+            <i18n-t v-if="initiatingClientId" keypath="pages.confirm.request" tag="p">
+              <template v-slot:client>
+                <strong class="font-semibold">{{ initiatingClientId }}</strong>
+              </template>
+              <template v-slot:action>{{ actionLabel }}</template>
+            </i18n-t>
+            <p v-else>{{ t('pages.confirm.request_no_client', { action: actionLabel }) }}</p>
+          </div>
 
-          <p v-if="requiresReauthentication" class="w-full mb-3 text-justify">
+          <p v-if="requiresReauthentication" class="flow-small text-gray-700">
             {{ t('pages.confirm.reauthentication_notice') }}
           </p>
 
-          <p class="w-full mb-7 text-justify font-semibold">
+          <p class="flow-small font-semibold! text-gray-900">
             {{ t('pages.confirm.warning') }}
           </p>
 
-          <div class="flex flex-col gap-3 w-full">
-            <common-button
-              :submitting="isConfirming"
-              :disabled="isCancelling"
-              class="w-full"
-              type="button"
-              @click="onConfirm"
-            >
-              <template v-slot:default>
-                {{ t('pages.confirm.confirm') }}
-              </template>
-              <template v-slot:submitting>
-                {{ t('pages.confirm.confirming') }}
-              </template>
-            </common-button>
+          <common-button
+            :disabled="isCancelling"
+            :submitting="isConfirming"
+            size="large"
+            type="button"
+            @click="onConfirm"
+          >
+            <template v-slot:default>
+              {{ t('pages.confirm.confirm') }}
+            </template>
+            <template v-slot:submitting>
+              {{ t('pages.confirm.confirming') }}
+            </template>
+          </common-button>
 
-            <common-button
-              :button-style="secondaryButton"
-              :submitting="isCancelling"
-              :disabled="isConfirming"
-              class="w-full"
-              type="button"
-              @click="onCancel"
-            >
-              <template v-slot:default>
-                {{ t('pages.confirm.cancel') }}
-              </template>
-              <template v-slot:submitting>
-                {{ t('pages.confirm.cancelling') }}
-              </template>
-            </common-button>
-          </div>
+          <common-button
+            :button-style="outlineColoredButton"
+            :disabled="isConfirming"
+            :submitting="isCancelling"
+            size="large"
+            type="button"
+            @click="onCancel"
+          >
+            <template v-slot:default>
+              {{ t('pages.confirm.cancel') }}
+            </template>
+            <template v-slot:submitting>
+              {{ t('pages.confirm.cancelling') }}
+            </template>
+          </common-button>
         </template>
       </title-content-card>
 

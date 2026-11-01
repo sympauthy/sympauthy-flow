@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import { FormField, FormInput } from '@sympauthy/design'
 import { useField } from 'vee-validate'
-import { ref, toRef } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import CommonModal from '@/components/CommonModal.vue'
 
 interface Props {
@@ -26,11 +27,13 @@ const name = toRef(props, 'name')
 // https://vee-validate.logaretm.com/v4/guide/validation#form-level-validation
 const {
   value: inputValue,
-  errorMessage,
+  errorMessage: validationErrorMessage,
   handleChange
-} = useField(name, undefined, {
+} = useField<string | undefined>(name, undefined, {
   initialValue: props.value
 })
+
+const error = computed(() => props.errorMessage ?? validationErrorMessage.value)
 
 const modal = ref<InstanceType<typeof CommonModal> | undefined>(undefined)
 
@@ -49,28 +52,20 @@ const cancel = () => {
 </script>
 
 <template>
-  <div>
-    <label v-if="label" :for="props.name" class="text-gray-700 text-sm font-bold mb-2">
-      {{ label }}
-    </label>
-    <input
-      :value="inputValue"
-      class="shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-1 disabled:outline-hidden disabled:pointer-events-none disabled:cursor-not-allowed"
-      type="text"
-      v-on:click="openModal"
+  <form-field :error="error" :for="props.name" :label="label ?? ''">
+    <form-input
+      :id="props.name"
+      :disabled="disabled"
+      :invalid="error !== undefined"
+      :model-value="inputValue"
+      readonly
+      @click="openModal"
     />
-    <span
-      v-if="props.errorMessage ?? errorMessage"
-      class="text-sm"
-      style="color: var(--color-danger)"
-    >
-      {{ props.errorMessage ?? errorMessage }}
-    </span>
 
     <common-modal ref="modal">
       <slot :cancel="cancel" :select="select"></slot>
     </common-modal>
-  </div>
+  </form-field>
 </template>
 
 <style scoped></style>

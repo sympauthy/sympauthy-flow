@@ -1,13 +1,15 @@
 <script lang="ts" setup>
+import { CommonButton, outlineColoredButton } from '@sympauthy/design'
 import type { ProviderResource } from '@/client/model/ProviderResource'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { redirectOrPush } from '@/utils/VueUtils'
 
 const props = defineProps<{
-  size: 'small' | 'default'
   provider: ProviderResource
 }>()
 
+const { t } = useI18n()
 const router = useRouter()
 
 async function onClick() {
@@ -17,9 +19,9 @@ async function onClick() {
 </script>
 
 <template>
-  <button @click="onClick" class="btn btn-primary w-full">
-    {{ provider.name }}
-  </button>
+  <common-button :button-style="outlineColoredButton" size="large" type="button" @click="onClick">
+    {{ t('components.provider_button.continue_with', [provider.name]) }}
+  </common-button>
 </template>
 
 <style scoped></style>

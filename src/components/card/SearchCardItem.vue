@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronRightIcon } from '@heroicons/vue/24/solid'
+import { ChevronRightIcon } from '@heroicons/vue/20/solid'
 </script>
 
 <template>
@@ -7,6 +7,6 @@ import { ChevronRightIcon } from '@heroicons/vue/24/solid'
     <div class="flex-auto">
       <slot></slot>
     </div>
-    <ChevronRightIcon class="size-6 text-gray-300" />
+    <ChevronRightIcon class="size-5 text-gray-400" />
   </div>
 </template>

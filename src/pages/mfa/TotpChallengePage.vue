@@ -10,8 +10,7 @@ import { useForm } from 'vee-validate'
 import { object, string } from 'yup'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
-import CommonAlert from '@/components/CommonAlert.vue'
-import CommonButton from '@/components/CommonButton.vue'
+import { CommonAlert, CommonButton } from '@sympauthy/design'
 import ValidationCodeField from '@/components/validationcode/ValidationCodeInputField.vue'
 
 const { t } = useI18n()
@@ -50,25 +49,25 @@ const onSubmit = handleSubmit(async (values, ctx) => {
 
 <template>
   <base-page>
-    <form @submit="onSubmit">
-      <div class="flex justify-center w-full">
-        <title-content-card size="default">
-          <template v-slot:title>
-            {{ t('pages.totp_challenge.title') }}
-          </template>
+    <div class="flex justify-center w-full">
+      <title-content-card size="default">
+        <template v-slot:title>
+          {{ t('pages.totp_challenge.title') }}
+        </template>
 
-          <template v-slot:default>
-            <common-alert v-if="submitErrorMessage" class="mb-3">
-              {{ submitErrorMessage }}
-            </common-alert>
+        <template v-slot:default>
+          <common-alert v-if="submitErrorMessage">
+            {{ submitErrorMessage }}
+          </common-alert>
 
-            <p class="w-full mb-7 text-justify">
-              {{ t('pages.totp_challenge.description') }}
-            </p>
+          <p>
+            {{ t('pages.totp_challenge.description') }}
+          </p>
 
-            <validation-code-field autofocus :code-length="6" class="mb-7" name="code" />
+          <form class="flex flex-col gap-4" @submit="onSubmit">
+            <validation-code-field autofocus :code-length="6" name="code" @complete="onSubmit()" />
 
-            <common-button :submitting="isSubmitting" class="w-full mt-5" type="submit">
+            <common-button :submitting="isSubmitting" size="large" type="submit">
               <template v-slot:default>
                 {{ t('pages.totp_challenge.submit') }}
               </template>
@@ -76,10 +75,10 @@ const onSubmit = handleSubmit(async (values, ctx) => {
                 {{ t('pages.totp_challenge.submitting') }}
               </template>
             </common-button>
-          </template>
-        </title-content-card>
-      </div>
-    </form>
+          </form>
+        </template>
+      </title-content-card>
+    </div>
   </base-page>
 </template>
 

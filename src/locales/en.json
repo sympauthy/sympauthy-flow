@@ -6,27 +6,32 @@
     "unreachable_state": "An unexpected state has been reached. Please try again or contact support.",
     "password": "Password",
     "confirm_password": "Confirm your password",
-    "sign_in": "Sign-in",
-    "sign_up": "Sign-up",
     "continue": "Continue",
-    "submit": "Submit",
-    "submitting": "Submitting...",
     "loading": "Loading...",
     "loading_from_server": "Waiting for a response from the server."
   },
   "components": {
-    "by_password_card": {
-      "title": "Login to your account",
-      "signing_in": "Signing-in...",
+    "sign_in_card": {
+      "title": "Sign in to your account",
+      "signing_in": "Signing in...",
       "no_account": "Don't have an account? {0}",
-      "sign_up_action": "Sign Up!",
-      "forgotten_password": "Forgot password?"
+      "sign_up_action": "Sign up",
+      "forgotten_password": "Forgot password?",
+      "or": "or"
+    },
+    "provider_button": {
+      "continue_with": "Continue with {0}"
+    },
+    "claims_input_group": {
+      "identity": "Identity",
+      "address": "Address"
     },
     "tz_claim_input_field": {
       "placeholder": "Search (country, offset, etc.)"
     },
     "validation_code_input_field": {
-      "submitting": "Validating..."
+      "label": "Validation code",
+      "digit": "Digit {0}"
     }
   },
   "media": {
@@ -35,13 +40,14 @@
   },
   "pages": {
     "base": {
+      "tagline": "A simple, self-hosted and open source OAuth 2/OpenID authorization server.",
       "footer": "Powered by {0}."
     },
     "sign_up": {
       "title": "Create your account",
-      "signing_up": "Signing-up...",
+      "signing_up": "Signing up...",
       "already_have_account": "Already have an account? {0}",
-      "sign_in_action": "Sign-in instead!"
+      "sign_in_action": "Sign in"
     },
     "collect_claims": {
       "title": "Before you continue",
@@ -58,7 +64,9 @@
         "waiting": "Wait {0}.",
         "action": "Resend the code",
         "resending": "Waiting for the code to be sent..."
-      }
+      },
+      "submit": "Verify",
+      "submitting": "Verifying..."
     },
     "mfa": {
       "enrollment": {
@@ -86,7 +94,9 @@
       "manual_entry": "Or enter this key manually:",
       "confirm_instructions": "Enter the 6-digit code shown by the app to confirm setup.",
       "submit": "Confirm",
-      "submitting": "Confirming..."
+      "submitting": "Confirming...",
+      "copy": "Copy",
+      "copied": "Copied"
     },
     "confirm": {
       "title": "Verify this request",

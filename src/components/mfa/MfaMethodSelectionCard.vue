@@ -1,6 +1,8 @@
 <script lang="ts" setup>
+import { DevicePhoneMobileIcon } from '@heroicons/vue/20/solid'
+import { CommonButton, outlineColoredButton } from '@sympauthy/design'
+import type { Component } from 'vue'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
-import CommonButton from '@/components/CommonButton.vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { redirectOrPush } from '@/utils/VueUtils'
@@ -17,6 +19,10 @@ const props = defineProps<Props>()
 
 const { t } = useI18n()
 const router = useRouter()
+
+const methodIcons: Record<string, Component> = {
+  totp: DevicePhoneMobileIcon
+}
 
 const onSelectMethod = async (method: MfaMethodResource) => {
   await redirectOrPush(router, method.redirect_url)
@@ -36,28 +42,26 @@ const onSkip = async () => {
     </template>
 
     <template v-slot:default>
-      <p class="w-full mb-7 text-justify">
+      <p>
         {{ t(descriptionKey) }}
       </p>
 
-      <div class="flex flex-col gap-3 w-full">
-        <common-button
-          v-for="method in methods"
-          :key="method.method"
-          class="w-full"
-          type="button"
-          @click="onSelectMethod(method)"
-        >
-          <template v-slot:default>
-            {{ t(`pages.mfa.methods.${method.method}`, method.method) }}
-          </template>
-        </common-button>
+      <common-button
+        v-for="method in methods"
+        :key="method.method"
+        :button-style="outlineColoredButton"
+        :icon="methodIcons[method.method]"
+        size="large"
+        type="button"
+        @click="onSelectMethod(method)"
+      >
+        <template v-slot:default>
+          {{ t(`pages.mfa.methods.${method.method}`, method.method) }}
+        </template>
+      </common-button>
 
-        <common-button v-if="skipRedirectUrl" class="w-full" type="button" @click="onSkip">
-          <template v-slot:default>
-            {{ t('pages.mfa.skip') }}
-          </template>
-        </common-button>
+      <div v-if="skipRedirectUrl" class="text-center">
+        <a class="link" @click="onSkip">{{ t('pages.mfa.skip') }}</a>
       </div>
     </template>
   </title-content-card>

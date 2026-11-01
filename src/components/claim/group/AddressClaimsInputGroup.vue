@@ -101,14 +101,14 @@ const shouldDisplaySplitAddress = computed(() => {
       :options="streetAddressOptions"
       v-bind="$attrs"
     />
-    <div class="md:flex md:flex-row">
+    <div class="flex flex-col gap-4 md:flex-row">
       <claim-input-field
         v-if="localityOptions"
         :disabled="disabled"
         :error-message="errorMessages?.[OpenIdClaim.LOCALITY]"
         :loading="loading"
         :options="localityOptions"
-        class="md:basis-1/2 md:me-3"
+        class="md:flex-1"
         v-bind="$attrs"
       />
       <claim-input-field
@@ -117,18 +117,18 @@ const shouldDisplaySplitAddress = computed(() => {
         :error-message="errorMessages?.[OpenIdClaim.REGION]"
         :loading="loading"
         :options="regionOptions"
-        class="md:basis-1/2"
+        class="md:flex-1"
         v-bind="$attrs"
       />
     </div>
-    <div class="md:flex md:flex-row">
+    <div class="flex flex-col gap-4 md:flex-row">
       <claim-input-field
         v-if="postalCodeOptions"
         :disabled="disabled"
         :error-message="errorMessages?.[OpenIdClaim.POSTAL_CODE]"
         :loading="loading"
         :options="postalCodeOptions"
-        class="md:basis-1/2 md:me-3"
+        class="md:flex-1"
         v-bind="$attrs"
       />
       <claim-input-field
@@ -137,7 +137,7 @@ const shouldDisplaySplitAddress = computed(() => {
         :error-message="errorMessages?.[OpenIdClaim.COUNTRY]"
         :loading="loading"
         :options="countryOptions"
-        class="md:basis-1/2"
+        class="md:flex-1"
         v-bind="$attrs"
       />
     </div>
