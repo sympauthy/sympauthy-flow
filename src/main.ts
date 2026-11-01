@@ -1,3 +1,5 @@
+import '@sympauthy/design/fonts.css'
+import { fetchBrand } from '@sympauthy/design'
 import { createApp } from 'vue'
 import App from '@/App.vue'
 import { i18n } from '@/i18n'
@@ -14,11 +16,17 @@ import { MfaApi, mfaApiKey } from '@/client/api/MfaApi'
 import { TotpApi, totpApiKey } from '@/client/api/TotpApi'
 import { ConfirmApi, confirmApiKey } from '@/client/api/ConfirmApi'
 import { CancelApi, cancelApiKey } from '@/client/api/CancelApi'
+import { brandKey, getBrandName } from '@/utils/BrandUtils'
 
 const pinia = createPinia()
 const router = makeRouter()
 
+// Awaited so that a deployment's name is on the page from the first paint, rather than replacing SympAuthy's.
+const brand = await fetchBrand()
+document.title = getBrandName(brand)
+
 createApp(App)
+  .provide(brandKey, brand)
   .provide(claimFormServiceKey, new ClaimFormService())
   .provide(signInApiKey, new SignInApi(pinia))
   .provide(signUpApiKey, new SignUpApi(pinia))

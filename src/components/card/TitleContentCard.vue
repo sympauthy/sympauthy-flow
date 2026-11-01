@@ -1,44 +1,36 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { CommonAlert, CommonCard, CommonSpinner } from '@sympauthy/design'
 import { useI18n } from 'vue-i18n'
-import BaseCard from '@/components/card/BaseCard.vue'
-import type { BaseCardProps } from '@/components/card/BaseCard.vue'
-import CommonAlert from '@/components/CommonAlert.vue'
-import CommonSpinner from '@/components/CommonSpinner.vue'
 
-interface Props extends BaseCardProps {
+interface Props {
+  size?: 'default' | 'large'
   loading?: boolean
   error?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
+  size: 'default',
   loading: false
 })
-
-const cardProps = computed(() => ({
-  size: props.size,
-  noPadding: props.noPadding
-}))
 
 const { t } = useI18n()
 </script>
 
 <template>
-  <base-card class="w-full" v-bind="cardProps">
-    <h1 v-if="$slots['title']" class="w-full text-2xl text-center mb-5">
-      <slot name="title"></slot>
-    </h1>
-    <div v-if="error" class="w-full text-base">
-      <common-alert>{{ error }}</common-alert>
+  <common-card
+    class="flow-body w-full"
+    :class="size === 'large' ? 'max-w-card-large' : 'max-w-card'"
+  >
+    <div class="flex flex-col gap-4">
+      <h1 v-if="$slots['title']" class="flow-title text-center text-gray-900">
+        <slot name="title"></slot>
+      </h1>
+      <common-alert v-if="error">{{ error }}</common-alert>
+      <div v-else-if="loading" class="flex flex-col items-center gap-3 py-10">
+        <common-spinner class="text-primary" size="lg" />
+        <p class="flow-small text-gray-500">{{ t('common.loading_from_server') }}</p>
+      </div>
+      <slot v-else name="default"></slot>
     </div>
-    <div v-else-if="loading" class="w-full flex flex-col items-center py-10 gap-3">
-      <common-spinner class="h-8 w-8 border-4 text-(--color-primary)" />
-      <p class="text-sm text-gray-500">{{ t('common.loading_from_server') }}</p>
-    </div>
-    <div v-else class="w-full text-base">
-      <slot name="default"></slot>
-    </div>
-  </base-card>
+  </common-card>
 </template>
-
-<style scoped></style>

@@ -23,7 +23,7 @@ defineExpose({
 
   <!-- Modal -->
   <div v-if="open" class="fixed inset-0 z-10 w-screen h-screen">
-    <div class="relative w-full h-full flex items-center justify-center">
+    <div class="relative w-full h-full flex items-center justify-center px-3">
       <slot></slot>
     </div>
   </div>

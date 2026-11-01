@@ -8,6 +8,7 @@ import IdentityClaimsInputGroup from '@/components/claim/group/IdentityClaimsInp
 import AddressClaimsInputGroup from '@/components/claim/group/AddressClaimsInputGroup.vue'
 import ClaimInputField from '@/components/claim/field/ClaimInputField.vue'
 import type { ClaimConfiguration } from '@/client/model/ClaimConfiguration'
+import { useI18n } from 'vue-i18n'
 
 interface Props {
   claims: Array<ClaimConfiguration>
@@ -25,6 +26,8 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false
 })
 
+const { t } = useI18n()
+
 const claimFormService = new ClaimFormService()
 
 const optionsArray = claimFormService.getOptionsForClaimConfigs(props.claims)
@@ -41,23 +44,29 @@ const optionsArray = claimFormService.getOptionsForClaimConfigs(props.claims)
         v-bind="$attrs"
       />
     </template>
-    <template v-if="options instanceof ClaimInputGroupOptions && options.group === 'identity'">
-      <identity-claims-input-group
-        :disabled="disabled"
-        :error-messages="errorMessages"
-        :loading="loading"
-        :options="options"
-        v-bind="$attrs"
-      />
-    </template>
-    <template v-if="options instanceof ClaimInputGroupOptions && options.group === 'address'">
-      <address-claims-input-group
-        :disabled="disabled"
-        :error-messages="errorMessages"
-        :loading="loading"
-        :options="options"
-        v-bind="$attrs"
-      />
-    </template>
+    <fieldset v-if="options instanceof ClaimInputGroupOptions" class="min-w-0">
+      <!-- The fields of the identity group name themselves, so its legend is for screen readers. -->
+      <legend :class="options.group === 'identity' ? 'sr-only' : 'flow-label mb-2 text-gray-900'">
+        {{ t(`components.claims_input_group.${options.group}`) }}
+      </legend>
+      <div class="flex flex-col gap-4">
+        <identity-claims-input-group
+          v-if="options.group === 'identity'"
+          :disabled="disabled"
+          :error-messages="errorMessages"
+          :loading="loading"
+          :options="options"
+          v-bind="$attrs"
+        />
+        <address-claims-input-group
+          v-if="options.group === 'address'"
+          :disabled="disabled"
+          :error-messages="errorMessages"
+          :loading="loading"
+          :options="options"
+          v-bind="$attrs"
+        />
+      </div>
+    </fieldset>
   </template>
 </template>

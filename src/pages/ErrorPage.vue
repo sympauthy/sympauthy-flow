@@ -3,8 +3,8 @@ import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import BasePage from '@/components/BasePage.vue'
-import BaseCard from '@/components/card/BaseCard.vue'
-import SkeletonText from '@/components/SkeletonText.vue'
+import { CommonAlert } from '@sympauthy/design'
+import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { errorApiKey } from '@/client/api/ErrorApi'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
@@ -42,29 +42,16 @@ onMounted(async () => {
 <template>
   <base-page>
     <div class="flex justify-center w-full">
-      <base-card>
+      <title-content-card :error="fetchErrorMessage" :loading="isLoading">
         <template v-slot:title>
           {{ t('pages.error.title') }}
         </template>
 
-        <p v-if="fetchErrorMessage" class="mb-3 text-red-600">
-          {{ fetchErrorMessage }}
-        </p>
-
-        <template v-if="isLoading">
-          <skeleton-text :count="3" class="mb-3"></skeleton-text>
-          <hr class="m-3" />
-          <skeleton-text class="text-sm"></skeleton-text>
-        </template>
-
-        <template v-else>
-          <p class="mb-3">
-            {{ description }}
-          </p>
-          <hr class="m-3" />
-          <p class="text-sm" style="color: var(--color-on-body)">{{ errorCode }} - {{ details }}</p>
-        </template>
-      </base-card>
+        <common-alert>
+          {{ description }}
+        </common-alert>
+        <p class="flow-small text-gray-500">{{ errorCode }} - {{ details }}</p>
+      </title-content-card>
     </div>
   </base-page>
 </template>

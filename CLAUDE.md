@@ -12,7 +12,7 @@ sympauthy-flow is a Vue 3 SPA implementing an OAuth2-compatible authentication f
 # Use nvm to activate the correct Node.js version:
 source ~/.nvm/nvm.sh && nvm use
 
-# Development server (proxies /api to localhost:8080)
+# Development server (proxies /api and /branding to localhost:8080)
 npm run dev
 
 # Production build (runs type-check + vite build in parallel)
@@ -37,7 +37,7 @@ No test framework is configured.
 - **Vue 3** (Composition API, `<script setup>`) + **TypeScript 6**
 - **Vite 7** with `@vitejs/plugin-vue`, `@tailwindcss/vite`, `@intlify/unplugin-vue-i18n`
 - **Pinia** for state management, **Vue Router 5**, **Vue-i18n**
-- **Tailwind CSS v4** with custom `@utility` directives in `src/styles/style.css`
+- **Tailwind CSS v4**, themed by **`@sympauthy/design`** (see Design system below)
 - **Yup** + **Vee-Validate** for form validation, **AJV** for API response schema validation
 
 ### Dependency Injection
@@ -55,6 +55,13 @@ Services are not imported directly by components. Instead, all API clients and s
 
 Routes use `meta.stateRequired` to indicate OAuth state is needed. A `beforeEach` guard redirects to the error page if state is missing. The router accounts for Vite's `BASE_URL` in redirects (see `redirectOrPush` in `VueUtils.ts`).
 
+### Design system and branding
+
+- `@sympauthy/design` is installed from its git tag (`github:sympauthy/sympauthy-design#vX.Y.Z`), not from npm. npm builds its `dist/` through `prepare`, so never install with `--ignore-scripts`.
+- Use its components (`CommonButton`, `CommonCard`, `CommonAlert`, `CommonSpinner`, `FormField`, `FormInput`) rather than writing new ones. Pages follow its [flow specification](https://sympauthy.github.io/sympauthy-design/flow).
+- A deployment's brand comes from the server under `/branding`. `index.html` links `/branding/tokens.css` and `/branding/icon`, `BasePage` draws `/branding/logo` and `/branding/logo-dark`, and `main.ts` fetches `/branding/brand.json` once before mounting and provides it under `brandKey`.
+- Never write a hex value or a color outside the theme: `bg-primary`, `text-gray-500` and the like read the server's tokens, and turn dark with them.
+
 ### Key Directories
 
 - `src/pages/` — Page-level components (SignIn, SignUp, Claims, MFA)
@@ -71,7 +78,7 @@ Routes use `meta.stateRequired` to indicate OAuth state is needed. A `beforeEach
 
 ### Dev Server
 
-Vite proxies `/api` requests to `http://localhost:8080` (the sympauthy backend).
+Vite proxies `/api` and `/branding` requests to `http://localhost:8080` (the sympauthy backend).
 
 ## Git Workflow
 

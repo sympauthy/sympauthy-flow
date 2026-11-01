@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue'
+import { CheckIcon, ClipboardIcon } from '@heroicons/vue/20/solid'
+import { CommonButton, outlineColoredButton } from '@sympauthy/design'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import QRCode from 'qrcode'
 
@@ -16,6 +18,22 @@ const props = withDefaults(defineProps<Props>(), {
 const { t } = useI18n()
 
 const qrDataUrl = ref<string | undefined>(undefined)
+const copied = ref(false)
+
+const copyIcon = computed(() => (copied.value ? CheckIcon : ClipboardIcon))
+const copyLabel = computed(() =>
+  copied.value ? t('pages.totp_enroll.copied') : t('pages.totp_enroll.copy')
+)
+
+const onCopy = async () => {
+  try {
+    await navigator.clipboard.writeText(props.secret)
+    copied.value = true
+    setTimeout(() => (copied.value = false), 2000)
+  } catch (e) {
+    console.error('Failed to copy the key', e)
+  }
+}
 
 const generateQrCode = async (uri: string) => {
   if (!uri) {
@@ -37,23 +55,39 @@ watch(
 </script>
 
 <template>
-  <p class="w-full mb-5 text-justify">
+  <p>
     {{ t('pages.totp_enroll.scan_instructions') }}
   </p>
 
-  <div class="flex justify-center mb-5">
-    <img v-if="qrDataUrl && !loading" :src="qrDataUrl" alt="QR Code" class="w-48 h-48" />
-    <div v-else class="w-48 h-48 bg-gray-100 animate-pulse rounded-sm" />
+  <div class="flex justify-center">
+    <img
+      v-if="qrDataUrl && !loading"
+      :src="qrDataUrl"
+      alt="QR Code"
+      class="size-52 rounded-md border border-gray-200 bg-white p-2"
+    />
+    <div v-else class="size-52 animate-pulse rounded-md bg-gray-100" />
   </div>
 
-  <p class="w-full mb-2 text-sm text-justify">
+  <p class="flow-small">
     {{ t('pages.totp_enroll.manual_entry') }}
   </p>
-  <div class="w-full mb-5 flex justify-center">
-    <code v-if="!loading" class="text-sm break-all bg-gray-100 px-2 py-1 rounded-sm">{{
-      secret
-    }}</code>
-    <div v-else class="w-48 h-6 bg-gray-100 animate-pulse rounded-sm" />
+  <div class="flex items-center gap-2">
+    <template v-if="!loading">
+      <code
+        class="min-w-0 flex-auto rounded-md bg-gray-100 px-3 py-2 font-mono text-sm break-all"
+        >{{ secret }}</code
+      >
+      <common-button
+        :button-style="outlineColoredButton"
+        :icon="copyIcon"
+        :label="copyLabel"
+        class="shrink-0"
+        type="button"
+        @click="onCopy"
+      />
+    </template>
+    <div v-else class="h-6 w-48 animate-pulse rounded-sm bg-gray-100" />
   </div>
 </template>
 

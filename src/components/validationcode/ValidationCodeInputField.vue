@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, watch } from 'vue'
 import { useField } from 'vee-validate'
+import { useI18n } from 'vue-i18n'
 import { isStringNotEmpty } from '@/utils/StringUtils.ts'
 
 interface Props {
@@ -15,6 +16,12 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   autofocus: false
 })
+
+const emit = defineEmits<{
+  complete: []
+}>()
+
+const { t } = useI18n()
 
 const { value, errorMessage, setTouched } = useField<string>(() => props.name)
 
@@ -33,7 +40,7 @@ const inputFieldNames = computed(() => {
 })
 
 const inputFieldClasses =
-  'w-0 h-[64px] p-1 md:p-3 mx-1 appearance-none rounded-sm flex-auto text-center border-2 text-gray-700 border-gray-300 focus:outline-1 disabled:outline-hidden disabled:pointer-events-none disabled:cursor-not-allowed'
+  'flow-code h-16 w-0 min-w-0 flex-auto appearance-none rounded-md border-2 border-gray-400 bg-white text-center text-gray-900 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-gray-50'
 
 const hasErrorMessage = computed(() => {
   return !props.disabled && errorMessage.value !== undefined
@@ -151,6 +158,9 @@ const updateTouchedAndValue = () => {
     setTouched(true)
     if (newValue !== undefined) {
       value.value = newValue
+      if (newValue !== '') {
+        emit('complete')
+      }
     }
   }
 }
@@ -176,7 +186,33 @@ const computeValue = (): string | undefined => {
 
 const onPaste = (event: ClipboardEvent) => {
   event.preventDefault()
-  const text = event.clipboardData?.getData('text') ?? ''
+  fillInputFields(event.clipboardData?.getData('text') ?? '')
+}
+
+/**
+ * Handle what no key press announces: a whole code filled in by the keyboard (one-time-code),
+ * or a digit from a virtual keyboard that does not name its keys.
+ */
+const onInput = (event: Event) => {
+  const targetInputField = event.target
+  if (!(targetInputField instanceof HTMLInputElement)) {
+    return
+  }
+
+  const digits = targetInputField.value.replace(/\D/g, '')
+  if (digits.length > 1) {
+    fillInputFields(digits)
+    return
+  }
+
+  targetInputField.value = digits
+  if (digits.length === 1) {
+    selectInputFieldAtIndex(inputFieldNames.value.indexOf(targetInputField.name) + 1)
+  }
+  updateTouchedAndValue()
+}
+
+const fillInputFields = (text: string) => {
   const digits = text.replace(/\D/g, '')
   if (digits.length === 0) {
     return
@@ -195,7 +231,6 @@ const onPaste = (event: ClipboardEvent) => {
 }
 
 watch(value, (newValue: string, oldValue: string) => {
-  console.log(`watch ${newValue} ${oldValue}`)
   if (newValue !== oldValue) {
     updateAllInputFieldsForValue(newValue)
   }
@@ -204,20 +239,27 @@ watch(value, (newValue: string, oldValue: string) => {
 
 <template>
   <div class="w-full">
-    <div class="w-full text-3xl flex flex-row justify-center" v-on:paste="onPaste">
-      <template v-for="inputFieldName of inputFieldNames" :key="inputFieldName">
+    <div
+      :aria-label="t('components.validation_code_input_field.label')"
+      class="flex w-full flex-row justify-center gap-2"
+      role="group"
+      v-on:paste="onPaste"
+    >
+      <template v-for="(inputFieldName, index) of inputFieldNames" :key="inputFieldName">
         <input
-          :class="inputFieldClasses"
+          :aria-label="t('components.validation_code_input_field.digit', [index + 1])"
+          :autocomplete="index === 0 ? 'one-time-code' : 'off'"
+          :class="[inputFieldClasses, index === Math.floor(codeLength / 2) - 1 ? 'me-2' : '']"
           :disabled="disabled"
           :name="inputFieldName"
-          autocomplete="off"
-          maxlength="1"
+          inputmode="numeric"
           type="text"
+          v-on:input="onInput"
           v-on:keydown="onKeyDown"
         />
       </template>
     </div>
-    <div v-if="hasErrorMessage" class="w-full pt-1 text-sm text-danger">
+    <div v-if="hasErrorMessage" class="flow-small w-full pt-1 text-danger">
       {{ errorMessage }}
     </div>
   </div>

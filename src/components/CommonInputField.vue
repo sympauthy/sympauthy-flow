@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { Field } from 'vee-validate'
+import { FormField, FormInput } from '@sympauthy/design'
+import { useField } from 'vee-validate'
+import { computed } from 'vue'
 
 interface Props {
   name: string
@@ -16,40 +18,30 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false
 })
 
-const inputClasses =
-  'shadow-sm appearance-none border rounded-sm w-full h-11 py-2 px-3 text-gray-700 leading-tight focus:outline-1 disabled:outline-hidden disabled:pointer-events-none disabled:cursor-not-allowed'
+const {
+  value,
+  errorMessage: validationErrorMessage,
+  handleBlur
+} = useField<string>(() => props.name)
+
+const error = computed(() => props.errorMessage ?? validationErrorMessage.value)
 </script>
 
 <template>
-  <div>
-    <label v-if="label" :for="name" class="text-gray-700 text-sm font-bold mb-2">
-      {{ label }}
-    </label>
-    <Field v-slot="{ field, errorMessage }" :name="name">
-      <template v-if="!loading">
-        <input
-          :autocomplete="autocomplete"
-          :class="inputClasses"
-          :disabled="disabled"
-          :type="type"
-          v-bind="field"
-        />
-      </template>
-      <template v-else>
-        <div :class="inputClasses" class="flex flex-col justify-center">
-          <div class="animate-pulse max-w-[40%] h-4 bg-slate-300 rounded-sm cursor-progress"></div>
-        </div>
-      </template>
-
-      <span
-        v-if="props.errorMessage ?? errorMessage"
-        class="text-sm"
-        style="color: var(--color-danger)"
-      >
-        {{ props.errorMessage ?? errorMessage }}
-      </span>
-    </Field>
-  </div>
+  <form-field :error="error" :for="name" :label="label ?? ''">
+    <form-input
+      v-if="!loading"
+      :id="name"
+      v-model="value"
+      :autocomplete="autocomplete"
+      :disabled="disabled"
+      :invalid="error !== undefined"
+      :name="name"
+      :type="type"
+      @blur="handleBlur"
+    />
+    <div v-else class="control flex flex-col justify-center">
+      <div class="h-4 max-w-[40%] animate-pulse cursor-progress rounded-sm bg-gray-300"></div>
+    </div>
+  </form-field>
 </template>
-
-<style scoped></style>

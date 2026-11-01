@@ -85,14 +85,14 @@ const shouldDisplaySplitName = computed(() => {
       v-bind="$attrs"
     />
   </template>
-  <div v-if="shouldDisplaySplitName" class="md:flex md:flex-row">
+  <div v-if="shouldDisplaySplitName" class="flex flex-col gap-4 md:flex-row">
     <claim-input-field
       v-if="givenNameOptions"
       :disabled="disabled"
       :error-message="errorMessages?.[OpenIdClaim.GIVEN_NAME]"
       :loading="loading"
       :options="givenNameOptions"
-      class="md:me-3"
+      class="md:flex-1"
       v-bind="$attrs"
     />
     <claim-input-field
@@ -101,7 +101,7 @@ const shouldDisplaySplitName = computed(() => {
       :error-message="errorMessages?.[OpenIdClaim.MIDDLE_NAME]"
       :loading="loading"
       :options="middleNameOptions"
-      class="md:me-3"
+      class="md:flex-1"
       v-bind="$attrs"
     />
     <claim-input-field
@@ -110,6 +110,7 @@ const shouldDisplaySplitName = computed(() => {
       :error-message="errorMessages?.[OpenIdClaim.FAMILY_NAME]"
       :loading="loading"
       :options="familyNameOptions"
+      class="md:flex-1"
       v-bind="$attrs"
     />
   </div>

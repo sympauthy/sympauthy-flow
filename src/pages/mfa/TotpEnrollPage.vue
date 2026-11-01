@@ -11,8 +11,7 @@ import { object, string } from 'yup'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
 import type { TotpEnrollFlowResource } from '@/client/model/TotpEnrollFlowResource'
-import CommonAlert from '@/components/CommonAlert.vue'
-import CommonButton from '@/components/CommonButton.vue'
+import { CommonAlert, CommonButton } from '@sympauthy/design'
 import ValidationCodeField from '@/components/validationcode/ValidationCodeInputField.vue'
 import TotpQrCodeCard from '@/components/mfa/TotpQrCodeCard.vue'
 
@@ -26,7 +25,7 @@ const submitErrorMessage = ref<string | undefined>(undefined)
 const enrollData = ref<TotpEnrollFlowResource | undefined>(undefined)
 
 const validationSchema = object({
-  code: string().required()
+  code: string().required().label(t('components.validation_code_input_field.label'))
 })
 
 const { handleSubmit, defineField, isSubmitting } = useForm({
@@ -66,31 +65,31 @@ const onSubmit = handleSubmit(async (values, ctx) => {
 <template>
   <base-page>
     <div class="flex justify-center w-full">
-      <form @submit="onSubmit">
-        <title-content-card size="default" :loading="isLoading" :error="fetchErrorMessage">
-          <template v-slot:title>
-            {{ t('pages.totp_enroll.title') }}
-          </template>
+      <title-content-card size="default" :loading="isLoading" :error="fetchErrorMessage">
+        <template v-slot:title>
+          {{ t('pages.totp_enroll.title') }}
+        </template>
 
-          <template v-slot:default>
-            <common-alert v-if="submitErrorMessage" class="mb-3">
-              {{ submitErrorMessage }}
-            </common-alert>
+        <template v-slot:default>
+          <common-alert v-if="submitErrorMessage">
+            {{ submitErrorMessage }}
+          </common-alert>
 
-            <totp-qr-code-card
-              v-if="enrollData"
-              :uri="enrollData.uri"
-              :secret="enrollData.secret"
-              :loading="false"
-            />
+          <totp-qr-code-card
+            v-if="enrollData"
+            :uri="enrollData.uri"
+            :secret="enrollData.secret"
+            :loading="false"
+          />
 
-            <p class="w-full mt-5 mb-5 text-justify">
-              {{ t('pages.totp_enroll.confirm_instructions') }}
-            </p>
+          <p>
+            {{ t('pages.totp_enroll.confirm_instructions') }}
+          </p>
 
-            <validation-code-field autofocus :code-length="6" class="mb-7" name="code" />
+          <form class="flex flex-col gap-4" @submit="onSubmit">
+            <validation-code-field autofocus :code-length="6" name="code" @complete="onSubmit()" />
 
-            <common-button :submitting="isSubmitting" class="w-full mt-5" type="submit">
+            <common-button :submitting="isSubmitting" size="large" type="submit">
               <template v-slot:default>
                 {{ t('pages.totp_enroll.submit') }}
               </template>
@@ -98,9 +97,9 @@ const onSubmit = handleSubmit(async (values, ctx) => {
                 {{ t('pages.totp_enroll.submitting') }}
               </template>
             </common-button>
-          </template>
-        </title-content-card>
-      </form>
+          </form>
+        </template>
+      </title-content-card>
     </div>
   </base-page>
 </template>

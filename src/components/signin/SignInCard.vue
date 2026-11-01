@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { CommonAlert, CommonButton } from '@sympauthy/design'
 import { useI18n } from 'vue-i18n'
 import { signInApiKey } from '@/client/api/SignInApi'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
@@ -7,17 +8,18 @@ import { useForm } from 'vee-validate'
 import { computed, ref } from 'vue'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
 import { useRouter } from 'vue-router'
-import CommonButton from '@/components/CommonButton.vue'
-import CommonAlert from '@/components/CommonAlert.vue'
 import CommonInput from '@/components/CommonInputField.vue'
+import ProviderButton from '@/components/signin/ProviderButton.vue'
 import { or } from '@/utils/StringUtils'
 import { i18n } from '@/i18n'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import type { PasswordResource } from '@/client/model/PasswordResource'
+import type { ProviderResource } from '@/client/model/ProviderResource'
 
 const props = defineProps<{
-  password: PasswordResource
+  providers: Array<ProviderResource>
+  password?: PasswordResource
   signUpRedirectUrl?: string
 }>()
 
@@ -28,9 +30,16 @@ const submitError = ref<string>()
 
 const router = useRouter()
 
+const loginLabel = computed(() =>
+  or(
+    i18n,
+    (props.password?.identifier_claims ?? []).map((claim) => claim.name)
+  )
+)
+
 const validationSchema = object({
-  login: string().required(),
-  password: string().required()
+  login: string().required().label(loginLabel.value),
+  password: string().required().label(t('common.password'))
 })
 
 const { handleSubmit, isSubmitting } = useForm({
@@ -48,13 +57,6 @@ const onSubmit = handleSubmit(async (values: any) => {
   }
 })
 
-const loginLabel = computed(() =>
-  or(
-    i18n,
-    (props.password.identifier_claims ?? []).map((claim) => claim.name)
-  )
-)
-
 async function onSignUpClick() {
   if (props.signUpRedirectUrl) {
     await redirectOrPush(router, props.signUpRedirectUrl)
@@ -65,54 +67,63 @@ async function onSignUpClick() {
 <template>
   <title-content-card>
     <template v-slot:title>
-      {{ t('components.by_password_card.title') }}
+      {{ t('components.sign_in_card.title') }}
     </template>
     <template v-slot:default>
-      <div v-if="signUpRedirectUrl" class="mb-3 w-full text-center">
-        <i18n-t keypath="components.by_password_card.no_account">
-          <a class="text-primary underline cursor-pointer" @click="onSignUpClick">
-            {{ t('components.by_password_card.sign_up_action') }}
-          </a>
-        </i18n-t>
-      </div>
-
-      <common-alert v-if="submitError" class="mb-5">
+      <common-alert v-if="submitError">
         {{ submitError }}
       </common-alert>
 
-      <form @submit="onSubmit">
-        <label class="form-label" for="login"></label>
+      <provider-button v-for="provider of providers" :key="provider.id" :provider="provider" />
+
+      <div
+        v-if="providers.length > 0 && password"
+        class="flow-small flex items-center gap-3 text-gray-500"
+      >
+        <span class="h-px flex-1 bg-gray-200"></span>
+        {{ t('components.sign_in_card.or') }}
+        <span class="h-px flex-1 bg-gray-200"></span>
+      </div>
+
+      <form v-if="password" class="flex flex-col gap-4" @submit="onSubmit">
         <common-input
           :disabled="isSubmitting"
           :label="loginLabel"
           autocomplete="username"
-          class="mb-3"
           name="login"
           type="text"
         />
 
-        <common-input
-          :disabled="isSubmitting"
-          :label="t('common.password')"
-          autocomplete="current-password"
-          class="mb-3"
-          name="password"
-          type="password"
-        />
-
-        <div class="w-full text-end text-primary underline">
-          <a>{{ t('components.by_password_card.forgotten_password') }}</a>
+        <div class="flex flex-col gap-1.5">
+          <common-input
+            :disabled="isSubmitting"
+            :label="t('common.password')"
+            autocomplete="current-password"
+            name="password"
+            type="password"
+          />
+          <div class="flow-small text-end">
+            <a class="link">{{ t('components.sign_in_card.forgotten_password') }}</a>
+          </div>
         </div>
 
-        <common-button :loading="isSubmitting" class="w-full mt-5" type="submit">
+        <common-button :loading="isSubmitting" size="large" type="submit">
           <template v-slot:default>
-            {{ t('common.sign_in') }}
+            {{ t('common.continue') }}
           </template>
           <template v-slot:loading>
-            {{ t('components.by_password_card.signing_in') }}
+            {{ t('components.sign_in_card.signing_in') }}
           </template>
         </common-button>
       </form>
+
+      <div v-if="signUpRedirectUrl" class="text-center">
+        <i18n-t keypath="components.sign_in_card.no_account">
+          <a class="link" @click="onSignUpClick">
+            {{ t('components.sign_in_card.sign_up_action') }}
+          </a>
+        </i18n-t>
+      </div>
     </template>
   </title-content-card>
 </template>

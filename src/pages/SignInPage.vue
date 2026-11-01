@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import ByPasswordCard from '@/components/signin/ByPasswordCard.vue'
-import ByProviderCard from '@/components/signin/ByProviderCard.vue'
+import SignInCard from '@/components/signin/SignInCard.vue'
 import BasePage from '@/components/BasePage.vue'
-import CommonSpinner from '@/components/CommonSpinner.vue'
-import { computed, onMounted, ref } from 'vue'
+import TitleContentCard from '@/components/card/TitleContentCard.vue'
+import { onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { signInApiKey } from '@/client/api/SignInApi'
@@ -11,14 +11,11 @@ import type { SignInFlowResource } from '@/client/model/SignInFlowResource'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { makeErrorRoute } from '@/router'
 
+const { t } = useI18n()
 const router = useRouter()
 const signInApi = injectRequired(signInApiKey)
 
-const isLoading = ref(true)
 const signIn = ref<SignInFlowResource>()
-
-const providers = computed(() => signIn.value?.providers ?? [])
-const hasProvider = computed(() => providers.value.length > 0)
 
 onMounted(async () => {
   const response = await signInApi.fetchSignIn()
@@ -29,7 +26,6 @@ onMounted(async () => {
       return
     }
     signIn.value = response.content
-    isLoading.value = false
   } else {
     await router.replace(makeErrorRoute(response.errorCode, response.details, response.description))
   }
@@ -38,19 +34,16 @@ onMounted(async () => {
 
 <template>
   <base-page>
-    <div v-if="isLoading" class="w-full flex justify-center py-10">
-      <common-spinner class="h-8 w-8 border-4 text-(--color-primary)" />
-    </div>
-    <div
-      v-else
-      class="w-full flex justify-center items-center flex-col-reverse lg:flex-row lg:items-start"
-    >
-      <by-provider-card v-if="hasProvider" :providers="providers" class="me-3" />
-      <by-password-card
-        v-if="signIn?.password"
+    <div class="flex justify-center w-full">
+      <sign-in-card
+        v-if="signIn"
         :password="signIn.password"
+        :providers="signIn.providers ?? []"
         :sign-up-redirect-url="signIn.sign_up_redirect_url"
       />
+      <title-content-card v-else loading>
+        <template v-slot:title>{{ t('components.sign_in_card.title') }}</template>
+      </title-content-card>
     </div>
   </base-page>
 </template>

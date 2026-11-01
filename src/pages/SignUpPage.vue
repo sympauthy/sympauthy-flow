@@ -8,12 +8,11 @@ import ClaimsInputGroup from '@/components/claim/group/ClaimsInputGroup.vue'
 import { claimFormServiceKey } from '@/services/ClaimFormService'
 import { getErrorMessage, getErrorMessageForProperties } from '@/client/ErrorApiResponse'
 import { useRouter } from 'vue-router'
-import CommonAlert from '@/components/CommonAlert.vue'
+import { CommonAlert, CommonButton } from '@sympauthy/design'
 import CommonField from '@/components/CommonInputField.vue'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import BasePage from '@/components/BasePage.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
-import CommonButton from '@/components/CommonButton.vue'
 import { useForm } from 'vee-validate'
 import { omit, pipe } from 'rambda'
 import type { ClaimConfiguration } from '@/client/model/ClaimConfiguration'
@@ -37,8 +36,8 @@ const validationSchema = computed(() => {
     ...claimFormService.getSchemasForClaimConfigs(signUpClaims.value)
   }
   if (passwordEnabled.value) {
-    schema.password = string().required()
-    schema.confirm_password = string().required()
+    schema.password = string().required().label(t('common.password'))
+    schema.confirm_password = string().required().label(t('common.confirm_password'))
   }
   return object(schema)
 })
@@ -94,24 +93,15 @@ onMounted(async () => {
           {{ t('pages.sign_up.title') }}
         </template>
         <template v-slot:default>
-          <div v-if="signInRedirectUrl" class="mb-3 w-full text-center">
-            <i18n-t keypath="pages.sign_up.already_have_account">
-              <a class="text-primary underline cursor-pointer" @click="onSignInClick">
-                {{ t('pages.sign_up.sign_in_action') }}
-              </a>
-            </i18n-t>
-          </div>
-
-          <common-alert v-if="errorMessage" class="mb-3">
+          <common-alert v-if="errorMessage">
             {{ errorMessage }}
           </common-alert>
 
-          <form @submit="onSubmit">
+          <form class="flex flex-col gap-4" @submit="onSubmit">
             <claims-input-group
               :claims="signUpClaims"
               :disabled="isSubmitting"
               :error-messages="fieldErrorMessages"
-              class="mb-3"
             />
 
             <template v-if="passwordEnabled">
@@ -120,7 +110,6 @@ onMounted(async () => {
                 :error-message="fieldErrorMessages?.['password']"
                 :label="t('common.password')"
                 autocomplete="new-password"
-                class="mb-3"
                 name="password"
                 type="password"
               />
@@ -130,21 +119,28 @@ onMounted(async () => {
                 :error-message="fieldErrorMessages?.['confirm_password']"
                 :label="t('common.confirm_password')"
                 autocomplete="new-password"
-                class="mb-3"
                 name="confirm_password"
                 type="password"
               />
             </template>
 
-            <common-button :loading="isSubmitting" class="w-full mt-5" type="submit">
+            <common-button :loading="isSubmitting" size="large" type="submit">
               <template v-slot:default>
-                {{ t('common.sign_up') }}
+                {{ t('common.continue') }}
               </template>
               <template v-slot:loading>
                 {{ t('pages.sign_up.signing_up') }}
               </template>
             </common-button>
           </form>
+
+          <div v-if="signInRedirectUrl" class="text-center">
+            <i18n-t keypath="pages.sign_up.already_have_account">
+              <a class="link" @click="onSignInClick">
+                {{ t('pages.sign_up.sign_in_action') }}
+              </a>
+            </i18n-t>
+          </div>
         </template>
       </title-content-card>
     </div>
