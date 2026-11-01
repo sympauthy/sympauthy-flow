@@ -72,7 +72,7 @@ export class ClaimFormService {
     if (claim.required) {
       claimSchema = claimSchema.required()
     }
-    return claimSchema
+    return claimSchema.label(claim.name)
   }
 
   /**

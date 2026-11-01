@@ -20,7 +20,7 @@ const totpApi = injectRequired(totpApiKey)
 const submitErrorMessage = ref<string | undefined>(undefined)
 
 const validationSchema = object({
-  code: string().required()
+  code: string().required().label(t('components.validation_code_input_field.label'))
 })
 
 const { handleSubmit, defineField, isSubmitting } = useForm({

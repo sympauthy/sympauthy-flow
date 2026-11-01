@@ -30,9 +30,16 @@ const submitError = ref<string>()
 
 const router = useRouter()
 
+const loginLabel = computed(() =>
+  or(
+    i18n,
+    (props.password?.identifier_claims ?? []).map((claim) => claim.name)
+  )
+)
+
 const validationSchema = object({
-  login: string().required(),
-  password: string().required()
+  login: string().required().label(loginLabel.value),
+  password: string().required().label(t('common.password'))
 })
 
 const { handleSubmit, isSubmitting } = useForm({
@@ -49,13 +56,6 @@ const onSubmit = handleSubmit(async (values: any) => {
     submitError.value = getErrorMessage(result)
   }
 })
-
-const loginLabel = computed(() =>
-  or(
-    i18n,
-    (props.password?.identifier_claims ?? []).map((claim) => claim.name)
-  )
-)
 
 async function onSignUpClick() {
   if (props.signUpRedirectUrl) {

@@ -36,8 +36,8 @@ const validationSchema = computed(() => {
     ...claimFormService.getSchemasForClaimConfigs(signUpClaims.value)
   }
   if (passwordEnabled.value) {
-    schema.password = string().required()
-    schema.confirm_password = string().required()
+    schema.password = string().required().label(t('common.password'))
+    schema.confirm_password = string().required().label(t('common.confirm_password'))
   }
   return object(schema)
 })

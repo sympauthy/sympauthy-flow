@@ -45,7 +45,8 @@ const optionsArray = claimFormService.getOptionsForClaimConfigs(props.claims)
       />
     </template>
     <fieldset v-if="options instanceof ClaimInputGroupOptions" class="min-w-0">
-      <legend class="flow-label mb-2 text-gray-900">
+      <!-- The fields of the identity group name themselves, so its legend is for screen readers. -->
+      <legend :class="options.group === 'identity' ? 'sr-only' : 'flow-label mb-2 text-gray-900'">
         {{ t(`components.claims_input_group.${options.group}`) }}
       </legend>
       <div class="flex flex-col gap-4">
