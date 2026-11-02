@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 import { computed, onMounted, ref } from 'vue'
-import { object, string, type Schema } from 'yup'
+import { object, ref as schemaRef, string, type Schema } from 'yup'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { signUpApiKey } from '@/client/api/SignUpApi'
 import ClaimsInputGroup from '@/components/claim/group/ClaimsInputGroup.vue'
@@ -37,7 +37,10 @@ const validationSchema = computed(() => {
   }
   if (passwordEnabled.value) {
     schema.password = string().required().label(t('common.password'))
-    schema.confirm_password = string().required().label(t('common.confirm_password'))
+    schema.confirm_password = string()
+      .required()
+      .oneOf([schemaRef('password')], t('pages.sign_up.passwords_do_not_match'))
+      .label(t('common.confirm_password'))
   }
   return object(schema)
 })

@@ -46,6 +46,7 @@
     "sign_up": {
       "title": "Create your account",
       "signing_up": "Signing up...",
+      "passwords_do_not_match": "The two passwords do not match.",
       "already_have_account": "Already have an account? {0}",
       "sign_in_action": "Sign in"
     },
