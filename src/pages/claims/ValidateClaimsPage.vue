@@ -14,7 +14,7 @@ import {
 import { type SubmissionContext, useForm } from 'vee-validate'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { object, string } from 'yup'
-import { CommonAlert, CommonButton, CommonSpinner } from '@sympauthy/design'
+import { SaAlert, SaButton, SaSpinner } from '@sympauthy/design'
 import { useRoute, useRouter } from 'vue-router'
 import type { ClaimsValidationFlowResource } from '@/client/model/ClaimsValidationFlowResource.ts'
 import { makeUnknownErrorRoute } from '@/router'
@@ -42,7 +42,7 @@ const validationSchema = object({
   code: string().required().label(t('components.validation_code_input_field.label'))
 })
 
-const { handleSubmit, defineField, isSubmitting } = useForm({
+const { handleSubmit, defineField, isSubmitting, resetForm } = useForm({
   validationSchema: validationSchema
 })
 defineField('code', {
@@ -111,6 +111,7 @@ const onResend = async () => {
     return
   }
   isResending.value = true
+  submitErrorMessage.value = undefined
 
   const response = await claimsValidationApi.resendValidationCode({
     media: validationCode.value.media
@@ -119,6 +120,7 @@ const onResend = async () => {
     if (response.content.resent && response.content.code !== undefined) {
       validationCode.value = response.content.code
       updateDurationToWaitBeforeResend()
+      resetForm()
     }
   } else {
     submitErrorMessage.value = getErrorMessage(response)
@@ -177,9 +179,9 @@ onUnmounted(() => {
         </template>
 
         <template v-slot:default>
-          <common-alert v-if="submitErrorMessage">
+          <sa-alert v-if="submitErrorMessage">
             {{ submitErrorMessage }}
-          </common-alert>
+          </sa-alert>
 
           <p>
             {{ t('pages.validate_claims.description.1', [mediaName]) }}
@@ -205,21 +207,16 @@ onUnmounted(() => {
                   ])
                 }}
               </p>
-              <a v-else-if="!isResending" class="link" @click="onResend">
+              <a v-else-if="!isResending" class="sa-link" @click="onResend">
                 {{ t('pages.validate_claims.resend.action') }}
               </a>
               <template v-else>
                 <p class="me-2">{{ t('pages.validate_claims.resend.resending') }}</p>
-                <common-spinner class="text-primary" size="sm" />
+                <sa-spinner class="text-primary" size="sm" />
               </template>
             </common-actionable-link>
 
-            <common-button
-              :loading="isResending"
-              :submitting="isSubmitting"
-              size="large"
-              type="submit"
-            >
+            <sa-button :loading="isResending" :submitting="isSubmitting" size="large" type="submit">
               <template v-slot:default>
                 {{ t('pages.validate_claims.submit') }}
               </template>
@@ -229,7 +226,7 @@ onUnmounted(() => {
               <template v-slot:submitting>
                 {{ t('pages.validate_claims.submitting') }}
               </template>
-            </common-button>
+            </sa-button>
           </form>
         </template>
       </title-content-card>

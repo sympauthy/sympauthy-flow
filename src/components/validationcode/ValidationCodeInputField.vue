@@ -231,7 +231,10 @@ const fillInputFields = (text: string) => {
 }
 
 watch(value, (newValue: string, oldValue: string) => {
-  if (newValue !== oldValue) {
+  if (newValue === undefined) {
+    // The form was reset. An empty string is different: the code is still being typed.
+    clearAllInputFields()
+  } else if (newValue !== oldValue) {
     updateAllInputFieldsForValue(newValue)
   }
 })

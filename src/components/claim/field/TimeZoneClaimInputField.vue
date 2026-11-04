@@ -41,12 +41,19 @@ const loadTimeZones = async () => {
   isLoadingTimeZones.value = false
 }
 
+// The IANA names write a space as an underscore: a person searches for "new york", not "New_York".
+const normalizeForSearch = (value: string) => value.toLowerCase().replaceAll('_', ' ')
+
 const filteredTimeZones = computed(() => {
   const searchedValue = search.value
   if (searchedValue === undefined) {
     return timeZones.value
   }
-  return timeZones.value?.filter((it) => it.id.includes(searchedValue))
+  const normalizedValue = normalizeForSearch(searchedValue)
+  return timeZones.value?.filter(
+    (it) =>
+      normalizeForSearch(it.id).includes(normalizedValue) || it.offset.includes(normalizedValue)
+  )
 })
 
 onMounted(async () => {
@@ -66,7 +73,6 @@ onMounted(async () => {
       <search-card
         v-model="search"
         :placeholder="t('components.tz_claim_input_field.placeholder')"
-        class="h-2/3"
         @close="cancel"
       >
         <search-card-item
@@ -76,6 +82,9 @@ onMounted(async () => {
         >
           {{ timeZone.id }}
         </search-card-item>
+        <p v-if="search && filteredTimeZones.length === 0" class="p-3 text-center text-gray-500">
+          {{ t('components.tz_claim_input_field.no_match') }}
+        </p>
       </search-card>
     </template>
   </common-select>

@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import BasePage from '@/components/BasePage.vue'
-import { CommonAlert } from '@sympauthy/design'
+import { SaAlert } from '@sympauthy/design'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { errorApiKey } from '@/client/api/ErrorApi'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
@@ -47,9 +47,9 @@ onMounted(async () => {
           {{ t('pages.error.title') }}
         </template>
 
-        <common-alert>
+        <sa-alert>
           {{ description }}
-        </common-alert>
+        </sa-alert>
         <p class="flow-small text-gray-500">{{ errorCode }} - {{ details }}</p>
       </title-content-card>
     </div>

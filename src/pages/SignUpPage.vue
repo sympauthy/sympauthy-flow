@@ -8,7 +8,7 @@ import ClaimsInputGroup from '@/components/claim/group/ClaimsInputGroup.vue'
 import { claimFormServiceKey } from '@/services/ClaimFormService'
 import { getErrorMessage, getErrorMessageForProperties } from '@/client/ErrorApiResponse'
 import { useRouter } from 'vue-router'
-import { CommonAlert, CommonButton } from '@sympauthy/design'
+import { SaAlert, SaButton } from '@sympauthy/design'
 import CommonField from '@/components/CommonInputField.vue'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import BasePage from '@/components/BasePage.vue'
@@ -96,9 +96,9 @@ onMounted(async () => {
           {{ t('pages.sign_up.title') }}
         </template>
         <template v-slot:default>
-          <common-alert v-if="errorMessage">
+          <sa-alert v-if="errorMessage">
             {{ errorMessage }}
-          </common-alert>
+          </sa-alert>
 
           <form class="flex flex-col gap-4" @submit="onSubmit">
             <claims-input-group
@@ -127,19 +127,19 @@ onMounted(async () => {
               />
             </template>
 
-            <common-button :loading="isSubmitting" size="large" type="submit">
+            <sa-button :loading="isSubmitting" size="large" type="submit">
               <template v-slot:default>
                 {{ t('common.continue') }}
               </template>
               <template v-slot:loading>
                 {{ t('pages.sign_up.signing_up') }}
               </template>
-            </common-button>
+            </sa-button>
           </form>
 
           <div v-if="signInRedirectUrl" class="text-center">
             <i18n-t keypath="pages.sign_up.already_have_account">
-              <a class="link" @click="onSignInClick">
+              <a class="sa-link" @click="onSignInClick">
                 {{ t('pages.sign_up.sign_in_action') }}
               </a>
             </i18n-t>
