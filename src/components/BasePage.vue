@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { brandingUrls } from '@sympauthy/design'
+import { BrandLogo } from '@sympauthy/design'
 import { useI18n } from 'vue-i18n'
 import { brandKey, getBrandName, SYMPAUTHY_NAME } from '@/utils/BrandUtils'
 import { injectRequired } from '@/utils/VueUtils'
@@ -7,7 +7,6 @@ import { injectRequired } from '@/utils/VueUtils'
 const { t } = useI18n()
 const brand = injectRequired(brandKey)
 
-const urls = brandingUrls()
 const name = getBrandName(brand)
 // The wordmark and the tagline are SympAuthy's own: a deployment's name is written as it is.
 const isSympAuthy = name === SYMPAUTHY_NAME
@@ -17,14 +16,7 @@ const isSympAuthy = name === SYMPAUTHY_NAME
   <div class="flex flex-col gap-6 pt-8 pb-6">
     <header class="flex w-full flex-col items-center gap-1 text-center">
       <div class="flex items-center gap-3">
-        <picture class="shrink-0">
-          <source
-            v-if="brand.darkMode === 'auto'"
-            media="(prefers-color-scheme: dark)"
-            :srcset="urls.logoDark"
-          />
-          <img :src="urls.logo" alt="" class="h-10 w-auto" />
-        </picture>
+        <brand-logo large :follow-device="brand.darkMode === 'auto'" />
         <p class="flow-brand text-gray-900">
           <template v-if="isSympAuthy">Symp<span class="font-extrabold">Authy</span></template>
           <template v-else>{{ name }}</template>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CommonAlert, CommonCard, CommonSpinner } from '@sympauthy/design'
+import { CommonAlert, CommonCard, LoadingState } from '@sympauthy/design'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
@@ -26,10 +26,7 @@ const { t } = useI18n()
         <slot name="title"></slot>
       </h1>
       <common-alert v-if="error">{{ error }}</common-alert>
-      <div v-else-if="loading" class="flex flex-col items-center gap-3 py-10">
-        <common-spinner class="text-primary" size="lg" />
-        <p class="flow-small text-gray-500">{{ t('common.loading_from_server') }}</p>
-      </div>
+      <loading-state v-else-if="loading" :label="t('common.loading_from_server')" size="lg" />
       <slot v-else name="default"></slot>
     </div>
   </common-card>

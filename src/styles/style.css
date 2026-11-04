@@ -24,7 +24,3 @@
     @apply bg-body font-sans text-gray-900;
   }
 }
-
-@utility link {
-  @apply cursor-pointer text-primary underline hover:text-primary-hover;
-}

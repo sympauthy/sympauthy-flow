@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { CommonSkeleton } from '@sympauthy/design'
+
 interface Props {
   label?: string
   text?: string
@@ -32,7 +34,7 @@ const onClick = () => {
       <p class="me-3">{{ props.label }}</p>
     </template>
     <template v-if="loading">
-      <p class="animate-pulse h-2 bg-gray-300 rounded-sm cursor-progress" style="width: 5rem"></p>
+      <common-skeleton class="h-2 w-20" />
     </template>
     <slot v-else-if="slots.default"></slot>
     <a v-else @click="onClick" class="link">{{ props.text }}</a>
