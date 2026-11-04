@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CommonSkeleton, FormField, FormInput } from '@sympauthy/design'
+import { SaSkeleton, SaField, SaInput } from '@sympauthy/design'
 import { useField } from 'vee-validate'
 import { computed } from 'vue'
 
@@ -28,8 +28,8 @@ const error = computed(() => props.errorMessage ?? validationErrorMessage.value)
 </script>
 
 <template>
-  <form-field :error="error" :for="name" :label="label ?? ''">
-    <form-input
+  <sa-field :error="error" :for="name" :label="label ?? ''">
+    <sa-input
       v-if="!loading"
       :id="name"
       v-model="value"
@@ -40,8 +40,8 @@ const error = computed(() => props.errorMessage ?? validationErrorMessage.value)
       :type="type"
       @blur="handleBlur"
     />
-    <div v-else class="control flex flex-col justify-center">
-      <common-skeleton class="h-4 max-w-[40%]" />
+    <div v-else class="sa-control flex flex-col justify-center">
+      <sa-skeleton class="h-4 max-w-[40%]" />
     </div>
-  </form-field>
+  </sa-field>
 </template>

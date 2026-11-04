@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { FormField, FormInput } from '@sympauthy/design'
+import { SaDialog, SaField, SaInput } from '@sympauthy/design'
 import { useField } from 'vee-validate'
 import { computed, ref, toRef } from 'vue'
-import CommonModal from '@/components/CommonModal.vue'
 
 interface Props {
   name: string
@@ -35,37 +34,38 @@ const {
 
 const error = computed(() => props.errorMessage ?? validationErrorMessage.value)
 
-const modal = ref<InstanceType<typeof CommonModal> | undefined>(undefined)
+const open = ref(false)
 
-const openModal = () => {
-  modal.value?.openModal()
+const openDialog = () => {
+  open.value = true
 }
 
 const select = (value: string) => {
   handleChange(value)
-  modal.value?.closeModal()
+  open.value = false
 }
 
 const cancel = () => {
-  modal.value?.closeModal()
+  open.value = false
 }
 </script>
 
 <template>
-  <form-field :error="error" :for="props.name" :label="label ?? ''">
-    <form-input
+  <sa-field :error="error" :for="props.name" :label="label ?? ''">
+    <sa-input
       :id="props.name"
       :disabled="disabled"
       :invalid="error !== undefined"
       :model-value="inputValue"
       readonly
-      @click="openModal"
+      @click="openDialog"
     />
+  </sa-field>
 
-    <common-modal ref="modal">
-      <slot :cancel="cancel" :select="select"></slot>
-    </common-modal>
-  </form-field>
+  <!-- Beside the field rather than in it: an input in the dialog would be described by its error. -->
+  <sa-dialog :open="open" :title="label" @close="cancel">
+    <slot :cancel="cancel" :select="select"></slot>
+  </sa-dialog>
 </template>
 
 <style scoped></style>

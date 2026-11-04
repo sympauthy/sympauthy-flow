@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CommonAlert, CommonButton } from '@sympauthy/design'
+import { SaAlert, SaButton } from '@sympauthy/design'
 import { useI18n } from 'vue-i18n'
 import { signInApiKey } from '@/client/api/SignInApi'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
@@ -70,9 +70,9 @@ async function onSignUpClick() {
       {{ t('components.sign_in_card.title') }}
     </template>
     <template v-slot:default>
-      <common-alert v-if="submitError">
+      <sa-alert v-if="submitError">
         {{ submitError }}
-      </common-alert>
+      </sa-alert>
 
       <provider-button v-for="provider of providers" :key="provider.id" :provider="provider" />
 
@@ -103,23 +103,23 @@ async function onSignUpClick() {
             type="password"
           />
           <div class="flow-small text-end">
-            <a class="link">{{ t('components.sign_in_card.forgotten_password') }}</a>
+            <a class="sa-link">{{ t('components.sign_in_card.forgotten_password') }}</a>
           </div>
         </div>
 
-        <common-button :loading="isSubmitting" size="large" type="submit">
+        <sa-button :loading="isSubmitting" size="large" type="submit">
           <template v-slot:default>
             {{ t('common.continue') }}
           </template>
           <template v-slot:loading>
             {{ t('components.sign_in_card.signing_in') }}
           </template>
-        </common-button>
+        </sa-button>
       </form>
 
       <div v-if="signUpRedirectUrl" class="text-center">
         <i18n-t keypath="components.sign_in_card.no_account">
-          <a class="link" @click="onSignUpClick">
+          <a class="sa-link" @click="onSignUpClick">
             {{ t('components.sign_in_card.sign_up_action') }}
           </a>
         </i18n-t>

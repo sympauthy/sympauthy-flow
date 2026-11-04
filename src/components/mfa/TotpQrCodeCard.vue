@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { CheckIcon, ClipboardIcon } from '@heroicons/vue/20/solid'
-import { CommonButton, CommonSkeleton, outlineColoredButton } from '@sympauthy/design'
+import { SaButton, SaSkeleton } from '@sympauthy/design'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import QRCode from 'qrcode'
@@ -66,7 +66,7 @@ watch(
       alt="QR Code"
       class="size-52 rounded-md border border-gray-200 bg-white p-2"
     />
-    <common-skeleton v-else class="size-52" />
+    <sa-skeleton v-else class="size-52" />
   </div>
 
   <p class="flow-small">
@@ -78,8 +78,8 @@ watch(
         class="min-w-0 flex-auto rounded-md bg-gray-100 px-3 py-2 font-mono text-sm break-all"
         >{{ secret }}</code
       >
-      <common-button
-        :button-style="outlineColoredButton"
+      <sa-button
+        variant="outline"
         :icon="copyIcon"
         :label="copyLabel"
         class="shrink-0"
@@ -87,7 +87,7 @@ watch(
         @click="onCopy"
       />
     </template>
-    <common-skeleton v-else class="h-6 w-48" />
+    <sa-skeleton v-else class="h-6 w-48" />
   </div>
 </template>
 

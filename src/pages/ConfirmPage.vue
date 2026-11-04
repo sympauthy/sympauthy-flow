@@ -2,7 +2,7 @@
 import BasePage from '@/components/BasePage.vue'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { ShieldCheckIcon } from '@heroicons/vue/20/solid'
-import { CommonAlert, CommonButton, outlineColoredButton } from '@sympauthy/design'
+import { SaAlert, SaButton } from '@sympauthy/design'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { confirmApiKey } from '@/client/api/ConfirmApi'
 import { cancelApiKey } from '@/client/api/CancelApi'
@@ -83,9 +83,9 @@ const onCancel = async () => {
         </template>
 
         <template v-slot:default>
-          <common-alert v-if="submitErrorMessage">
+          <sa-alert v-if="submitErrorMessage">
             {{ submitErrorMessage }}
-          </common-alert>
+          </sa-alert>
 
           <div
             class="flex items-start gap-3 rounded-md bg-primary-subtle p-3 text-on-primary-subtle"
@@ -108,7 +108,7 @@ const onCancel = async () => {
             {{ t('pages.confirm.warning') }}
           </p>
 
-          <common-button
+          <sa-button
             :disabled="isCancelling"
             :submitting="isConfirming"
             size="large"
@@ -121,10 +121,10 @@ const onCancel = async () => {
             <template v-slot:submitting>
               {{ t('pages.confirm.confirming') }}
             </template>
-          </common-button>
+          </sa-button>
 
-          <common-button
-            :button-style="outlineColoredButton"
+          <sa-button
+            variant="outline"
             :disabled="isConfirming"
             :submitting="isCancelling"
             size="large"
@@ -137,7 +137,7 @@ const onCancel = async () => {
             <template v-slot:submitting>
               {{ t('pages.confirm.cancelling') }}
             </template>
-          </common-button>
+          </sa-button>
         </template>
       </title-content-card>
 

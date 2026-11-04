@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CommonSkeleton } from '@sympauthy/design'
+import { SaSkeleton } from '@sympauthy/design'
 
 interface Props {
   label?: string
@@ -34,10 +34,10 @@ const onClick = () => {
       <p class="me-3">{{ props.label }}</p>
     </template>
     <template v-if="loading">
-      <common-skeleton class="h-2 w-20" />
+      <sa-skeleton class="h-2 w-20" />
     </template>
     <slot v-else-if="slots.default"></slot>
-    <a v-else @click="onClick" class="link">{{ props.text }}</a>
+    <a v-else @click="onClick" class="sa-link">{{ props.text }}</a>
   </div>
 </template>
 

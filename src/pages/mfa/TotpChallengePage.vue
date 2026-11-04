@@ -10,7 +10,7 @@ import { useForm } from 'vee-validate'
 import { object, string } from 'yup'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
-import { CommonAlert, CommonButton } from '@sympauthy/design'
+import { SaAlert, SaButton } from '@sympauthy/design'
 import ValidationCodeField from '@/components/validationcode/ValidationCodeInputField.vue'
 
 const { t } = useI18n()
@@ -56,9 +56,9 @@ const onSubmit = handleSubmit(async (values, ctx) => {
         </template>
 
         <template v-slot:default>
-          <common-alert v-if="submitErrorMessage">
+          <sa-alert v-if="submitErrorMessage">
             {{ submitErrorMessage }}
-          </common-alert>
+          </sa-alert>
 
           <p>
             {{ t('pages.totp_challenge.description') }}
@@ -67,14 +67,14 @@ const onSubmit = handleSubmit(async (values, ctx) => {
           <form class="flex flex-col gap-4" @submit="onSubmit">
             <validation-code-field autofocus :code-length="6" name="code" @complete="onSubmit()" />
 
-            <common-button :submitting="isSubmitting" size="large" type="submit">
+            <sa-button :submitting="isSubmitting" size="large" type="submit">
               <template v-slot:default>
                 {{ t('pages.totp_challenge.submit') }}
               </template>
               <template v-slot:submitting>
                 {{ t('pages.totp_challenge.submitting') }}
               </template>
-            </common-button>
+            </sa-button>
           </form>
         </template>
       </title-content-card>

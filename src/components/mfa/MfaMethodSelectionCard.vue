@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { DevicePhoneMobileIcon } from '@heroicons/vue/20/solid'
-import { CommonButton, outlineColoredButton } from '@sympauthy/design'
+import { SaButton } from '@sympauthy/design'
 import type { Component } from 'vue'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { useI18n } from 'vue-i18n'
@@ -46,10 +46,10 @@ const onSkip = async () => {
         {{ t(descriptionKey) }}
       </p>
 
-      <common-button
+      <sa-button
         v-for="method in methods"
         :key="method.method"
-        :button-style="outlineColoredButton"
+        variant="outline"
         :icon="methodIcons[method.method]"
         size="large"
         type="button"
@@ -58,10 +58,10 @@ const onSkip = async () => {
         <template v-slot:default>
           {{ t(`pages.mfa.methods.${method.method}`, method.method) }}
         </template>
-      </common-button>
+      </sa-button>
 
       <div v-if="skipRedirectUrl" class="text-center">
-        <a class="link" @click="onSkip">{{ t('pages.mfa.skip') }}</a>
+        <a class="sa-link" @click="onSkip">{{ t('pages.mfa.skip') }}</a>
       </div>
     </template>
   </title-content-card>

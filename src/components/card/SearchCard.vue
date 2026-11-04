@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/vue/20/solid'
-import { CommonCard } from '@sympauthy/design'
+import { SaInput } from '@sympauthy/design'
 
 interface Props {
   placeholder?: string
@@ -16,25 +16,25 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <common-card class="flex w-full max-w-card flex-col" :padded="false">
+  <div class="flex w-full flex-col gap-3">
     <!-- Search -->
-    <div class="flex w-full flex-row items-center border-b border-gray-200 p-3 text-gray-700">
-      <MagnifyingGlassIcon class="size-5" />
-      <input
+    <div class="flex w-full flex-row items-center gap-3 text-gray-700">
+      <sa-input
         v-model="model"
+        :icon="MagnifyingGlassIcon"
         :placeholder="props.placeholder"
-        class="flex-auto appearance-none bg-transparent px-3 py-2 text-base leading-tight text-gray-900 outline-hidden placeholder:text-gray-500"
+        class="flex-auto"
         name="search"
         type="text"
       />
       <XMarkIcon class="size-5 cursor-pointer" @click="emit('close')" />
     </div>
 
-    <!-- Selector -->
-    <div class="flex-auto overflow-x-scroll">
+    <!-- Selector. Its own scroll keeps the search in sight, and its height keeps it still. -->
+    <div class="h-[50vh] overflow-y-auto">
       <slot></slot>
     </div>
-  </common-card>
+  </div>
 </template>
 
 <style scoped></style>

@@ -12,7 +12,7 @@ import { getErrorMessage, getErrorMessageForProperties } from '@/client/ErrorApi
 import { claimApiKey } from '@/client/api/ClaimApi'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
-import { CommonAlert, CommonButton } from '@sympauthy/design'
+import { SaAlert, SaButton } from '@sympauthy/design'
 import type { ClaimConfiguration } from '@/client/model/ClaimConfiguration'
 
 const { t } = useI18n()
@@ -95,9 +95,9 @@ onMounted(async () => {
           {{ t('pages.collect_claims.title') }}
         </template>
 
-        <common-alert v-if="submitErrorMessage">
+        <sa-alert v-if="submitErrorMessage">
           {{ submitErrorMessage }}
-        </common-alert>
+        </sa-alert>
 
         <form class="flex flex-col gap-4" @submit="onSubmit">
           <claims-input-group
@@ -106,14 +106,14 @@ onMounted(async () => {
             :error-messages="fieldErrorMessages"
           />
 
-          <common-button :loading="isSubmitting" size="large" type="submit">
+          <sa-button :loading="isSubmitting" size="large" type="submit">
             <template v-slot:default>
               {{ t('common.continue') }}
             </template>
             <template v-slot:loading>
               {{ t('pages.collect_claims.updating') }}
             </template>
-          </common-button>
+          </sa-button>
         </form>
       </title-content-card>
     </div>

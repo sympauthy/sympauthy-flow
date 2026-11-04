@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CommonButton, outlineColoredButton } from '@sympauthy/design'
+import { SaButton } from '@sympauthy/design'
 import type { ProviderResource } from '@/client/model/ProviderResource'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
@@ -19,9 +19,9 @@ async function onClick() {
 </script>
 
 <template>
-  <common-button :button-style="outlineColoredButton" size="large" type="button" @click="onClick">
+  <sa-button variant="outline" size="large" type="button" @click="onClick">
     {{ t('components.provider_button.continue_with', [provider.name]) }}
-  </common-button>
+  </sa-button>
 </template>
 
 <style scoped></style>

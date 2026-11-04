@@ -66,7 +66,6 @@ onMounted(async () => {
       <search-card
         v-model="search"
         :placeholder="t('components.tz_claim_input_field.placeholder')"
-        class="h-2/3"
         @close="cancel"
       >
         <search-card-item
