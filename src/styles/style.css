@@ -1,7 +1,6 @@
 @import 'tailwindcss';
 @import '@sympauthy/design/theme.css';
 @import '@sympauthy/design/components.css';
-@source '../../node_modules/@sympauthy/design/src';
 
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
