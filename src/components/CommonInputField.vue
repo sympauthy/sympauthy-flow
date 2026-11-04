@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { FormField, FormInput } from '@sympauthy/design'
+import { CommonSkeleton, FormField, FormInput } from '@sympauthy/design'
 import { useField } from 'vee-validate'
 import { computed } from 'vue'
 
@@ -41,7 +41,7 @@ const error = computed(() => props.errorMessage ?? validationErrorMessage.value)
       @blur="handleBlur"
     />
     <div v-else class="control flex flex-col justify-center">
-      <div class="h-4 max-w-[40%] animate-pulse cursor-progress rounded-sm bg-gray-300"></div>
+      <common-skeleton class="h-4 max-w-[40%]" />
     </div>
   </form-field>
 </template>
