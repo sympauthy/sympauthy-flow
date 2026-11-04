@@ -17,13 +17,9 @@ const props = withDefaults(defineProps<Props>(), {
   autofocus: false
 })
 
-const emit = defineEmits<{
-  complete: []
-}>()
-
 const { t } = useI18n()
 
-const { value, errorMessage, setTouched } = useField<string>(() => props.name)
+const { value, errorMessage, setTouched, setValue } = useField<string>(() => props.name)
 
 onMounted(() => {
   if (props.autofocus) {
@@ -157,10 +153,8 @@ const updateTouchedAndValue = () => {
   if (newValue !== value.value) {
     setTouched(true)
     if (newValue !== undefined) {
-      value.value = newValue
-      if (newValue !== '') {
-        emit('complete')
-      }
+      // Validate on submission only: a code being typed is not missing, and an error must stay
+      setValue(newValue, false)
     }
   }
 }

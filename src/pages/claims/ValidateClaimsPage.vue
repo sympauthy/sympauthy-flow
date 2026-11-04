@@ -192,7 +192,7 @@ onUnmounted(() => {
           </p>
 
           <form class="flex flex-col gap-4" @submit="onSubmit">
-            <validation-code-field autofocus name="code" @complete="onSubmit()" />
+            <validation-code-field autofocus name="code" />
 
             <common-actionable-link
               :disabled="isSubmitting"
