@@ -16,7 +16,7 @@ const isSympAuthy = name === SYMPAUTHY_NAME
   <div class="flex flex-col gap-6 pt-8 pb-6">
     <header class="flex w-full flex-col items-center gap-1 text-center">
       <div class="flex items-center gap-3">
-        <sa-brand-logo large :follow-device="brand.darkMode === 'auto'" />
+        <sa-brand-logo size="lg" :follow-device="brand.darkMode === 'auto'" />
         <p class="flow-brand text-gray-900">
           <template v-if="isSympAuthy">Symp<span class="font-extrabold">Authy</span></template>
           <template v-else>{{ name }}</template>
