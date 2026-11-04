@@ -63,6 +63,10 @@ Routes use `meta.stateRequired` to indicate OAuth state is needed. A `beforeEach
 - We get its dependencies transitively, so the flow stays aligned on the versions the design system is built with: `@heroicons/vue` (its dependency) and `reka-ui` (its peer dependency, which npm installs) are deliberately not listed in this project's `package.json`, and upgrading the design system upgrades them. Import them as usual, and don't add them back. If they must be listed for a reason, stay within the design system's range: npm only warns outside a peer range, and the design system's components would run on a version they were not built for.
 - Never write a hex value or a color outside the theme: `bg-primary`, `text-gray-500` and the like read the server's tokens, and turn dark with them.
 
+### Validation codes
+
+A code is submitted only when the person asks for it, with Enter or the submit button. `ValidationCodeInputField` never submits by itself, whether its boxes were filled by typing, by pasting or by the keyboard's one-time-code suggestion: submitting on a change sends requests that race, and they can fail a session after its code has succeeded. After a failed submission the code stays in the boxes, so that the person can correct a digit without retyping the whole code.
+
 ### Key Directories
 
 - `src/pages/` — Page-level components (SignIn, SignUp, Claims, MFA)

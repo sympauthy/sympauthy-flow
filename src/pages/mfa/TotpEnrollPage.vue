@@ -87,7 +87,7 @@ const onSubmit = handleSubmit(async (values, ctx) => {
           </p>
 
           <form class="flex flex-col gap-4" @submit="onSubmit">
-            <validation-code-field autofocus :code-length="6" name="code" @complete="onSubmit()" />
+            <validation-code-field autofocus :code-length="6" name="code" />
 
             <sa-button :submitting="isSubmitting" size="large" type="submit">
               <template v-slot:default>
