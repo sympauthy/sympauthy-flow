@@ -27,7 +27,8 @@
       "address": "Address"
     },
     "tz_claim_input_field": {
-      "placeholder": "Search (country, offset, etc.)"
+      "placeholder": "Search (city, region, offset)",
+      "no_match": "No time zone matches your search."
     },
     "validation_code_input_field": {
       "label": "Validation code",

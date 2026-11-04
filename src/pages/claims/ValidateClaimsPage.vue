@@ -42,7 +42,7 @@ const validationSchema = object({
   code: string().required().label(t('components.validation_code_input_field.label'))
 })
 
-const { handleSubmit, defineField, isSubmitting } = useForm({
+const { handleSubmit, defineField, isSubmitting, resetForm } = useForm({
   validationSchema: validationSchema
 })
 defineField('code', {
@@ -111,6 +111,7 @@ const onResend = async () => {
     return
   }
   isResending.value = true
+  submitErrorMessage.value = undefined
 
   const response = await claimsValidationApi.resendValidationCode({
     media: validationCode.value.media
@@ -119,6 +120,7 @@ const onResend = async () => {
     if (response.content.resent && response.content.code !== undefined) {
       validationCode.value = response.content.code
       updateDurationToWaitBeforeResend()
+      resetForm()
     }
   } else {
     submitErrorMessage.value = getErrorMessage(response)
