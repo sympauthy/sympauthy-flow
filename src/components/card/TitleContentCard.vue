@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { SaAlert, SaCard, SaLoadingState } from '@sympauthy/design'
-import { useI18n } from 'vue-i18n'
 
 interface Props {
   size?: 'default' | 'large'
@@ -12,8 +11,6 @@ withDefaults(defineProps<Props>(), {
   size: 'default',
   loading: false
 })
-
-const { t } = useI18n()
 </script>
 
 <template>
@@ -23,7 +20,7 @@ const { t } = useI18n()
         <slot name="title"></slot>
       </h1>
       <sa-alert v-if="error">{{ error }}</sa-alert>
-      <sa-loading-state v-else-if="loading" :label="t('common.loading_from_server')" size="lg" />
+      <sa-loading-state v-else-if="loading" size="lg" />
       <slot v-else name="default"></slot>
     </div>
   </sa-card>

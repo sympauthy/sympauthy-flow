@@ -7,8 +7,7 @@
     "password": "Password",
     "confirm_password": "Confirm your password",
     "continue": "Continue",
-    "loading": "Loading...",
-    "loading_from_server": "Waiting for a response from the server."
+    "loading": "Loading..."
   },
   "components": {
     "sign_in_card": {
