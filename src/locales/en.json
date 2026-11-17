@@ -50,6 +50,35 @@
       "already_have_account": "Already have an account? {0}",
       "sign_in_action": "Sign in"
     },
+    "reset_password": {
+      "request": {
+        "title": "Reset your password",
+        "description": "Enter the {0} you sign in with. If it belongs to an account, we'll send a code to that account's email address.",
+        "submit": "Send code",
+        "submitting": "Sending...",
+        "remembered": "Remembered it? {0}",
+        "back_to_sign_in": "Back to sign in"
+      },
+      "validate": {
+        "title": "Check your email",
+        "description": "If an account uses {login}, we sent a code to its email address. Nothing yet? Check the spelling, and use the {identifier} you signed up with.",
+        "submit": "Verify",
+        "submitting": "Verifying...",
+        "resend": {
+          "description": "Didn't get it?",
+          "waiting": "Resend in {0}",
+          "action": "Resend",
+          "resending": "Resending..."
+        },
+        "different_login": "Use a different {0}"
+      },
+      "choose": {
+        "title": "Choose a new password",
+        "description": "It replaces your current password, which will stop working.",
+        "label": "New password",
+        "submitting": "Continuing..."
+      }
+    },
     "collect_claims": {
       "title": "Before you continue",
       "updating": "Updating..."

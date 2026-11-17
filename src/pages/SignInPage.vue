@@ -40,6 +40,7 @@ onMounted(async () => {
         :password="signIn.password"
         :providers="signIn.providers ?? []"
         :sign-up-redirect-url="signIn.sign_up_redirect_url"
+        :reset-password-redirect-url="signIn.reset_password_redirect_url"
       />
       <title-content-card v-else loading>
         <template v-slot:title>{{ t('components.sign_in_card.title') }}</template>

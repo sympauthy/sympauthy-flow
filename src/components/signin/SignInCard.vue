@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { SaAlert, SaButton } from '@sympauthy/design'
+import { SaAlert, SaButton, SaLink } from '@sympauthy/design'
 import { useI18n } from 'vue-i18n'
 import { signInApiKey } from '@/client/api/SignInApi'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
@@ -16,15 +16,18 @@ import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import type { PasswordResource } from '@/client/model/PasswordResource'
 import type { ProviderResource } from '@/client/model/ProviderResource'
+import { useResetPassword } from '@/stores/ResetPasswordStore'
 
 const props = defineProps<{
   providers: Array<ProviderResource>
   password?: PasswordResource
   signUpRedirectUrl?: string
+  resetPasswordRedirectUrl?: string
 }>()
 
 const signInApi = injectRequired(signInApiKey)
 const { t } = useI18n()
+const resetPassword = useResetPassword()
 
 const submitError = ref<string>()
 
@@ -42,7 +45,7 @@ const validationSchema = object({
   password: string().required().label(t('common.password'))
 })
 
-const { handleSubmit, isSubmitting } = useForm({
+const { handleSubmit, isSubmitting, values } = useForm({
   validationSchema: validationSchema
 })
 
@@ -56,6 +59,23 @@ const onSubmit = handleSubmit(async (values: any) => {
     submitError.value = getErrorMessage(result)
   }
 })
+
+async function onForgottenPasswordClick(event: MouseEvent) {
+  // A link opened in another tab or window is a full page load, which carries no identifier.
+  if (
+    !props.resetPasswordRedirectUrl ||
+    event.button !== 0 ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.shiftKey
+  ) {
+    return
+  }
+  event.preventDefault()
+  // Held by the app, never put in the address, so that the first reset page opens with it.
+  resetPassword.login = values.login
+  await redirectOrPush(router, props.resetPasswordRedirectUrl)
+}
 
 async function onSignUpClick() {
   if (props.signUpRedirectUrl) {
@@ -94,18 +114,13 @@ async function onSignUpClick() {
           type="text"
         />
 
-        <div class="flex flex-col gap-1.5">
-          <common-input
-            :disabled="isSubmitting"
-            :label="t('common.password')"
-            autocomplete="current-password"
-            name="password"
-            type="password"
-          />
-          <div class="flow-small text-end">
-            <a class="sa-link">{{ t('components.sign_in_card.forgotten_password') }}</a>
-          </div>
-        </div>
+        <common-input
+          :disabled="isSubmitting"
+          :label="t('common.password')"
+          autocomplete="current-password"
+          name="password"
+          type="password"
+        />
 
         <sa-button :loading="isSubmitting" size="large" type="submit">
           <template v-slot:default>
@@ -116,6 +131,13 @@ async function onSignUpClick() {
           </template>
         </sa-button>
       </form>
+
+      <div v-if="password && resetPasswordRedirectUrl" class="flex justify-center">
+        <sa-link
+          :label="t('components.sign_in_card.forgotten_password')"
+          :link="{ href: resetPasswordRedirectUrl, onClick: onForgottenPasswordClick }"
+        />
+      </div>
 
       <div v-if="signUpRedirectUrl" class="text-center">
         <i18n-t keypath="components.sign_in_card.no_account">

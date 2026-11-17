@@ -16,6 +16,7 @@ import { MfaApi, mfaApiKey } from '@/client/api/MfaApi'
 import { TotpApi, totpApiKey } from '@/client/api/TotpApi'
 import { ConfirmApi, confirmApiKey } from '@/client/api/ConfirmApi'
 import { CancelApi, cancelApiKey } from '@/client/api/CancelApi'
+import { ResetPasswordApi, resetPasswordApiKey } from '@/client/api/ResetPasswordApi'
 import { brandKey, getBrandName } from '@/utils/BrandUtils'
 
 const pinia = createPinia()
@@ -38,6 +39,7 @@ createApp(App)
   .provide(totpApiKey, new TotpApi(pinia))
   .provide(confirmApiKey, new ConfirmApi(pinia))
   .provide(cancelApiKey, new CancelApi(pinia))
+  .provide(resetPasswordApiKey, new ResetPasswordApi(pinia))
   .use(router)
   .use(i18n)
   .use(pinia)

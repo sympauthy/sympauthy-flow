@@ -33,3 +33,8 @@ export function translateMessage(messageKey: string, values?: NamedValue): strin
   const { t } = i18n.global
   return t(messageKey, values)
 }
+
+export function translateListMessage(messageKey: string, values: Array<unknown>): string {
+  const { t } = i18n.global
+  return t(messageKey, values)
+}
