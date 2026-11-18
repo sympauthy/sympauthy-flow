@@ -42,6 +42,12 @@ npm run lint
 npm run format
 ```
 
+### Unit tests
+
+```sh
+npm run test:unit
+```
+
 ## Documentation
 
 - [Functional documentation](https://sympauthy.github.io/documentation/functional/)

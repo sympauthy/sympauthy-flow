@@ -26,9 +26,12 @@ npm run lint
 
 # Format (Prettier)
 npm run format
+
+# Unit tests (Vitest, in watch mode; `npx vitest run` runs them once)
+npm run test:unit
 ```
 
-No test framework is configured.
+Unit tests sit beside the code they test, in `__tests__/` directories named `*.spec.ts`, and run through the app's Vite config (`vitest.config.ts` merges it), so `@` and the i18n messages work in them.
 
 ## Architecture
 

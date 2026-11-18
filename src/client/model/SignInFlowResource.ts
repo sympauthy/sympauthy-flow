@@ -13,7 +13,8 @@ import { providerResourceSchema } from '@/client/model/ProviderResource'
  * Consumers must check `redirect_url` first; when it is set all config fields
  * are null.
  *
- * All URLs (`redirect_url`, `sign_up_redirect_url`, provider `authorize_url`)
+ * All URLs (`redirect_url`, `sign_up_redirect_url`, `reset_password_redirect_url`, provider
+ * `authorize_url`)
  * are built by the server with the flow `state` already appended.
  */
 export interface SignInFlowResource {
@@ -23,6 +24,8 @@ export interface SignInFlowResource {
   providers?: Array<ProviderResource>
   /** Link to the sign-up step; present iff sign-up is allowed for this attempt. */
   sign_up_redirect_url?: string
+  /** Link to the first step resetting a forgotten password; present iff the reset is offered. */
+  reset_password_redirect_url?: string
   /** Set when sign-in does not apply; the end-user should be redirected there. */
   redirect_url?: string
 }
@@ -42,6 +45,10 @@ export const signInFlowResourceSchema: JSONSchemaType<SignInFlowResource> = {
       nullable: true
     },
     sign_up_redirect_url: {
+      type: 'string',
+      nullable: true
+    },
+    reset_password_redirect_url: {
       type: 'string',
       nullable: true
     },

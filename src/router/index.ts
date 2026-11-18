@@ -16,6 +16,9 @@ import MfaSelectionPage from '@/pages/mfa/MfaSelectionPage.vue'
 import TotpChallengePage from '@/pages/mfa/TotpChallengePage.vue'
 import TotpEnrollPage from '@/pages/mfa/TotpEnrollPage.vue'
 import ConfirmPage from '@/pages/ConfirmPage.vue'
+import ResetPasswordPage from '@/pages/resetpassword/ResetPasswordPage.vue'
+import ResetPasswordValidatePage from '@/pages/resetpassword/ResetPasswordValidatePage.vue'
+import ResetPasswordChoosePage from '@/pages/resetpassword/ResetPasswordChoosePage.vue'
 import { isArrayNotEmpty } from '@/utils/ArrayUtils.ts'
 import { isString } from '@/utils/StringUtils.ts'
 
@@ -109,6 +112,32 @@ export function makeRouter(): Router {
         path: '/sign-up',
         name: 'SignUp',
         component: SignUpPage,
+        meta: {
+          stateRequired: true
+        }
+      },
+      // Each path reads as the server key an operator names it by: flows.<id>.reset-password,
+      // flows.<id>.reset-password-validate and flows.<id>.reset-password-choose.
+      {
+        path: '/reset-password',
+        name: 'ResetPassword',
+        component: ResetPasswordPage,
+        meta: {
+          stateRequired: true
+        }
+      },
+      {
+        path: '/reset-password/validate',
+        name: 'ResetPasswordValidate',
+        component: ResetPasswordValidatePage,
+        meta: {
+          stateRequired: true
+        }
+      },
+      {
+        path: '/reset-password/choose',
+        name: 'ResetPasswordChoose',
+        component: ResetPasswordChoosePage,
         meta: {
           stateRequired: true
         }

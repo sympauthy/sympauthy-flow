@@ -1,5 +1,5 @@
 import type { I18n } from 'vue-i18n'
-import { translateMessage } from '@/i18n'
+import { translateListMessage } from '@/i18n'
 
 export function isString(value: any): value is string {
   return typeof value === 'string'
@@ -25,10 +25,10 @@ export function or(i18n: I18n, values: Array<string>): string {
   if (values.length === 1) {
     return values[0] || ''
   }
-  return values.slice(2).reduce(
-    (acc, it) => {
-      return translateMessage('or.separator', { '0': acc, '1': it })
-    },
-    translateMessage('or.or', { '0': values[0], '1': values[1] })
-  )
+  // The messages read their values as a list, `{0}` and `{1}`, so they are given one.
+  // Every value but the last is joined by the separator, and the last one by "or": "A, B or C".
+  const head = values
+    .slice(1, -1)
+    .reduce((acc, it) => translateListMessage('or.separator', [acc, it]), values[0])
+  return translateListMessage('or.or', [head, values[values.length - 1]])
 }

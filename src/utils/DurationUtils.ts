@@ -28,3 +28,19 @@ export const formatToHumanReadable = (duration: Duration) => {
 
   return parts.join(' ')
 }
+
+/**
+ * Return the duration left until the provided date, in UTC.
+ * Return undefined if there is no date or if the date is already passed.
+ * @param date A date and time in UTC, without offset, as the server gives a `resend_date`.
+ */
+export const getDurationUntil = (date?: string): Duration | undefined => {
+  if (date === undefined) {
+    return undefined
+  }
+  const duration = Temporal.PlainDateTime.from(date).since(Temporal.Now.plainDateTimeISO('UTC'))
+  if (duration.sign < 0) {
+    return undefined
+  }
+  return duration
+}

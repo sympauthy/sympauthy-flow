@@ -50,6 +50,11 @@ const onKeyDown = async (event: KeyboardEvent) => {
     return
   }
 
+  if (event.key === 'Tab') {
+    // Let Tab move focus out of the boxes, to what follows them on the page
+    return
+  }
+
   if ((event.ctrlKey || event.metaKey) && event.key === 'v') {
     // Let Ctrl+V / Cmd+V propagate so the paste event fires
     return

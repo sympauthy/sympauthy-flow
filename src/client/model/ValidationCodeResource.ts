@@ -1,5 +1,6 @@
 import type { JSONSchemaType } from 'ajv'
 import { Temporal } from '@js-temporal/polyfill'
+import { getDurationUntil } from '@/utils/DurationUtils'
 
 export type ValidationCodeResource = {
   id: string
@@ -14,17 +15,7 @@ export type ValidationCodeResource = {
  */
 export const getDurationToWaitBeforeResend = (
   code?: ValidationCodeResource
-): Temporal.Duration | undefined => {
-  if (code === undefined || code.resend_date === undefined) {
-    return undefined
-  }
-  const resendDate = Temporal.PlainDateTime.from(code.resend_date)
-  const duration = resendDate.since(Temporal.Now.plainDateTimeISO('UTC'))
-  if (duration.sign < 0) {
-    return undefined
-  }
-  return duration
-}
+): Temporal.Duration | undefined => getDurationUntil(code?.resend_date)
 
 export const validationCodeResourceSchema: JSONSchemaType<ValidationCodeResource> = {
   type: 'object',
