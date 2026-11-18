@@ -72,6 +72,10 @@ async function onForgottenPasswordClick(event: MouseEvent) {
     return
   }
   event.preventDefault()
+  // A sign-in in flight would still move the person on once it answers, away from the reset page.
+  if (isSubmitting.value) {
+    return
+  }
   // Held by the app, never put in the address, so that the first reset page opens with it.
   resetPassword.login = values.login
   await redirectOrPush(router, props.resetPasswordRedirectUrl)
@@ -135,7 +139,11 @@ async function onSignUpClick() {
       <div v-if="password && resetPasswordRedirectUrl" class="flex justify-center">
         <sa-link
           :label="t('components.sign_in_card.forgotten_password')"
-          :link="{ href: resetPasswordRedirectUrl, onClick: onForgottenPasswordClick }"
+          :link="{
+            href: resetPasswordRedirectUrl,
+            'aria-disabled': isSubmitting,
+            onClick: onForgottenPasswordClick
+          }"
         />
       </div>
 

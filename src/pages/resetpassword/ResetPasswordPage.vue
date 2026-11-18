@@ -55,6 +55,8 @@ const signInRoute = computed(() => ({
 
 const onSubmit = handleSubmit(async (values: any) => {
   submitErrorMessage.value = undefined
+  // Kept so that coming back to this page, with Back or from the code page, shows it again.
+  resetPassword.login = values.login
 
   // Whatever is typed leads to the code page, which says nothing about whether an account holds it.
   const response = await resetPasswordApi.requestCode(values.login)

@@ -26,10 +26,9 @@ export function or(i18n: I18n, values: Array<string>): string {
     return values[0] || ''
   }
   // The messages read their values as a list, `{0}` and `{1}`, so they are given one.
-  return values
-    .slice(2)
-    .reduce(
-      (acc, it) => translateListMessage('or.separator', [acc, it]),
-      translateListMessage('or.or', [values[0], values[1]])
-    )
+  // Every value but the last is joined by the separator, and the last one by "or": "A, B or C".
+  const head = values
+    .slice(1, -1)
+    .reduce((acc, it) => translateListMessage('or.separator', [acc, it]), values[0])
+  return translateListMessage('or.or', [head, values[values.length - 1]])
 }

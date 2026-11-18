@@ -33,6 +33,8 @@ const identifierClaims = ref<Array<CollectableClaimResource>>()
 const resendDate = ref<string>()
 const durationToWaitBeforeResend = ref<Temporal.Duration>()
 let refreshInterval: number | undefined = undefined
+// Set once the person has left the page, so that a response arriving later starts nothing.
+let unmounted = false
 
 const fetchErrorMessage = ref<string>()
 const submitErrorMessage = ref<string>()
@@ -64,7 +66,11 @@ const updateDurationToWaitBeforeResend = () => {
   durationToWaitBeforeResend.value = getDurationUntil(resendDate.value)
 
   // Start interval if duration is not undefined and interval is not already running
-  if (durationToWaitBeforeResend.value !== undefined && refreshInterval === undefined) {
+  if (
+    !unmounted &&
+    durationToWaitBeforeResend.value !== undefined &&
+    refreshInterval === undefined
+  ) {
     refreshInterval = window.setInterval(() => {
       updateDurationToWaitBeforeResend()
       if (durationToWaitBeforeResend.value === undefined && refreshInterval !== undefined) {
@@ -82,19 +88,21 @@ const onResend = async () => {
   isResending.value = true
   submitErrorMessage.value = undefined
 
-  const response = await resetPasswordApi.resendCode()
-  if (response instanceof SuccessApiResponse) {
-    // A resend the server did not make changes nothing: the boxes keep what was typed.
-    if (response.content.resent) {
-      resendDate.value = response.content.resend_date
-      updateDurationToWaitBeforeResend()
-      resetForm()
+  try {
+    const response = await resetPasswordApi.resendCode()
+    if (response instanceof SuccessApiResponse) {
+      // A resend the server did not make changes nothing: the boxes keep what was typed.
+      if (response.content.resent) {
+        resendDate.value = response.content.resend_date
+        updateDurationToWaitBeforeResend()
+        resetForm()
+      }
+    } else {
+      submitErrorMessage.value = getErrorMessage(response)
     }
-  } else {
-    submitErrorMessage.value = getErrorMessage(response)
+  } finally {
+    isResending.value = false
   }
-
-  isResending.value = false
 }
 
 const onUseDifferentLogin = async () => {
@@ -121,6 +129,9 @@ onMounted(async () => {
     resetPasswordApi.fetchValidation(),
     resetPasswordApi.fetchResetPassword()
   ])
+  if (unmounted) {
+    return
+  }
   for (const response of [validation, configuration]) {
     if (!(response instanceof SuccessApiResponse)) {
       fetchErrorMessage.value = getErrorMessage(response)
@@ -141,6 +152,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  unmounted = true
   if (refreshInterval !== undefined) {
     clearInterval(refreshInterval)
   }
@@ -171,7 +183,13 @@ onUnmounted(() => {
           <form class="flex flex-col gap-4" @submit="onSubmit">
             <validation-code-field autofocus name="code" />
 
-            <sa-button :submitting="isSubmitting" size="large" type="submit">
+            <!-- Not while a resend is in flight: a resend that went through clears the boxes. -->
+            <sa-button
+              :disabled="isResending"
+              :submitting="isSubmitting"
+              size="large"
+              type="submit"
+            >
               <template v-slot:default>
                 {{ t('pages.reset_password.validate.submit') }}
               </template>
