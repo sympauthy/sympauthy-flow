@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { SaBrandLogo, SaLink } from '@sympauthy/design'
+import { SaBrandLogo, SaButton } from '@sympauthy/design'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { brandKey, getBrandName, SYMPAUTHY_NAME } from '@/utils/BrandUtils'
-import { injectRequired, linkAttributes } from '@/utils/VueUtils'
+import { injectRequired } from '@/utils/VueUtils'
 import { type ClientReferenceResource, getClientName } from '@/client/model/ClientReferenceResource'
 
 interface Props {
@@ -31,8 +31,14 @@ const cancelLabel = computed(() => {
   return clientName ? t('pages.base.cancel', [clientName]) : t('pages.base.cancel_no_client')
 })
 
-// Opened in another tab, it would end the session as surely while the submission may be completing it.
-const cancelLink = computed(() => linkAttributes(props.cancelUrl, props.cancelDisabled))
+// A button rather than a link, as the design system draws it: it cannot be opened in another tab,
+// where it would end the session as surely while a submission may be completing it, nor loaded by
+// a browser's link preview, which would end it while the person is still on the page.
+function onCancel() {
+  if (props.cancelUrl !== undefined) {
+    document.location.assign(props.cancelUrl)
+  }
+}
 </script>
 
 <template>
@@ -52,7 +58,14 @@ const cancelLink = computed(() => linkAttributes(props.cancelUrl, props.cancelDi
     </header>
     <slot />
     <footer class="flex w-full flex-col items-center gap-2 text-center">
-      <sa-link v-if="cancelUrl" :label="cancelLabel" :link="cancelLink" />
+      <sa-button
+        v-if="cancelUrl"
+        :disabled="cancelDisabled"
+        :label="cancelLabel"
+        type="button"
+        variant="text"
+        @click="onCancel"
+      />
       <i18n-t keypath="pages.base.footer" tag="p" class="flow-small text-gray-500">
         <a class="sa-link" href="https://sympauthy.github.io/" target="_blank">SympAuthy</a>
       </i18n-t>
