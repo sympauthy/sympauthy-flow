@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { SaBrandLogo, SaButton } from '@sympauthy/design'
-import { computed } from 'vue'
+import { SaBrandLogo } from '@sympauthy/design'
 import { useI18n } from 'vue-i18n'
 import { brandKey, getBrandName, SYMPAUTHY_NAME } from '@/utils/BrandUtils'
 import { injectRequired } from '@/utils/VueUtils'
-import { type ClientReferenceResource, getClientName } from '@/client/model/ClientReferenceResource'
+import type { ClientReferenceResource } from '@/client/model/ClientReferenceResource'
+import CancelButton from '@/components/CancelButton.vue'
 
 interface Props {
   /** The client the step was started for, named by the link leaving the flow. */
@@ -15,7 +15,7 @@ interface Props {
   cancelDisabled?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   cancelDisabled: false
 })
 
@@ -25,20 +25,6 @@ const brand = injectRequired(brandKey)
 const name = getBrandName(brand)
 // The wordmark and the tagline are SympAuthy's own: a deployment's name is written as it is.
 const isSympAuthy = name === SYMPAUTHY_NAME
-
-const cancelLabel = computed(() => {
-  const clientName = getClientName(props.client)
-  return clientName ? t('pages.base.cancel', [clientName]) : t('pages.base.cancel_no_client')
-})
-
-// A button rather than a link, as the design system draws it: it cannot be opened in another tab,
-// where it would end the session as surely while a submission may be completing it, nor loaded by
-// a browser's link preview, which would end it while the person is still on the page.
-function onCancel() {
-  if (props.cancelUrl !== undefined) {
-    document.location.assign(props.cancelUrl)
-  }
-}
 </script>
 
 <template>
@@ -58,13 +44,11 @@ function onCancel() {
     </header>
     <slot />
     <footer class="flex w-full flex-col items-center gap-2 text-center">
-      <sa-button
-        v-if="cancelUrl"
+      <cancel-button
+        :cancel-url="cancelUrl"
+        :client="client"
         :disabled="cancelDisabled"
-        :label="cancelLabel"
-        type="button"
         variant="text"
-        @click="onCancel"
       />
       <i18n-t keypath="pages.base.footer" tag="p" class="flow-small text-gray-500">
         <a class="sa-link" href="https://sympauthy.github.io/" target="_blank">SympAuthy</a>

@@ -1,6 +1,7 @@
 import type { JSONSchemaType } from 'ajv'
+import { type FlowStepResource, flowStepResourceProperties } from '@/client/model/FlowStepResource'
 
-export type FlowErrorResource = {
+export type FlowErrorResource = FlowStepResource & {
   error_code: string
   details?: string
   description?: string
@@ -10,6 +11,7 @@ export type FlowErrorResource = {
 export const flowErrorResourceSchema: JSONSchemaType<FlowErrorResource> = {
   type: 'object',
   properties: {
+    ...flowStepResourceProperties,
     error_code: {
       type: ['string']
     },
