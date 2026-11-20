@@ -1,7 +1,12 @@
 import type { JSONSchemaType } from 'ajv'
+import { type FlowStepResource, flowStepResourceProperties } from '@/client/model/FlowStepResource'
 
-export type FlowErrorResource = {
-  error_code: string
+/**
+ * Why the session failed, or only a `redirect_url` to send the browser to instead, without any other
+ * field, `error_code` included.
+ */
+export type FlowErrorResource = FlowStepResource & {
+  error_code?: string
   details?: string
   description?: string
   redirect_url?: string
@@ -10,8 +15,10 @@ export type FlowErrorResource = {
 export const flowErrorResourceSchema: JSONSchemaType<FlowErrorResource> = {
   type: 'object',
   properties: {
+    ...flowStepResourceProperties,
     error_code: {
-      type: ['string']
+      type: ['string'],
+      nullable: true
     },
     details: {
       type: ['string'],
@@ -26,6 +33,6 @@ export const flowErrorResourceSchema: JSONSchemaType<FlowErrorResource> = {
       nullable: true
     }
   },
-  required: ['error_code'],
+  required: [],
   additionalProperties: true
 }
