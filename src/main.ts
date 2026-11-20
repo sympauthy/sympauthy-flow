@@ -15,7 +15,6 @@ import { ErrorApi, errorApiKey } from '@/client/api/ErrorApi'
 import { MfaApi, mfaApiKey } from '@/client/api/MfaApi'
 import { TotpApi, totpApiKey } from '@/client/api/TotpApi'
 import { ConfirmApi, confirmApiKey } from '@/client/api/ConfirmApi'
-import { CancelApi, cancelApiKey } from '@/client/api/CancelApi'
 import { ResetPasswordApi, resetPasswordApiKey } from '@/client/api/ResetPasswordApi'
 import { brandKey, getBrandName } from '@/utils/BrandUtils'
 
@@ -38,7 +37,6 @@ createApp(App)
   .provide(mfaApiKey, new MfaApi(pinia))
   .provide(totpApiKey, new TotpApi(pinia))
   .provide(confirmApiKey, new ConfirmApi(pinia))
-  .provide(cancelApiKey, new CancelApi(pinia))
   .provide(resetPasswordApiKey, new ResetPasswordApi(pinia))
   .use(router)
   .use(i18n)
