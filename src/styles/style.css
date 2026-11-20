@@ -23,3 +23,13 @@
     @apply bg-body font-sans text-gray-900;
   }
 }
+
+/*
+  A link that ignores a press, such as "Forgot password?" while a sign-in is on its way, looks it.
+  The design system's `.sa-link` draws no such state yet.
+*/
+@layer components {
+  .sa-link[aria-disabled='true'] {
+    @apply cursor-not-allowed text-gray-400 no-underline;
+  }
+}

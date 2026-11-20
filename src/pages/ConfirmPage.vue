@@ -20,6 +20,7 @@ const fetchErrorMessage = ref<string | undefined>(undefined)
 const action = ref<string | undefined>(undefined)
 const requiresReauthentication = ref(false)
 const client = ref<ClientReferenceResource | undefined>(undefined)
+const clientName = computed(() => getClientName(client.value))
 const cancelUrl = ref<string | undefined>(undefined)
 
 const submitErrorMessage = ref<string | undefined>(undefined)
@@ -87,9 +88,9 @@ const onCancel = () => {
             class="flex items-start gap-3 rounded-md bg-primary-subtle p-3 text-on-primary-subtle"
           >
             <ShieldCheckIcon class="mt-0.5 size-5 shrink-0" />
-            <i18n-t v-if="client" keypath="pages.confirm.request" tag="p">
+            <i18n-t v-if="clientName" keypath="pages.confirm.request" tag="p">
               <template v-slot:client>
-                <strong class="font-semibold">{{ getClientName(client) }}</strong>
+                <strong class="font-semibold">{{ clientName }}</strong>
               </template>
               <template v-slot:action>{{ actionLabel }}</template>
             </i18n-t>

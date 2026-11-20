@@ -1,19 +1,12 @@
 import type { JSONSchemaType } from 'ajv'
-import {
-  type ClientReferenceResource,
-  clientReferenceResourceSchema
-} from '@/client/model/ClientReferenceResource'
+import { type FlowStepResource, flowStepResourceProperties } from '@/client/model/FlowStepResource'
 
 export type MfaMethodResource = {
   method: string
   redirect_url: string
 }
 
-export type MfaFlowResource = {
-  /** The client the session was started for; absent on a session no client started. */
-  client?: ClientReferenceResource
-  /** Link leaving the flow; absent where leaving has nowhere to go. */
-  cancel_url?: string
+export type MfaFlowResource = FlowStepResource & {
   redirect_url?: string
   methods?: MfaMethodResource[]
   skip_redirect_url?: string
@@ -32,14 +25,7 @@ const mfaMethodResourceSchema: JSONSchemaType<MfaMethodResource> = {
 export const mfaFlowResourceSchema: JSONSchemaType<MfaFlowResource> = {
   type: 'object',
   properties: {
-    client: {
-      ...clientReferenceResourceSchema,
-      nullable: true
-    },
-    cancel_url: {
-      type: 'string',
-      nullable: true
-    },
+    ...flowStepResourceProperties,
     redirect_url: {
       type: 'string',
       nullable: true

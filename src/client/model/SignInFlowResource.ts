@@ -1,8 +1,5 @@
 import type { JSONSchemaType } from 'ajv'
-import {
-  type ClientReferenceResource,
-  clientReferenceResourceSchema
-} from '@/client/model/ClientReferenceResource'
+import { type FlowStepResource, flowStepResourceProperties } from '@/client/model/FlowStepResource'
 import type { PasswordResource } from '@/client/model/PasswordResource'
 import { passwordResourceSchema } from '@/client/model/PasswordResource'
 import type { ProviderResource } from '@/client/model/ProviderResource'
@@ -21,7 +18,7 @@ import { providerResourceSchema } from '@/client/model/ProviderResource'
  * `authorize_url`)
  * are built by the server with the flow `state` already appended.
  */
-export interface SignInFlowResource {
+export interface SignInFlowResource extends FlowStepResource {
   /** Password sign-in configuration; null/absent when password sign-in is disabled. */
   password?: PasswordResource
   /** Third-party providers to offer; null/empty when none. */
@@ -30,10 +27,6 @@ export interface SignInFlowResource {
   sign_up_redirect_url?: string
   /** Link to the first step resetting a forgotten password; present iff the reset is offered. */
   reset_password_redirect_url?: string
-  /** The client the session was started for; absent on a session no client started. */
-  client?: ClientReferenceResource
-  /** Link leaving the flow; absent where leaving has nowhere to go. */
-  cancel_url?: string
   /** Set when sign-in does not apply; the end-user should be redirected there. */
   redirect_url?: string
 }
@@ -60,14 +53,7 @@ export const signInFlowResourceSchema: JSONSchemaType<SignInFlowResource> = {
       type: 'string',
       nullable: true
     },
-    client: {
-      ...clientReferenceResourceSchema,
-      nullable: true
-    },
-    cancel_url: {
-      type: 'string',
-      nullable: true
-    },
+    ...flowStepResourceProperties,
     redirect_url: {
       type: 'string',
       nullable: true

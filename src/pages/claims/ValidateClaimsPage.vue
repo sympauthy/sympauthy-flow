@@ -113,7 +113,8 @@ const onResend = async () => {
   if (validationCode.value === undefined) {
     return
   }
-  if (isResending.value) {
+  // A code being checked, or one that moved the person on, would be replaced by the new one.
+  if (isResending.value || busy.value) {
     return
   }
   isResending.value = true
@@ -214,7 +215,7 @@ onUnmounted(() => {
                   ])
                 }}
               </p>
-              <a v-else-if="!isResending" class="sa-link" @click="onResend">
+              <a v-else-if="!isResending" :aria-disabled="busy" class="sa-link" @click="onResend">
                 {{ t('pages.validate_claims.resend.action') }}
               </a>
               <template v-else>

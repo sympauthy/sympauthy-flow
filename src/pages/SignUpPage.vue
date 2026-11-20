@@ -2,7 +2,13 @@
 import { useI18n } from 'vue-i18n'
 import { computed, onMounted, ref } from 'vue'
 import { object, ref as schemaRef, string, type Schema } from 'yup'
-import { injectRequired, redirectOrPush, useSubmission } from '@/utils/VueUtils'
+import {
+  injectRequired,
+  isClickInPlace,
+  linkAttributes,
+  redirectOrPush,
+  useSubmission
+} from '@/utils/VueUtils'
 import { signUpApiKey } from '@/client/api/SignUpApi'
 import ClaimsInputGroup from '@/components/claim/group/ClaimsInputGroup.vue'
 import { claimFormServiceKey } from '@/services/ClaimFormService'
@@ -68,10 +74,16 @@ const onSubmit = handleSubmit(async (values: any) => {
   }
 })
 
-async function onSignInClick() {
-  if (signInRedirectUrl.value) {
-    await redirectOrPush(router, signInRedirectUrl.value)
+async function onSignInClick(event: MouseEvent) {
+  if (!isClickInPlace(event)) {
+    return
   }
+  event.preventDefault()
+  // A sign-up in flight would still move the person on once it answers, away from the sign-in page.
+  if (busy.value || !signInRedirectUrl.value) {
+    return
+  }
+  await redirectOrPush(router, signInRedirectUrl.value)
 }
 
 onMounted(async () => {
@@ -145,7 +157,11 @@ onMounted(async () => {
 
           <div v-if="signInRedirectUrl" class="text-center">
             <i18n-t keypath="pages.sign_up.already_have_account">
-              <a class="sa-link" @click="onSignInClick">
+              <a
+                v-bind="linkAttributes(signInRedirectUrl, busy)"
+                class="sa-link"
+                @click="onSignInClick"
+              >
                 {{ t('pages.sign_up.sign_in_action') }}
               </a>
             </i18n-t>

@@ -5,7 +5,7 @@ import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
+import { injectRequired, isClickInPlace, linkAttributes, redirectOrPush } from '@/utils/VueUtils'
 import { signInApiKey } from '@/client/api/SignInApi'
 import type { SignInFlowResource } from '@/client/model/SignInFlowResource'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
@@ -19,14 +19,16 @@ const signIn = ref<SignInFlowResource>()
 // Whether a sign-in is on its way, or has moved the person on.
 const isSigningIn = ref(false)
 
-async function onSignUpClick() {
-  // A sign-in in flight would still move the person on once it answers, away from the sign-up page.
-  if (isSigningIn.value) {
+async function onSignUpClick(event: MouseEvent) {
+  if (!isClickInPlace(event)) {
     return
   }
-  if (signIn.value?.sign_up_redirect_url) {
-    await redirectOrPush(router, signIn.value.sign_up_redirect_url)
+  event.preventDefault()
+  // A sign-in in flight would still move the person on once it answers, away from the sign-up page.
+  if (isSigningIn.value || !signIn.value?.sign_up_redirect_url) {
+    return
   }
+  await redirectOrPush(router, signIn.value.sign_up_redirect_url)
 }
 
 onMounted(async () => {
@@ -53,7 +55,7 @@ onMounted(async () => {
     <div class="flex w-full flex-col items-center gap-6">
       <sign-in-card
         v-if="signIn"
-        v-model:signing-in="isSigningIn"
+        @busy="isSigningIn = $event"
         :client="signIn.client"
         :password="signIn.password"
         :providers="signIn.providers ?? []"
@@ -69,7 +71,11 @@ onMounted(async () => {
         tag="p"
         class="text-center"
       >
-        <a :aria-disabled="isSigningIn" class="sa-link" @click="onSignUpClick">
+        <a
+          v-bind="linkAttributes(signIn.sign_up_redirect_url, isSigningIn)"
+          class="sa-link"
+          @click="onSignUpClick"
+        >
           {{ t('components.sign_in_card.sign_up_action') }}
         </a>
       </i18n-t>

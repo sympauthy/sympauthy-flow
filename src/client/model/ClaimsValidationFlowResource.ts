@@ -3,17 +3,10 @@ import {
   validationCodeResourceSchema
 } from '@/client/model/ValidationCodeResource'
 import type { JSONSchemaType } from 'ajv'
-import {
-  type ClientReferenceResource,
-  clientReferenceResourceSchema
-} from '@/client/model/ClientReferenceResource'
+import { type FlowStepResource, flowStepResourceProperties } from '@/client/model/FlowStepResource'
 
-export type ClaimsValidationFlowResource = {
+export type ClaimsValidationFlowResource = FlowStepResource & {
   code?: ValidationCodeResource
-  /** The client the session was started for; absent on a session no client started. */
-  client?: ClientReferenceResource
-  /** Link leaving the flow; absent where leaving has nowhere to go. */
-  cancel_url?: string
   redirect_url?: string
 }
 
@@ -24,14 +17,7 @@ export const claimValidationFlowResourceSchema: JSONSchemaType<ClaimsValidationF
       ...validationCodeResourceSchema,
       nullable: true
     },
-    client: {
-      ...clientReferenceResourceSchema,
-      nullable: true
-    },
-    cancel_url: {
-      type: 'string',
-      nullable: true
-    },
+    ...flowStepResourceProperties,
     redirect_url: {
       type: ['string'],
       nullable: true

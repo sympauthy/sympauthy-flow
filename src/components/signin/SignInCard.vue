@@ -2,7 +2,7 @@
 import { SaAlert, SaButton, SaLink } from '@sympauthy/design'
 import { useI18n } from 'vue-i18n'
 import { signInApiKey } from '@/client/api/SignInApi'
-import { injectRequired, redirectOrPush, useSubmission } from '@/utils/VueUtils'
+import { injectRequired, isClickInPlace, redirectOrPush, useSubmission } from '@/utils/VueUtils'
 import { object, string } from 'yup'
 import { useForm } from 'vee-validate'
 import { computed, ref, watch } from 'vue'
@@ -16,7 +16,7 @@ import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import type { PasswordResource } from '@/client/model/PasswordResource'
 import type { ProviderResource } from '@/client/model/ProviderResource'
-import type { ClientReferenceResource } from '@/client/model/ClientReferenceResource'
+import { type ClientReferenceResource, getClientName } from '@/client/model/ClientReferenceResource'
 import { useResetPassword } from '@/stores/ResetPasswordStore'
 
 const props = defineProps<{
@@ -26,8 +26,11 @@ const props = defineProps<{
   client?: ClientReferenceResource
 }>()
 
-// Told to the page, for the controls it draws outside the card.
-const signingIn = defineModel<boolean>('signingIn', { default: false })
+const emit = defineEmits<{
+  // Whether a sign-in is on its way or has moved the person on, for the controls the page draws
+  // outside the card.
+  busy: [busy: boolean]
+}>()
 
 const signInApi = injectRequired(signInApiKey)
 const { t } = useI18n()
@@ -52,10 +55,10 @@ const validationSchema = object({
 const { handleSubmit, isSubmitting, values } = useForm({
   validationSchema: validationSchema
 })
+const clientName = computed(() => getClientName(props.client))
+
 const { busy, moveOn } = useSubmission(router, isSubmitting)
-watch(busy, (value) => {
-  signingIn.value = value
-})
+watch(busy, (value) => emit('busy', value))
 
 const onSubmit = handleSubmit(async (values: any) => {
   submitError.value = undefined
@@ -70,13 +73,7 @@ const onSubmit = handleSubmit(async (values: any) => {
 
 async function onForgottenPasswordClick(event: MouseEvent) {
   // A link opened in another tab or window is a full page load, which carries no identifier.
-  if (
-    !props.resetPasswordRedirectUrl ||
-    event.button !== 0 ||
-    event.ctrlKey ||
-    event.metaKey ||
-    event.shiftKey
-  ) {
+  if (!props.resetPasswordRedirectUrl || !isClickInPlace(event)) {
     return
   }
   event.preventDefault()
@@ -95,11 +92,10 @@ async function onForgottenPasswordClick(event: MouseEvent) {
     <template v-slot:title>
       {{ t('components.sign_in_card.title') }}
     </template>
-    <!-- Named only by its display name: its identifier is not a name a person recognises. -->
-    <template v-if="client?.display_name" v-slot:subtitle>
+    <template v-if="clientName" v-slot:subtitle>
       <i18n-t keypath="components.sign_in_card.client">
         <template v-slot:client>
-          <strong class="font-semibold text-gray-900">{{ client.display_name }}</strong>
+          <strong class="font-semibold text-gray-900">{{ clientName }}</strong>
         </template>
       </i18n-t>
     </template>

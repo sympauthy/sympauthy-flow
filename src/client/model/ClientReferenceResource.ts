@@ -18,8 +18,11 @@ export const clientReferenceResourceSchema: JSONSchemaType<ClientReferenceResour
   additionalProperties: true
 }
 
-// The server leaves display_name out when the deployment gives the client none:
-// the identifier then stands in.
-export function getClientName(client: ClientReferenceResource): string {
-  return client.display_name ?? client.id
+/**
+ * Return the name to show a person for the client, or undefined when the deployment gives it none.
+ *
+ * The identifier is a configuration value, not a name a person recognises: it never stands in.
+ */
+export function getClientName(client: ClientReferenceResource | undefined): string | undefined {
+  return client?.display_name
 }

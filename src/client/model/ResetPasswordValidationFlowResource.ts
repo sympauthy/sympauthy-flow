@@ -1,8 +1,5 @@
 import type { JSONSchemaType } from 'ajv'
-import {
-  type ClientReferenceResource,
-  clientReferenceResourceSchema
-} from '@/client/model/ClientReferenceResource'
+import { type FlowStepResource, flowStepResourceProperties } from '@/client/model/FlowStepResource'
 
 /**
  * Configuration of the step where the end-user enters the code sent to reset their password.
@@ -11,15 +8,11 @@ import {
  * The resource returns EITHER the login OR a `redirect_url` to send the browser to instead, before a
  * code was asked for or once it was accepted. Consumers must check `redirect_url` first.
  */
-export type ResetPasswordValidationFlowResource = {
+export type ResetPasswordValidationFlowResource = FlowStepResource & {
   /** Login the end-user asked to reset the password of, as they entered it. */
   login?: string
   /** Date and time at which a new code can be asked for, in UTC. */
   resend_date?: string
-  /** The client the session was started for; absent on a session no client started. */
-  client?: ClientReferenceResource
-  /** Link leaving the flow; absent where leaving has nowhere to go. */
-  cancel_url?: string
   redirect_url?: string
 }
 
@@ -35,14 +28,7 @@ export const resetPasswordValidationFlowResourceSchema: JSONSchemaType<ResetPass
         type: 'string',
         nullable: true
       },
-      client: {
-        ...clientReferenceResourceSchema,
-        nullable: true
-      },
-      cancel_url: {
-        type: 'string',
-        nullable: true
-      },
+      ...flowStepResourceProperties,
       redirect_url: {
         type: 'string',
         nullable: true
