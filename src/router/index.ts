@@ -1,6 +1,7 @@
 import {
   createRouter,
   createWebHistory,
+  type HistoryState,
   type LocationQueryValue,
   type RouteLocationNormalized,
   type RouteLocationRaw,
@@ -21,6 +22,7 @@ import ResetPasswordValidatePage from '@/pages/resetpassword/ResetPasswordValida
 import ResetPasswordChoosePage from '@/pages/resetpassword/ResetPasswordChoosePage.vue'
 import { isArrayNotEmpty } from '@/utils/ArrayUtils.ts'
 import { isString } from '@/utils/StringUtils.ts'
+import { translateMessage } from '@/i18n'
 
 export function getStateQueryParam(route: RouteLocationNormalized): string | undefined {
   const stateQueryValues = route.query['state']
@@ -39,24 +41,72 @@ export function getStateQueryParam(route: RouteLocationNormalized): string | und
   }
 }
 
+/**
+ * Why the end-user is sent to the error page.
+ */
+export type ErrorReason = {
+  error_code: string
+  details?: string
+  description?: string
+}
+
+export function makeErrorReason(
+  errorCode: string,
+  details?: string,
+  description?: string
+): ErrorReason {
+  const reason: ErrorReason = {
+    error_code: errorCode
+  }
+  if (details !== undefined) {
+    reason.details = details
+  }
+  if (description !== undefined) {
+    reason.description = description
+  }
+  return reason
+}
+
+export function makeTranslatedErrorReason(
+  errorCode: string,
+  detailsMessageId?: string,
+  descriptionMessageId?: string
+): ErrorReason {
+  return makeErrorReason(
+    errorCode,
+    detailsMessageId !== undefined ? translateMessage(detailsMessageId) : undefined,
+    descriptionMessageId !== undefined ? translateMessage(descriptionMessageId) : undefined
+  )
+}
+
+export function makeMissingStateErrorReason(): ErrorReason {
+  return makeTranslatedErrorReason(
+    'state.unauthorized',
+    'errors.missing_state.details',
+    'errors.missing_state.description'
+  )
+}
+
+/**
+ * Make the route to the error page, showing the given reason.
+ *
+ * The reason travels in the history state rather than in the query: the error page shows it as it
+ * is, and a link must not be able to make it show a message that neither the server nor this flow
+ * wrote.
+ */
+function makeErrorReasonRoute(reason: ErrorReason): RouteLocationRaw {
+  return {
+    name: 'Error',
+    state: { error: reason }
+  }
+}
+
 export function makeErrorRoute(
   errorCode: string,
   details?: string,
   description?: string
 ): RouteLocationRaw {
-  const queryParams: Record<string, string> = {
-    error_code: errorCode
-  }
-  if (details !== undefined) {
-    queryParams['details'] = details
-  }
-  if (description !== undefined) {
-    queryParams['description'] = description
-  }
-  return {
-    name: 'Error',
-    query: queryParams
-  }
+  return makeErrorReasonRoute(makeErrorReason(errorCode, details, description))
 }
 
 export function makeTranslatedErrorRoute(
@@ -64,23 +114,36 @@ export function makeTranslatedErrorRoute(
   detailsMessageId?: string,
   descriptionMessageId?: string
 ): RouteLocationRaw {
-  const queryParams: Record<string, string> = {
-    error_code: errorCode
-  }
-  if (detailsMessageId !== undefined) {
-    queryParams['details_id'] = detailsMessageId
-  }
-  if (descriptionMessageId !== undefined) {
-    queryParams['description_id'] = descriptionMessageId
-  }
-  return {
-    name: 'Error',
-    query: queryParams
-  }
+  return makeErrorReasonRoute(
+    makeTranslatedErrorReason(errorCode, detailsMessageId, descriptionMessageId)
+  )
 }
 
 export function makeUnknownErrorRoute(): RouteLocationRaw {
   return makeTranslatedErrorRoute('unknown', 'errors.unknown.details', 'errors.unknown.description')
+}
+
+export function makeMissingStateErrorRoute(): RouteLocationRaw {
+  return makeErrorReasonRoute(makeMissingStateErrorReason())
+}
+
+/**
+ * Return the reason a route made by makeErrorRoute carries, read from the history state it left.
+ */
+export function getErrorReason(historyState: HistoryState | undefined): ErrorReason | undefined {
+  const error = historyState?.['error']
+  if (error === null || typeof error !== 'object' || Array.isArray(error)) {
+    return undefined
+  }
+  const { error_code, details, description } = error as HistoryState
+  if (!isString(error_code)) {
+    return undefined
+  }
+  return makeErrorReason(
+    error_code,
+    isString(details) ? details : undefined,
+    isString(description) ? description : undefined
+  )
 }
 
 export function makeRouter(): Router {
@@ -218,11 +281,7 @@ export function makeRouter(): Router {
         })
       } else {
         // The state is missing, go to error page.
-        return makeTranslatedErrorRoute(
-          'state.unauthorized',
-          'errors.missing_state.details',
-          'errors.missing_state.description'
-        )
+        return makeMissingStateErrorRoute()
       }
     }
 
