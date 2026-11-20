@@ -1,4 +1,4 @@
-import { inject, type InjectionKey } from 'vue'
+import { computed, inject, type InjectionKey, type Ref, ref } from 'vue'
 import type { RouteLocationRaw, Router } from 'vue-router'
 
 export function injectRequired<T>(key: InjectionKey<T> | string): T {
@@ -47,4 +47,23 @@ export async function redirectOrPush(router: Router, redirectUri: string) {
   } else {
     document.location = redirectUri
   }
+}
+
+/**
+ * Follow a submission that may complete the session, such as a sign-in or a code being checked.
+ *
+ * `busy` is true while the submission is on its way, and stays true once its answer moves the
+ * person on, until the page is left: the next page can take seconds to arrive, and a control
+ * pressed meanwhile would act on a session that has just completed. Only a failure ends it.
+ */
+export function useSubmission(router: Router, isSubmitting: Ref<boolean>) {
+  const movingOn = ref(false)
+  const busy = computed(() => isSubmitting.value || movingOn.value)
+
+  async function moveOn(redirectUri: string) {
+    movingOn.value = true
+    await redirectOrPush(router, redirectUri)
+  }
+
+  return { busy, moveOn }
 }

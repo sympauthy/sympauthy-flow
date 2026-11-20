@@ -2,7 +2,7 @@
 import BasePage from '@/components/BasePage.vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
+import { injectRequired, redirectOrPush, useSubmission } from '@/utils/VueUtils'
 import { claimFormServiceKey } from '@/services/ClaimFormService'
 import { object } from 'yup'
 import { useForm } from 'vee-validate'
@@ -14,6 +14,7 @@ import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { SaAlert, SaButton } from '@sympauthy/design'
 import type { ClaimConfiguration } from '@/client/model/ClaimConfiguration'
+import type { ClientReferenceResource } from '@/client/model/ClientReferenceResource'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -27,6 +28,8 @@ const submitErrorMessage = ref<string | undefined>(undefined)
 const fieldErrorMessages = ref<Record<string, string> | undefined>(undefined)
 
 const claimConfigs = ref<Array<ClaimConfiguration>>([])
+const client = ref<ClientReferenceResource>()
+const cancelUrl = ref<string>()
 
 const validationSchema = computed(() => {
   return object({
@@ -37,6 +40,7 @@ const validationSchema = computed(() => {
 const { setValues, handleSubmit, isSubmitting } = useForm({
   validationSchema
 })
+const { busy, moveOn } = useSubmission(router, isSubmitting)
 
 const loadClaims = async () => {
   if (isLoadingClaims.value) return
@@ -49,6 +53,8 @@ const loadClaims = async () => {
     if (response.content.claims !== undefined) {
       const claims = response.content.claims
       claimConfigs.value = claims
+      client.value = response.content.client
+      cancelUrl.value = response.content.cancel_url
 
       const initialValues: Record<string, string | undefined> = {}
       for (const claim of claims) {
@@ -75,7 +81,7 @@ const onSubmit = handleSubmit(async (values: any) => {
 
   const response = await claimApi.collectClaims(values)
   if (response instanceof SuccessApiResponse) {
-    await redirectOrPush(router, response.content.redirect_url)
+    await moveOn(response.content.redirect_url)
   } else {
     fieldErrorMessages.value = getErrorMessageForProperties(response)
     submitErrorMessage.value = getErrorMessage(response)
@@ -88,7 +94,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <base-page>
+  <base-page :cancel-disabled="busy" :cancel-url="cancelUrl" :client="client">
     <div class="flex justify-center w-full">
       <title-content-card size="large" :loading="isLoadingClaims" :error="fetchErrorMessage">
         <template v-slot:title>
@@ -102,11 +108,11 @@ onMounted(async () => {
         <form class="flex flex-col gap-4" @submit="onSubmit">
           <claims-input-group
             :claims="claimConfigs"
-            :disabled="isSubmitting"
+            :disabled="busy"
             :error-messages="fieldErrorMessages"
           />
 
-          <sa-button :loading="isSubmitting" size="large" type="submit">
+          <sa-button :loading="busy" size="large" type="submit">
             <template v-slot:default>
               {{ t('common.continue') }}
             </template>

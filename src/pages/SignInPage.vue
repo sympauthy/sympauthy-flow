@@ -16,6 +16,18 @@ const router = useRouter()
 const signInApi = injectRequired(signInApiKey)
 
 const signIn = ref<SignInFlowResource>()
+// Whether a sign-in is on its way, or has moved the person on.
+const isSigningIn = ref(false)
+
+async function onSignUpClick() {
+  // A sign-in in flight would still move the person on once it answers, away from the sign-up page.
+  if (isSigningIn.value) {
+    return
+  }
+  if (signIn.value?.sign_up_redirect_url) {
+    await redirectOrPush(router, signIn.value.sign_up_redirect_url)
+  }
+}
 
 onMounted(async () => {
   const response = await signInApi.fetchSignIn()
@@ -33,18 +45,34 @@ onMounted(async () => {
 </script>
 
 <template>
-  <base-page>
-    <div class="flex justify-center w-full">
+  <base-page
+    :cancel-disabled="isSigningIn"
+    :cancel-url="signIn?.cancel_url"
+    :client="signIn?.client"
+  >
+    <div class="flex w-full flex-col items-center gap-6">
       <sign-in-card
         v-if="signIn"
+        v-model:signing-in="isSigningIn"
+        :client="signIn.client"
         :password="signIn.password"
         :providers="signIn.providers ?? []"
-        :sign-up-redirect-url="signIn.sign_up_redirect_url"
         :reset-password-redirect-url="signIn.reset_password_redirect_url"
       />
       <title-content-card v-else loading>
         <template v-slot:title>{{ t('components.sign_in_card.title') }}</template>
       </title-content-card>
+
+      <i18n-t
+        v-if="signIn?.sign_up_redirect_url"
+        keypath="components.sign_in_card.no_account"
+        tag="p"
+        class="text-center"
+      >
+        <a :aria-disabled="isSigningIn" class="sa-link" @click="onSignUpClick">
+          {{ t('components.sign_in_card.sign_up_action') }}
+        </a>
+      </i18n-t>
     </div>
   </base-page>
 </template>

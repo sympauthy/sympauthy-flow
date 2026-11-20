@@ -5,9 +5,15 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { redirectOrPush } from '@/utils/VueUtils'
 
-const props = defineProps<{
-  provider: ProviderResource
-}>()
+const props = withDefaults(
+  defineProps<{
+    provider: ProviderResource
+    disabled?: boolean
+  }>(),
+  {
+    disabled: false
+  }
+)
 
 const { t } = useI18n()
 const router = useRouter()
@@ -19,7 +25,7 @@ async function onClick() {
 </script>
 
 <template>
-  <sa-button variant="outline" size="large" type="button" @click="onClick">
+  <sa-button :disabled="disabled" variant="outline" size="large" type="button" @click="onClick">
     {{ t('components.provider_button.continue_with', [provider.name]) }}
   </sa-button>
 </template>

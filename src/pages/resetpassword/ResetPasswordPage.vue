@@ -13,6 +13,7 @@ import { resetPasswordApiKey } from '@/client/api/ResetPasswordApi'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
 import type { CollectableClaimResource } from '@/client/model/CollectableClaimResource'
+import type { ClientReferenceResource } from '@/client/model/ClientReferenceResource'
 import { useResetPassword } from '@/stores/ResetPasswordStore'
 import { getStateQueryParam } from '@/router'
 import { or } from '@/utils/StringUtils'
@@ -26,6 +27,8 @@ const resetPasswordApi = injectRequired(resetPasswordApiKey)
 const resetPassword = useResetPassword()
 
 const identifierClaims = ref<Array<CollectableClaimResource>>()
+const client = ref<ClientReferenceResource>()
+const cancelUrl = ref<string>()
 const fetchErrorMessage = ref<string>()
 const submitErrorMessage = ref<string>()
 
@@ -76,6 +79,8 @@ onMounted(async () => {
       return
     }
     identifierClaims.value = response.content.identifier_claims
+    client.value = response.content.client
+    cancelUrl.value = response.content.cancel_url
   } else {
     fetchErrorMessage.value = getErrorMessage(response)
   }
@@ -83,7 +88,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <base-page>
+  <!-- Asking for a code cannot complete the session: leaving stays available meanwhile. -->
+  <base-page :cancel-url="cancelUrl" :client="client">
     <div class="flex w-full flex-col items-center gap-6">
       <title-content-card :loading="!identifierClaims" :error="fetchErrorMessage">
         <template v-slot:title>

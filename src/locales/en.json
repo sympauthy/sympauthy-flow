@@ -11,7 +11,8 @@
   },
   "components": {
     "sign_in_card": {
-      "title": "Sign in to your account",
+      "title": "Sign in",
+      "client": "to continue to {client}",
       "signing_in": "Signing in...",
       "no_account": "Don't have an account? {0}",
       "sign_up_action": "Sign up",
@@ -41,7 +42,9 @@
   "pages": {
     "base": {
       "tagline": "A simple, self-hosted and open source OAuth 2/OpenID authorization server.",
-      "footer": "Powered by {0}."
+      "footer": "Powered by {0}.",
+      "cancel": "Cancel and return to {0}",
+      "cancel_no_client": "Cancel and return to the application"
     },
     "sign_up": {
       "title": "Create your account",

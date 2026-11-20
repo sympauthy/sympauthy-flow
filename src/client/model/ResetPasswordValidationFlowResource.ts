@@ -1,4 +1,8 @@
 import type { JSONSchemaType } from 'ajv'
+import {
+  type ClientReferenceResource,
+  clientReferenceResourceSchema
+} from '@/client/model/ClientReferenceResource'
 
 /**
  * Configuration of the step where the end-user enters the code sent to reset their password.
@@ -12,6 +16,10 @@ export type ResetPasswordValidationFlowResource = {
   login?: string
   /** Date and time at which a new code can be asked for, in UTC. */
   resend_date?: string
+  /** The client the session was started for; absent on a session no client started. */
+  client?: ClientReferenceResource
+  /** Link leaving the flow; absent where leaving has nowhere to go. */
+  cancel_url?: string
   redirect_url?: string
 }
 
@@ -24,6 +32,14 @@ export const resetPasswordValidationFlowResourceSchema: JSONSchemaType<ResetPass
         nullable: true
       },
       resend_date: {
+        type: 'string',
+        nullable: true
+      },
+      client: {
+        ...clientReferenceResourceSchema,
+        nullable: true
+      },
+      cancel_url: {
         type: 'string',
         nullable: true
       },

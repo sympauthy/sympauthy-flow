@@ -16,9 +16,14 @@ withDefaults(defineProps<Props>(), {
 <template>
   <sa-card class="flow-body w-full" :class="size === 'large' ? 'max-w-card-large' : 'max-w-card'">
     <div class="flex flex-col gap-4">
-      <h1 v-if="$slots['title']" class="flow-title text-center text-gray-900">
-        <slot name="title"></slot>
-      </h1>
+      <div v-if="$slots['title']" class="flex flex-col gap-1 text-center">
+        <h1 class="flow-title text-gray-900">
+          <slot name="title"></slot>
+        </h1>
+        <p v-if="$slots['subtitle'] && !loading && !error" class="text-gray-500">
+          <slot name="subtitle"></slot>
+        </p>
+      </div>
       <sa-alert v-if="error">{{ error }}</sa-alert>
       <sa-loading-state v-else-if="loading" size="lg" />
       <slot v-else name="default"></slot>

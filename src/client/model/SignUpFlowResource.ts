@@ -1,4 +1,8 @@
 import type { JSONSchemaType } from 'ajv'
+import {
+  type ClientReferenceResource,
+  clientReferenceResourceSchema
+} from '@/client/model/ClientReferenceResource'
 import type { PasswordResource } from '@/client/model/PasswordResource'
 import { passwordResourceSchema } from '@/client/model/PasswordResource'
 
@@ -22,6 +26,10 @@ export interface SignUpFlowResource {
   password?: PasswordResource
   /** Link to the sign-in step; present iff sign-in is allowed (absent during an invitation flow). */
   sign_in_redirect_url?: string
+  /** The client the session was started for; absent on a session no client started. */
+  client?: ClientReferenceResource
+  /** Link leaving the flow; absent where leaving has nowhere to go. */
+  cancel_url?: string
   /** Set when sign-up does not apply; the end-user should be redirected there. */
   redirect_url?: string
 }
@@ -34,6 +42,14 @@ export const signUpFlowResourceSchema: JSONSchemaType<SignUpFlowResource> = {
       nullable: true
     },
     sign_in_redirect_url: {
+      type: 'string',
+      nullable: true
+    },
+    client: {
+      ...clientReferenceResourceSchema,
+      nullable: true
+    },
+    cancel_url: {
       type: 'string',
       nullable: true
     },
