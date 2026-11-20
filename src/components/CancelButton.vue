@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { SaButton } from '@sympauthy/design'
+import { SaButton, type SaButtonProps, type SaButtonVariant } from '@sympauthy/design'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { type ClientReferenceResource, getClientName } from '@/client/model/ClientReferenceResource'
 
 /**
  * The way back to the application that sent the person, following the step's `cancel_url`.
- * Nothing is shown without one. The look is the caller's: `variant` and `size` go to the button.
+ * Nothing is shown without one.
  */
 interface Props {
+  /** The button's look, as the page places it. */
+  variant?: SaButtonVariant
+  size?: SaButtonProps['size']
   /** The client the step was started for, named by the button. */
   client?: ClientReferenceResource
   /** Link leaving the flow, from the step. */
@@ -20,6 +23,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  variant: 'text',
+  size: 'control',
   disabled: false,
   ended: false
 })
@@ -49,5 +54,13 @@ function onClick() {
 </script>
 
 <template>
-  <sa-button v-if="cancelUrl" :disabled="disabled" :label="label" type="button" @click="onClick" />
+  <sa-button
+    v-if="cancelUrl"
+    :disabled="disabled"
+    :label="label"
+    :size="size"
+    type="button"
+    :variant="variant"
+    @click="onClick"
+  />
 </template>

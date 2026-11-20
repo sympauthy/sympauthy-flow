@@ -20,6 +20,10 @@ describe('flowErrorResourceSchema', () => {
     expect(validate({ error_code: 'auth.interactive_flow_session.expired' })).toBe(true)
   })
 
+  it('accepts a redirect alone, without an error code', () => {
+    expect(validate({ redirect_url: 'https://auth.example.com/sign-in?state=abc' })).toBe(true)
+  })
+
   it('refuses a client without an identifier', () => {
     expect(
       validate({

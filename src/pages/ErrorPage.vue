@@ -9,7 +9,7 @@ import CancelButton from '@/components/CancelButton.vue'
 import { errorApiKey } from '@/client/api/ErrorApi'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
-import type { ClientReferenceResource } from '@/client/model/ClientReferenceResource'
+import type { FlowStepResource } from '@/client/model/FlowStepResource'
 import {
   type ErrorReason,
   getErrorReason,
@@ -24,21 +24,18 @@ const router = useRouter()
 const errorApi = injectRequired(errorApiKey)
 
 const isLoading = ref(true)
-const reason = ref<ErrorReason | undefined>(undefined)
-// Only a step loaded from the server carries them: a reason sent by a page comes without.
-const client = ref<ClientReferenceResource | undefined>(undefined)
-const cancelUrl = ref<string | undefined>(undefined)
+// Only a step loaded from the server carries the way back: a reason sent by a page comes without.
+const reason = ref<(ErrorReason & FlowStepResource) | undefined>(undefined)
 
-async function fetchErrorReason(): Promise<ErrorReason | undefined> {
+async function fetchErrorReason(): Promise<(ErrorReason & FlowStepResource) | undefined> {
   const response = await errorApi.getError()
   if (response instanceof SuccessApiResponse) {
     if (response.content.redirect_url !== undefined) {
       await redirectOrPush(router, response.content.redirect_url)
       return undefined
     }
-    client.value = response.content.client
-    cancelUrl.value = response.content.cancel_url
-    return response.content
+    // The server leaves the code out only beside a redirect.
+    return { ...response.content, error_code: response.content.error_code ?? 'api.unknown' }
   } else {
     return makeErrorReason(response.errorCode, response.details, response.description)
   }
@@ -70,7 +67,13 @@ onMounted(async () => {
           <sa-alert>
             {{ reason.description ?? t('errors.unknown.description') }}
           </sa-alert>
-          <cancel-button :cancel-url="cancelUrl" :client="client" ended size="large" />
+          <cancel-button
+            :cancel-url="reason.cancel_url"
+            :client="reason.client"
+            ended
+            size="large"
+            variant="outline"
+          />
           <p class="flow-small text-gray-500">
             <span>{{ reason.error_code }}</span>
             <span v-if="reason.details"> - {{ reason.details }}</span>

@@ -7,9 +7,9 @@ import type { ClientReferenceResource } from '@/client/model/ClientReferenceReso
 import CancelButton from '@/components/CancelButton.vue'
 
 interface Props {
-  /** The client the step was started for, named by the link leaving the flow. */
+  /** The client the step was started for, named by the button leaving the flow. */
   client?: ClientReferenceResource
-  /** Link leaving the flow, from the step; no link is shown without it. */
+  /** Link leaving the flow, from the step; no button is shown without it. */
   cancelUrl?: string
   /** Set while a submission that may complete the session is on its way. */
   cancelDisabled?: boolean
@@ -44,12 +44,7 @@ const isSympAuthy = name === SYMPAUTHY_NAME
     </header>
     <slot />
     <footer class="flex w-full flex-col items-center gap-2 text-center">
-      <cancel-button
-        :cancel-url="cancelUrl"
-        :client="client"
-        :disabled="cancelDisabled"
-        variant="text"
-      />
+      <cancel-button :cancel-url="cancelUrl" :client="client" :disabled="cancelDisabled" />
       <i18n-t keypath="pages.base.footer" tag="p" class="flow-small text-gray-500">
         <a class="sa-link" href="https://sympauthy.github.io/" target="_blank">SympAuthy</a>
       </i18n-t>
