@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import BasePage from '@/components/BasePage.vue'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
-import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
+import { injectRequired, useSubmission } from '@/utils/VueUtils'
 import { totpApiKey } from '@/client/api/TotpApi'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -26,6 +26,7 @@ const validationSchema = object({
 const { handleSubmit, defineField, isSubmitting } = useForm({
   validationSchema
 })
+const { busy, moveOn } = useSubmission(router, isSubmitting)
 defineField('code', {
   validateOnBlur: false,
   validateOnChange: false,
@@ -38,7 +39,7 @@ const onSubmit = handleSubmit(async (values, ctx) => {
 
   const response = await totpApi.submitChallenge(values['code'])
   if (response instanceof SuccessApiResponse) {
-    await redirectOrPush(router, response.content.redirect_url)
+    await moveOn(response.content.redirect_url)
   } else if (response.errorCode === 'flow.mfa.totp.invalid_code') {
     ctx.setFieldError('code', getErrorMessage(response))
   } else {
@@ -67,7 +68,7 @@ const onSubmit = handleSubmit(async (values, ctx) => {
           <form class="flex flex-col gap-4" @submit="onSubmit">
             <validation-code-field autofocus :code-length="6" name="code" />
 
-            <sa-button :submitting="isSubmitting" size="large" type="submit">
+            <sa-button :submitting="busy" size="large" type="submit">
               <template v-slot:default>
                 {{ t('pages.totp_challenge.submit') }}
               </template>

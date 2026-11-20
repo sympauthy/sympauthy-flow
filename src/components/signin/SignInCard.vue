@@ -2,10 +2,10 @@
 import { SaAlert, SaButton, SaLink } from '@sympauthy/design'
 import { useI18n } from 'vue-i18n'
 import { signInApiKey } from '@/client/api/SignInApi'
-import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
+import { injectRequired, isClickInPlace, redirectOrPush, useSubmission } from '@/utils/VueUtils'
 import { object, string } from 'yup'
 import { useForm } from 'vee-validate'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
 import { useRouter } from 'vue-router'
 import CommonInput from '@/components/CommonInputField.vue'
@@ -16,13 +16,20 @@ import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import type { PasswordResource } from '@/client/model/PasswordResource'
 import type { ProviderResource } from '@/client/model/ProviderResource'
+import { type ClientReferenceResource, getClientName } from '@/client/model/ClientReferenceResource'
 import { useResetPassword } from '@/stores/ResetPasswordStore'
 
 const props = defineProps<{
   providers: Array<ProviderResource>
   password?: PasswordResource
-  signUpRedirectUrl?: string
   resetPasswordRedirectUrl?: string
+  client?: ClientReferenceResource
+}>()
+
+const emit = defineEmits<{
+  // Whether a sign-in is on its way or has moved the person on, for the controls the page draws
+  // outside the card.
+  busy: [busy: boolean]
 }>()
 
 const signInApi = injectRequired(signInApiKey)
@@ -48,13 +55,17 @@ const validationSchema = object({
 const { handleSubmit, isSubmitting, values } = useForm({
   validationSchema: validationSchema
 })
+const clientName = computed(() => getClientName(props.client))
+
+const { busy, moveOn } = useSubmission(router, isSubmitting)
+watch(busy, (value) => emit('busy', value))
 
 const onSubmit = handleSubmit(async (values: any) => {
   submitError.value = undefined
 
   const result = await signInApi.signIn(values.login, values.password)
   if (result instanceof SuccessApiResponse) {
-    await redirectOrPush(router, result.content.redirect_url)
+    await moveOn(result.content.redirect_url)
   } else {
     submitError.value = getErrorMessage(result)
   }
@@ -62,29 +73,17 @@ const onSubmit = handleSubmit(async (values: any) => {
 
 async function onForgottenPasswordClick(event: MouseEvent) {
   // A link opened in another tab or window is a full page load, which carries no identifier.
-  if (
-    !props.resetPasswordRedirectUrl ||
-    event.button !== 0 ||
-    event.ctrlKey ||
-    event.metaKey ||
-    event.shiftKey
-  ) {
+  if (!props.resetPasswordRedirectUrl || !isClickInPlace(event)) {
     return
   }
   event.preventDefault()
   // A sign-in in flight would still move the person on once it answers, away from the reset page.
-  if (isSubmitting.value) {
+  if (busy.value) {
     return
   }
   // Held by the app, never put in the address, so that the first reset page opens with it.
   resetPassword.login = values.login
   await redirectOrPush(router, props.resetPasswordRedirectUrl)
-}
-
-async function onSignUpClick() {
-  if (props.signUpRedirectUrl) {
-    await redirectOrPush(router, props.signUpRedirectUrl)
-  }
 }
 </script>
 
@@ -93,12 +92,21 @@ async function onSignUpClick() {
     <template v-slot:title>
       {{ t('components.sign_in_card.title') }}
     </template>
+    <template v-if="clientName" v-slot:subtitle>
+      <i18n-t keypath="components.sign_in_card.client">
+        <template v-slot:client>
+          <strong class="font-semibold text-gray-900">{{ clientName }}</strong>
+        </template>
+      </i18n-t>
+    </template>
     <template v-slot:default>
-      <sa-alert v-if="submitError">
-        {{ submitError }}
-      </sa-alert>
-
-      <provider-button v-for="provider of providers" :key="provider.id" :provider="provider" />
+      <!-- A provider pressed while a sign-in is on its way would race it. -->
+      <provider-button
+        v-for="provider of providers"
+        :key="provider.id"
+        :disabled="busy"
+        :provider="provider"
+      />
 
       <div
         v-if="providers.length > 0 && password"
@@ -110,8 +118,13 @@ async function onSignUpClick() {
       </div>
 
       <form v-if="password" class="flex flex-col gap-4" @submit="onSubmit">
+        <!-- With the form it is about, rather than above the providers it does not concern. -->
+        <sa-alert v-if="submitError">
+          {{ submitError }}
+        </sa-alert>
+
         <common-input
-          :disabled="isSubmitting"
+          :disabled="busy"
           :label="loginLabel"
           autocomplete="username"
           name="login"
@@ -119,14 +132,15 @@ async function onSignUpClick() {
         />
 
         <common-input
-          :disabled="isSubmitting"
+          :disabled="busy"
           :label="t('common.password')"
           autocomplete="current-password"
           name="password"
+          revealable
           type="password"
         />
 
-        <sa-button :loading="isSubmitting" size="large" type="submit">
+        <sa-button :loading="busy" size="large" type="submit">
           <template v-slot:default>
             {{ t('common.continue') }}
           </template>
@@ -141,18 +155,10 @@ async function onSignUpClick() {
           :label="t('components.sign_in_card.forgotten_password')"
           :link="{
             href: resetPasswordRedirectUrl,
-            'aria-disabled': isSubmitting,
+            'aria-disabled': busy,
             onClick: onForgottenPasswordClick
           }"
         />
-      </div>
-
-      <div v-if="signUpRedirectUrl" class="text-center">
-        <i18n-t keypath="components.sign_in_card.no_account">
-          <a class="sa-link" @click="onSignUpClick">
-            {{ t('components.sign_in_card.sign_up_action') }}
-          </a>
-        </i18n-t>
       </div>
     </template>
   </title-content-card>

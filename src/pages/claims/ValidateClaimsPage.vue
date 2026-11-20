@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import BasePage from '@/components/BasePage.vue'
-import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
+import { injectRequired, useSubmission } from '@/utils/VueUtils'
 import { claimsValidationApiKey } from '@/client/api/ClaimsValidationApi'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
@@ -17,6 +17,7 @@ import { object, string } from 'yup'
 import { SaAlert, SaButton, SaSpinner } from '@sympauthy/design'
 import { useRoute, useRouter } from 'vue-router'
 import type { ClaimsValidationFlowResource } from '@/client/model/ClaimsValidationFlowResource.ts'
+import type { ClientReferenceResource } from '@/client/model/ClientReferenceResource'
 import { makeUnknownErrorRoute } from '@/router'
 import CommonActionableLink from '@/components/CommonActionableLink.vue'
 import { Temporal } from '@js-temporal/polyfill'
@@ -33,6 +34,8 @@ const isResending = ref(false)
 const media = ref<string | undefined>(undefined)
 const validationCode = ref<ValidationCodeResource | undefined>(undefined)
 const durationToWaitBeforeResend = ref<Temporal.Duration | undefined>(undefined)
+const client = ref<ClientReferenceResource>()
+const cancelUrl = ref<string>()
 let refreshInterval: number | undefined = undefined
 
 const fetchErrorMessage = ref<string | undefined>(undefined)
@@ -45,6 +48,7 @@ const validationSchema = object({
 const { handleSubmit, defineField, isSubmitting, resetForm } = useForm({
   validationSchema: validationSchema
 })
+const { busy, moveOn } = useSubmission(router, isSubmitting)
 defineField('code', {
   validateOnBlur: false,
   validateOnChange: false,
@@ -82,6 +86,8 @@ const fetchValidationFlowResult = async (media: string) => {
 
   const response = await claimsValidationApi.fetchValidationFlowResult(media)
   if (response instanceof SuccessApiResponse) {
+    client.value = response.content.client
+    cancelUrl.value = response.content.cancel_url
     await handleValidationFlowResult(response)
   } else {
     fetchErrorMessage.value = getErrorMessage(response)
@@ -95,7 +101,7 @@ const handleValidationFlowResult = async (
   ctx?: SubmissionContext
 ) => {
   if (response.content.redirect_url !== undefined) {
-    await redirectOrPush(router, response.content.redirect_url)
+    await moveOn(response.content.redirect_url)
   } else {
     validationCode.value = response.content.code
     updateDurationToWaitBeforeResend()
@@ -107,7 +113,8 @@ const onResend = async () => {
   if (validationCode.value === undefined) {
     return
   }
-  if (isResending.value) {
+  // A code being checked, or one that moved the person on, would be replaced by the new one.
+  if (isResending.value || busy.value) {
     return
   }
   isResending.value = true
@@ -171,7 +178,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <base-page>
+  <!-- A resend cannot complete the session: leaving stays available meanwhile. -->
+  <base-page :cancel-disabled="busy" :cancel-url="cancelUrl" :client="client">
     <div class="flex justify-center w-full">
       <title-content-card size="default" :loading="isLoading" :error="fetchErrorMessage">
         <template v-slot:title>
@@ -195,7 +203,7 @@ onUnmounted(() => {
             <validation-code-field autofocus name="code" />
 
             <common-actionable-link
-              :disabled="isSubmitting"
+              :disabled="busy"
               :label="t('pages.validate_claims.resend.description')"
               :text="t('pages.validate_claims.resend.action')"
               class="flow-small"
@@ -207,7 +215,7 @@ onUnmounted(() => {
                   ])
                 }}
               </p>
-              <a v-else-if="!isResending" class="sa-link" @click="onResend">
+              <a v-else-if="!isResending" :aria-disabled="busy" class="sa-link" @click="onResend">
                 {{ t('pages.validate_claims.resend.action') }}
               </a>
               <template v-else>
@@ -216,7 +224,7 @@ onUnmounted(() => {
               </template>
             </common-actionable-link>
 
-            <sa-button :loading="isResending" :submitting="isSubmitting" size="large" type="submit">
+            <sa-button :loading="isResending" :submitting="busy" size="large" type="submit">
               <template v-slot:default>
                 {{ t('pages.validate_claims.submit') }}
               </template>

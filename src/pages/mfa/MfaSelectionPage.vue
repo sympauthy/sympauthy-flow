@@ -10,6 +10,7 @@ import { getErrorMessage } from '@/client/ErrorApiResponse'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import MfaMethodSelectionCard from '@/components/mfa/MfaMethodSelectionCard.vue'
 import type { MfaMethodResource } from '@/client/model/MfaFlowResource'
+import type { ClientReferenceResource } from '@/client/model/ClientReferenceResource'
 
 type MfaKind = 'enrollment' | 'challenge'
 
@@ -26,6 +27,8 @@ const descriptionKey = `pages.mfa.${mfaKind}.description`
 const fetchErrorMessage = ref<string | undefined>(undefined)
 const methods = ref<MfaMethodResource[] | undefined>(undefined)
 const skipRedirectUrl = ref<string | undefined>(undefined)
+const client = ref<ClientReferenceResource>()
+const cancelUrl = ref<string>()
 
 onMounted(async () => {
   const response =
@@ -38,6 +41,8 @@ onMounted(async () => {
     } else {
       methods.value = response.content.methods
       skipRedirectUrl.value = response.content.skip_redirect_url
+      client.value = response.content.client
+      cancelUrl.value = response.content.cancel_url
     }
   } else {
     fetchErrorMessage.value = getErrorMessage(response)
@@ -46,7 +51,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <base-page>
+  <base-page :cancel-url="cancelUrl" :client="client">
     <div class="flex justify-center w-full">
       <mfa-method-selection-card
         v-if="methods"

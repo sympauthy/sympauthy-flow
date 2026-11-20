@@ -1,4 +1,5 @@
 import type { JSONSchemaType } from 'ajv'
+import { type FlowStepResource, flowStepResourceProperties } from '@/client/model/FlowStepResource'
 import type { PasswordResource } from '@/client/model/PasswordResource'
 import { passwordResourceSchema } from '@/client/model/PasswordResource'
 
@@ -14,7 +15,7 @@ import { passwordResourceSchema } from '@/client/model/PasswordResource'
  * All URLs (`redirect_url`, `sign_in_redirect_url`) are built by the server with
  * the flow `state` already appended.
  */
-export interface SignUpFlowResource {
+export interface SignUpFlowResource extends FlowStepResource {
   /**
    * Password sign-up configuration; null/absent when password sign-up is disabled.
    * The claims to collect at sign-up are exposed as `password.identifier_claims`.
@@ -37,6 +38,7 @@ export const signUpFlowResourceSchema: JSONSchemaType<SignUpFlowResource> = {
       type: 'string',
       nullable: true
     },
+    ...flowStepResourceProperties,
     redirect_url: {
       type: 'string',
       nullable: true

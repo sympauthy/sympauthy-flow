@@ -23,3 +23,13 @@
     @apply bg-body font-sans text-gray-900;
   }
 }
+
+/*
+  A link that ignores a press, such as "Forgot password?" while a sign-in is on its way, looks it, as
+  a disabled text button does. The design system gives a link no disabled state.
+*/
+@layer components {
+  .sa-link[aria-disabled='true'] {
+    @apply cursor-not-allowed text-on-disabled;
+  }
+}

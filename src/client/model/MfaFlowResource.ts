@@ -1,11 +1,12 @@
 import type { JSONSchemaType } from 'ajv'
+import { type FlowStepResource, flowStepResourceProperties } from '@/client/model/FlowStepResource'
 
 export type MfaMethodResource = {
   method: string
   redirect_url: string
 }
 
-export type MfaFlowResource = {
+export type MfaFlowResource = FlowStepResource & {
   redirect_url?: string
   methods?: MfaMethodResource[]
   skip_redirect_url?: string
@@ -24,6 +25,7 @@ const mfaMethodResourceSchema: JSONSchemaType<MfaMethodResource> = {
 export const mfaFlowResourceSchema: JSONSchemaType<MfaFlowResource> = {
   type: 'object',
   properties: {
+    ...flowStepResourceProperties,
     redirect_url: {
       type: 'string',
       nullable: true

@@ -1,4 +1,5 @@
 import type { JSONSchemaType } from 'ajv'
+import { type FlowStepResource, flowStepResourceProperties } from '@/client/model/FlowStepResource'
 import {
   type CollectableClaimResource,
   collectableClaimResourceSchema
@@ -10,7 +11,7 @@ import {
  * The resource returns EITHER the identifier claims OR a `redirect_url` to send the browser to
  * instead, once the end-user is signed in. Consumers must check `redirect_url` first.
  */
-export type ResetPasswordFlowResource = {
+export type ResetPasswordFlowResource = FlowStepResource & {
   /** Identifier claims: the value of any one of them is the login whose password is reset. */
   identifier_claims?: Array<CollectableClaimResource>
   redirect_url?: string
@@ -26,6 +27,7 @@ export const resetPasswordFlowResourceSchema: JSONSchemaType<ResetPasswordFlowRe
       },
       nullable: true
     },
+    ...flowStepResourceProperties,
     redirect_url: {
       type: 'string',
       nullable: true

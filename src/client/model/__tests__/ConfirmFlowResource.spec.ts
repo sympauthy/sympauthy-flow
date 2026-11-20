@@ -34,7 +34,11 @@ describe('getClientName', () => {
     expect(getClientName({ id: 'example', display_name: 'Example' })).toBe('Example')
   })
 
-  it('returns the identifier when the client has no display name', () => {
-    expect(getClientName({ id: 'example' })).toBe('example')
+  it('returns nothing when the client has no display name', () => {
+    expect(getClientName({ id: 'example' })).toBeUndefined()
+  })
+
+  it('returns nothing without a client', () => {
+    expect(getClientName(undefined)).toBeUndefined()
   })
 })

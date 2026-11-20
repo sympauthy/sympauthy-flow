@@ -9,11 +9,12 @@ import { useForm } from 'vee-validate'
 import { object, string } from 'yup'
 import { SaAlert, SaButton } from '@sympauthy/design'
 import { Temporal } from '@js-temporal/polyfill'
-import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
+import { injectRequired, redirectOrPush, useSubmission } from '@/utils/VueUtils'
 import { resetPasswordApiKey } from '@/client/api/ResetPasswordApi'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
 import type { CollectableClaimResource } from '@/client/model/CollectableClaimResource'
+import type { ClientReferenceResource } from '@/client/model/ClientReferenceResource'
 import { useResetPassword } from '@/stores/ResetPasswordStore'
 import { getStateQueryParam } from '@/router'
 import { formatToHumanReadable, getDurationUntil } from '@/utils/DurationUtils'
@@ -30,6 +31,8 @@ const isResending = ref(false)
 
 const login = ref<string>()
 const identifierClaims = ref<Array<CollectableClaimResource>>()
+const client = ref<ClientReferenceResource>()
+const cancelUrl = ref<string>()
 const resendDate = ref<string>()
 const durationToWaitBeforeResend = ref<Temporal.Duration>()
 let refreshInterval: number | undefined = undefined
@@ -55,6 +58,7 @@ const validationSchema = object({
 const { handleSubmit, defineField, isSubmitting, resetForm } = useForm({
   validationSchema: validationSchema
 })
+const { busy, moveOn } = useSubmission(router, isSubmitting)
 defineField('code', {
   validateOnBlur: false,
   validateOnChange: false,
@@ -115,7 +119,7 @@ const onSubmit = handleSubmit(async (values, ctx) => {
 
   const response = await resetPasswordApi.validateCode(values['code'])
   if (response instanceof SuccessApiResponse) {
-    await redirectOrPush(router, response.content.redirect_url)
+    await moveOn(response.content.redirect_url)
   } else if (response.errorCode === 'flow.password.reset.invalid_code') {
     ctx.setFieldError('code', getErrorMessage(response))
   } else {
@@ -146,6 +150,8 @@ onMounted(async () => {
   if (validation instanceof SuccessApiResponse && configuration instanceof SuccessApiResponse) {
     login.value = validation.content.login
     resendDate.value = validation.content.resend_date
+    client.value = validation.content.client
+    cancelUrl.value = validation.content.cancel_url
     identifierClaims.value = configuration.content.identifier_claims
     updateDurationToWaitBeforeResend()
   }
@@ -160,7 +166,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <base-page>
+  <!-- A resend cannot complete the session: leaving stays available meanwhile. -->
+  <base-page :cancel-disabled="busy" :cancel-url="cancelUrl" :client="client">
     <div class="flex w-full justify-center">
       <title-content-card :loading="!isLoaded" :error="fetchErrorMessage">
         <template v-slot:title>
@@ -184,12 +191,7 @@ onUnmounted(() => {
             <validation-code-field autofocus name="code" />
 
             <!-- Not while a resend is in flight: a resend that went through clears the boxes. -->
-            <sa-button
-              :disabled="isResending"
-              :submitting="isSubmitting"
-              size="large"
-              type="submit"
-            >
+            <sa-button :disabled="isResending" :submitting="busy" size="large" type="submit">
               <template v-slot:default>
                 {{ t('pages.reset_password.validate.submit') }}
               </template>
@@ -211,7 +213,7 @@ onUnmounted(() => {
               </p>
               <sa-button
                 v-else
-                :disabled="isSubmitting"
+                :disabled="busy"
                 :submitting="isResending"
                 type="button"
                 variant="text"
@@ -226,12 +228,7 @@ onUnmounted(() => {
               </sa-button>
             </div>
 
-            <sa-button
-              :disabled="isSubmitting"
-              type="button"
-              variant="text"
-              @click="onUseDifferentLogin"
-            >
+            <sa-button :disabled="busy" type="button" variant="text" @click="onUseDifferentLogin">
               {{ t('pages.reset_password.validate.different_login', [loginLabel]) }}
             </sa-button>
           </div>

@@ -8,17 +8,20 @@ import { useRouter } from 'vue-router'
 import { useForm } from 'vee-validate'
 import { object } from 'yup'
 import { SaAlert, SaButton } from '@sympauthy/design'
-import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
+import { injectRequired, redirectOrPush, useSubmission } from '@/utils/VueUtils'
 import { resetPasswordApiKey } from '@/client/api/ResetPasswordApi'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
 import { notBlankString } from '@/utils/ValidationUtils'
+import type { ClientReferenceResource } from '@/client/model/ClientReferenceResource'
 
 const { t } = useI18n()
 const router = useRouter()
 const resetPasswordApi = injectRequired(resetPasswordApiKey)
 
 const login = ref<string>()
+const client = ref<ClientReferenceResource>()
+const cancelUrl = ref<string>()
 const fetchErrorMessage = ref<string>()
 const submitErrorMessage = ref<string>()
 
@@ -29,6 +32,7 @@ const validationSchema = object({
 const { handleSubmit, isSubmitting } = useForm({
   validationSchema: validationSchema
 })
+const { busy, moveOn } = useSubmission(router, isSubmitting)
 
 const onSubmit = handleSubmit(async (values) => {
   submitErrorMessage.value = undefined
@@ -36,7 +40,7 @@ const onSubmit = handleSubmit(async (values) => {
   // The reset takes effect when the authorization completes, so the server leads on to the next step.
   const response = await resetPasswordApi.choosePassword(values.password)
   if (response instanceof SuccessApiResponse) {
-    await redirectOrPush(router, response.content.redirect_url)
+    await moveOn(response.content.redirect_url)
   } else {
     submitErrorMessage.value = getErrorMessage(response)
   }
@@ -51,6 +55,8 @@ onMounted(async () => {
       return
     }
     login.value = response.content.login
+    client.value = response.content.client
+    cancelUrl.value = response.content.cancel_url
   } else {
     fetchErrorMessage.value = getErrorMessage(response)
   }
@@ -58,7 +64,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <base-page>
+  <base-page :cancel-disabled="busy" :cancel-url="cancelUrl" :client="client">
     <div class="flex w-full justify-center">
       <title-content-card :loading="login === undefined" :error="fetchErrorMessage">
         <template v-slot:title>
@@ -79,7 +85,7 @@ onMounted(async () => {
             <input :value="login" autocomplete="username" hidden type="text" />
 
             <common-input
-              :disabled="isSubmitting"
+              :disabled="busy"
               :label="t('pages.reset_password.choose.label')"
               autocomplete="new-password"
               name="password"
@@ -87,7 +93,7 @@ onMounted(async () => {
               type="password"
             />
 
-            <sa-button :submitting="isSubmitting" size="large" type="submit">
+            <sa-button :submitting="busy" size="large" type="submit">
               <template v-slot:default>
                 {{ t('common.continue') }}
               </template>
