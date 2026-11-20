@@ -5,7 +5,6 @@ import { ShieldCheckIcon } from '@heroicons/vue/20/solid'
 import { SaAlert, SaButton } from '@sympauthy/design'
 import { injectRequired, redirectOrPush } from '@/utils/VueUtils'
 import { confirmApiKey } from '@/client/api/ConfirmApi'
-import { cancelApiKey } from '@/client/api/CancelApi'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -15,12 +14,12 @@ import { getErrorMessage } from '@/client/ErrorApiResponse'
 const { t } = useI18n()
 const router = useRouter()
 const confirmApi = injectRequired(confirmApiKey)
-const cancelApi = injectRequired(cancelApiKey)
 
 const fetchErrorMessage = ref<string | undefined>(undefined)
 const action = ref<string | undefined>(undefined)
 const requiresReauthentication = ref(false)
 const initiatingClientId = ref<string | undefined>(undefined)
+const cancelUrl = ref<string | undefined>(undefined)
 
 const submitErrorMessage = ref<string | undefined>(undefined)
 const isConfirming = ref(false)
@@ -41,6 +40,7 @@ onMounted(async () => {
       action.value = response.content.action
       requiresReauthentication.value = response.content.requires_reauthentication ?? false
       initiatingClientId.value = response.content.initiating_client_id
+      cancelUrl.value = response.content.cancel_url
     }
   } else {
     fetchErrorMessage.value = getErrorMessage(response)
@@ -60,17 +60,12 @@ const onConfirm = async () => {
   }
 }
 
-const onCancel = async () => {
-  submitErrorMessage.value = undefined
+// The server ends the session and redirects the browser itself, so the link is always followed as a
+// full navigation: redirectOrPush would hand it to the router when the API shares the app's base URL.
+const onCancel = () => {
+  if (cancelUrl.value === undefined) return
   isCancelling.value = true
-
-  const response = await cancelApi.cancel()
-  if (response instanceof SuccessApiResponse) {
-    await redirectOrPush(router, response.content.redirect_url)
-  } else {
-    submitErrorMessage.value = getErrorMessage(response)
-    isCancelling.value = false
-  }
+  document.location.assign(cancelUrl.value)
 }
 </script>
 
@@ -124,6 +119,7 @@ const onCancel = async () => {
           </sa-button>
 
           <sa-button
+            v-if="cancelUrl"
             variant="outline"
             :disabled="isConfirming"
             :submitting="isCancelling"

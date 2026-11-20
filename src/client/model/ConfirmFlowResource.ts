@@ -4,6 +4,7 @@ export type ConfirmFlowResource = {
   action?: string
   requires_reauthentication?: boolean
   initiating_client_id?: string
+  cancel_url?: string
   redirect_url?: string
 }
 
@@ -19,6 +20,10 @@ export const confirmFlowResourceSchema: JSONSchemaType<ConfirmFlowResource> = {
       nullable: true
     },
     initiating_client_id: {
+      type: 'string',
+      nullable: true
+    },
+    cancel_url: {
       type: 'string',
       nullable: true
     },
