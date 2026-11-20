@@ -10,6 +10,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
 import { getErrorMessage } from '@/client/ErrorApiResponse'
+import { type ClientReferenceResource, getClientName } from '@/client/model/ClientReferenceResource'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -18,7 +19,7 @@ const confirmApi = injectRequired(confirmApiKey)
 const fetchErrorMessage = ref<string | undefined>(undefined)
 const action = ref<string | undefined>(undefined)
 const requiresReauthentication = ref(false)
-const initiatingClientId = ref<string | undefined>(undefined)
+const client = ref<ClientReferenceResource | undefined>(undefined)
 const cancelUrl = ref<string | undefined>(undefined)
 
 const submitErrorMessage = ref<string | undefined>(undefined)
@@ -39,7 +40,7 @@ onMounted(async () => {
     } else {
       action.value = response.content.action
       requiresReauthentication.value = response.content.requires_reauthentication ?? false
-      initiatingClientId.value = response.content.initiating_client_id
+      client.value = response.content.client
       cancelUrl.value = response.content.cancel_url
     }
   } else {
@@ -86,9 +87,9 @@ const onCancel = () => {
             class="flex items-start gap-3 rounded-md bg-primary-subtle p-3 text-on-primary-subtle"
           >
             <ShieldCheckIcon class="mt-0.5 size-5 shrink-0" />
-            <i18n-t v-if="initiatingClientId" keypath="pages.confirm.request" tag="p">
+            <i18n-t v-if="client" keypath="pages.confirm.request" tag="p">
               <template v-slot:client>
-                <strong class="font-semibold">{{ initiatingClientId }}</strong>
+                <strong class="font-semibold">{{ getClientName(client) }}</strong>
               </template>
               <template v-slot:action>{{ actionLabel }}</template>
             </i18n-t>
