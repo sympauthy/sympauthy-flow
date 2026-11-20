@@ -100,10 +100,6 @@ async function onForgottenPasswordClick(event: MouseEvent) {
       </i18n-t>
     </template>
     <template v-slot:default>
-      <sa-alert v-if="submitError">
-        {{ submitError }}
-      </sa-alert>
-
       <!-- A provider pressed while a sign-in is on its way would race it. -->
       <provider-button
         v-for="provider of providers"
@@ -122,6 +118,11 @@ async function onForgottenPasswordClick(event: MouseEvent) {
       </div>
 
       <form v-if="password" class="flex flex-col gap-4" @submit="onSubmit">
+        <!-- With the form it is about, rather than above the providers it does not concern. -->
+        <sa-alert v-if="submitError">
+          {{ submitError }}
+        </sa-alert>
+
         <common-input
           :disabled="busy"
           :label="loginLabel"
