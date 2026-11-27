@@ -13,7 +13,7 @@ import { signUpApiKey } from '@/client/api/SignUpApi'
 import ClaimsInputGroup from '@/components/claim/group/ClaimsInputGroup.vue'
 import { claimFormServiceKey } from '@/services/ClaimFormService'
 import { getErrorMessage, getErrorMessageForProperties } from '@/client/ErrorApiResponse'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { SaAlert, SaButton } from '@sympauthy/design'
 import CommonField from '@/components/CommonInputField.vue'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
@@ -23,9 +23,10 @@ import { useForm } from 'vee-validate'
 import { omit, pipe } from 'rambda'
 import type { ClaimConfiguration } from '@/client/model/ClaimConfiguration'
 import type { ClientReferenceResource } from '@/client/model/ClientReferenceResource'
-import { makeErrorRoute } from '@/router'
+import { getStateQueryParam, makeApiErrorRoute } from '@/router'
 
 const { t } = useI18n()
+const route = useRoute()
 const router = useRouter()
 const claimFormService = injectRequired(claimFormServiceKey)
 const signUpApi = injectRequired(signUpApiKey)
@@ -101,7 +102,7 @@ onMounted(async () => {
     cancelUrl.value = response.content.cancel_url
     isLoading.value = false
   } else {
-    await router.replace(makeErrorRoute(response.errorCode, response.details, response.description))
+    await router.replace(makeApiErrorRoute(getStateQueryParam(route), response))
   }
 })
 </script>

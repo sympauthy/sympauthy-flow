@@ -21,9 +21,13 @@ import ResetPasswordPage from '@/pages/resetpassword/ResetPasswordPage.vue'
 import ResetPasswordValidatePage from '@/pages/resetpassword/ResetPasswordValidatePage.vue'
 import ResetPasswordChoosePage from '@/pages/resetpassword/ResetPasswordChoosePage.vue'
 import { isArrayNotEmpty } from '@/utils/ArrayUtils.ts'
-import { isString } from '@/utils/StringUtils.ts'
-import { translateMessage } from '@/i18n'
+import { isString, isStringNotBlankNorEmpty, isStringNotEmpty } from '@/utils/StringUtils.ts'
+import type { ErrorApiResponse } from '@/client/ErrorApiResponse'
 
+/**
+ * Return the state the route carries, or undefined when it carries none: an empty or blank state
+ * names no session either, and the server refuses it as it refuses a missing one.
+ */
 export function getStateQueryParam(route: RouteLocationNormalized): string | undefined {
   const stateQueryValues = route.query['state']
 
@@ -34,7 +38,7 @@ export function getStateQueryParam(route: RouteLocationNormalized): string | und
     stateQueryValue = stateQueryValues
   }
 
-  if (stateQueryValue !== null) {
+  if (isStringNotBlankNorEmpty(stateQueryValue)) {
     return stateQueryValue
   } else {
     return undefined
@@ -50,81 +54,71 @@ export type ErrorReason = {
   description?: string
 }
 
+/**
+ * The code of the error a page opened with no state is sent to the error page with.
+ */
+export const MISSING_STATE_ERROR_CODE = 'state.unauthorized'
+
+/**
+ * Make a reason, leaving out details and a description that say nothing: the server may send them
+ * empty, or as null, and the error page shows no line without a value.
+ */
 export function makeErrorReason(
   errorCode: string,
-  details?: string,
-  description?: string
+  details?: string | null,
+  description?: string | null
 ): ErrorReason {
   const reason: ErrorReason = {
     error_code: errorCode
   }
-  if (details !== undefined) {
+  if (isStringNotEmpty(details)) {
     reason.details = details
   }
-  if (description !== undefined) {
+  if (isStringNotEmpty(description)) {
     reason.description = description
   }
   return reason
 }
 
-export function makeTranslatedErrorReason(
-  errorCode: string,
-  detailsMessageId?: string,
-  descriptionMessageId?: string
-): ErrorReason {
-  return makeErrorReason(
-    errorCode,
-    detailsMessageId !== undefined ? translateMessage(detailsMessageId) : undefined,
-    descriptionMessageId !== undefined ? translateMessage(descriptionMessageId) : undefined
-  )
-}
-
-export function makeMissingStateErrorReason(): ErrorReason {
-  return makeTranslatedErrorReason(
-    'state.unauthorized',
-    'errors.missing_state.details',
-    'errors.missing_state.description'
-  )
-}
-
 /**
- * Make the route to the error page, showing the given reason.
+ * Make the route to the error page, showing the given reason, sent by a page of the session the
+ * given state names, or by a page opened with no state when it is undefined.
  *
- * The reason travels in the history state rather than in the query: the error page shows it as it
- * is, and a link must not be able to make it show a message that neither the server nor this flow
- * wrote.
+ * The reason and the state travel in the history state rather than in the query: the error page
+ * shows the reason as it is, and a link must not be able to make it show a message that neither
+ * the server nor this flow wrote. Nor does a copy of the error page's address ask the server for
+ * the session's error, and draw another card than the one the person was sent to.
+ *
+ * A missing state is written as null rather than left out: a replace merges the history state of
+ * the entry it replaces, whose state would otherwise be carried over.
  */
-function makeErrorReasonRoute(reason: ErrorReason): RouteLocationRaw {
+export function makeErrorRoute(reason: ErrorReason, state?: string): RouteLocationRaw {
   return {
     name: 'Error',
-    state: { error: reason }
+    state: { error: reason, state: state ?? null }
   }
 }
 
-export function makeErrorRoute(
-  errorCode: string,
-  details?: string,
-  description?: string
+/**
+ * Make the route to the error page for a request that failed, showing only the details the server
+ * sent: the flow's own stand-in for them tells support nothing.
+ */
+export function makeApiErrorRoute(
+  state: string | undefined,
+  response: ErrorApiResponse
 ): RouteLocationRaw {
-  return makeErrorReasonRoute(makeErrorReason(errorCode, details, description))
-}
-
-export function makeTranslatedErrorRoute(
-  errorCode: string,
-  detailsMessageId?: string,
-  descriptionMessageId?: string
-): RouteLocationRaw {
-  return makeErrorReasonRoute(
-    makeTranslatedErrorReason(errorCode, detailsMessageId, descriptionMessageId)
+  return makeErrorRoute(
+    makeErrorReason(response.errorCode, response.error?.details, response.description),
+    state
   )
 }
 
-export function makeUnknownErrorRoute(): RouteLocationRaw {
-  return makeTranslatedErrorRoute('unknown', 'errors.unknown.details', 'errors.unknown.description')
+export function makeUnknownErrorRoute(state: string | undefined): RouteLocationRaw {
+  return makeErrorRoute(makeErrorReason('unknown'), state)
 }
 
 export function makeMissingStateErrorRoute(): RouteLocationRaw {
-  return makeErrorReasonRoute(makeMissingStateErrorReason())
+  return makeErrorRoute(makeErrorReason(MISSING_STATE_ERROR_CODE))
 }
 
 /**
@@ -144,6 +138,15 @@ export function getErrorReason(historyState: HistoryState | undefined): ErrorRea
     isString(details) ? details : undefined,
     isString(description) ? description : undefined
   )
+}
+
+/**
+ * Return the state a route made by makeErrorRoute carries beside its reason, or undefined when it
+ * was sent by a page opened with no state.
+ */
+export function getErrorState(historyState: HistoryState | undefined): string | undefined {
+  const state = historyState?.['state']
+  return isString(state) && isStringNotBlankNorEmpty(state) ? state : undefined
 }
 
 export function makeRouter(): Router {

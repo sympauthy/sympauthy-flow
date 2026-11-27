@@ -18,7 +18,7 @@ import { SaAlert, SaButton, SaSpinner } from '@sympauthy/design'
 import { useRoute, useRouter } from 'vue-router'
 import type { ClaimsValidationFlowResource } from '@/client/model/ClaimsValidationFlowResource.ts'
 import type { ClientReferenceResource } from '@/client/model/ClientReferenceResource'
-import { makeUnknownErrorRoute } from '@/router'
+import { getStateQueryParam, makeUnknownErrorRoute } from '@/router'
 import CommonActionableLink from '@/components/CommonActionableLink.vue'
 import { Temporal } from '@js-temporal/polyfill'
 import { formatToHumanReadable } from '@/utils/DurationUtils.ts'
@@ -162,7 +162,7 @@ const onSubmit = handleSubmit(async (values, ctx) => {
 onMounted(async () => {
   const mediaQueryParam = route.query.media?.toString()
   if (mediaQueryParam === undefined) {
-    await router.replace(makeUnknownErrorRoute())
+    await router.replace(makeUnknownErrorRoute(getStateQueryParam(route)))
     return
   }
   media.value = mediaQueryParam
