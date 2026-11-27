@@ -58,7 +58,9 @@ onBeforeUnmount(() => clearTimeout(timer))
 
 <template>
   <div>
+    <!-- The name stays the label: the outcome is announced once, by the status below. -->
     <sa-button
+      :aria-label="label"
       variant="outline"
       :icon="icon"
       :label="outcome || label"

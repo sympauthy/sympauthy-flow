@@ -21,7 +21,7 @@ import ResetPasswordPage from '@/pages/resetpassword/ResetPasswordPage.vue'
 import ResetPasswordValidatePage from '@/pages/resetpassword/ResetPasswordValidatePage.vue'
 import ResetPasswordChoosePage from '@/pages/resetpassword/ResetPasswordChoosePage.vue'
 import { isArrayNotEmpty } from '@/utils/ArrayUtils.ts'
-import { isString, isStringNotBlankNorEmpty } from '@/utils/StringUtils.ts'
+import { isString, isStringNotBlankNorEmpty, isStringNotEmpty } from '@/utils/StringUtils.ts'
 import type { ErrorApiResponse } from '@/client/ErrorApiResponse'
 
 /**
@@ -54,18 +54,27 @@ export type ErrorReason = {
   description?: string
 }
 
+/**
+ * The code of the error a page opened with no state is sent to the error page with.
+ */
+export const MISSING_STATE_ERROR_CODE = 'state.unauthorized'
+
+/**
+ * Make a reason, leaving out details and a description that say nothing: the server may send them
+ * empty, or as null, and the error page shows no line without a value.
+ */
 export function makeErrorReason(
   errorCode: string,
-  details?: string,
-  description?: string
+  details?: string | null,
+  description?: string | null
 ): ErrorReason {
   const reason: ErrorReason = {
     error_code: errorCode
   }
-  if (details !== undefined) {
+  if (isStringNotEmpty(details)) {
     reason.details = details
   }
-  if (description !== undefined) {
+  if (isStringNotEmpty(description)) {
     reason.description = description
   }
   return reason
@@ -79,20 +88,14 @@ export function makeErrorReason(
  * shows the reason as it is, and a link must not be able to make it show a message that neither
  * the server nor this flow wrote. Nor does a copy of the error page's address ask the server for
  * the session's error, and draw another card than the one the person was sent to.
+ *
+ * A missing state is written as null rather than left out: a replace merges the history state of
+ * the entry it replaces, whose state would otherwise be carried over.
  */
-export function makeErrorRoute(
-  state: string | undefined,
-  errorCode: string,
-  details?: string,
-  description?: string
-): RouteLocationRaw {
-  const historyState: HistoryState = { error: makeErrorReason(errorCode, details, description) }
-  if (state !== undefined) {
-    historyState['state'] = state
-  }
+export function makeErrorRoute(reason: ErrorReason, state?: string): RouteLocationRaw {
   return {
     name: 'Error',
-    state: historyState
+    state: { error: reason, state: state ?? null }
   }
 }
 
@@ -104,15 +107,18 @@ export function makeApiErrorRoute(
   state: string | undefined,
   response: ErrorApiResponse
 ): RouteLocationRaw {
-  return makeErrorRoute(state, response.errorCode, response.error?.details, response.description)
+  return makeErrorRoute(
+    makeErrorReason(response.errorCode, response.error?.details, response.description),
+    state
+  )
 }
 
 export function makeUnknownErrorRoute(state: string | undefined): RouteLocationRaw {
-  return makeErrorRoute(state, 'unknown')
+  return makeErrorRoute(makeErrorReason('unknown'), state)
 }
 
 export function makeMissingStateErrorRoute(): RouteLocationRaw {
-  return makeErrorRoute(undefined, 'state.unauthorized')
+  return makeErrorRoute(makeErrorReason(MISSING_STATE_ERROR_CODE))
 }
 
 /**

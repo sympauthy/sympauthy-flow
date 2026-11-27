@@ -15,7 +15,8 @@ import {
   getErrorReason,
   getErrorState,
   getStateQueryParam,
-  makeErrorReason
+  makeErrorReason,
+  MISSING_STATE_ERROR_CODE
 } from '@/router'
 import { getSessionId } from '@/utils/StateUtils'
 import { formatUtcTime, type TechnicalDetail } from '@/utils/TechnicalDetailsUtils'
@@ -42,6 +43,7 @@ const errorApi = injectRequired(errorApiKey)
 const shownAt = new Date()
 const isLoading = ref(true)
 const card = ref<ErrorCard | undefined>(undefined)
+const isReturning = ref(false)
 
 const clientName = computed(() => getClientName(card.value?.client))
 
@@ -67,12 +69,19 @@ const detailLines = computed(() => {
 })
 
 function makeMissingStateCard(): ErrorCard {
-  return { missingState: true, reason: makeErrorReason('state.unauthorized') }
+  return { missingState: true, reason: makeErrorReason(MISSING_STATE_ERROR_CODE) }
 }
 
 async function fetchErrorCard(state: string): Promise<ErrorCard | undefined> {
   const sessionId = getSessionId(state)
-  const response = await errorApi.getError()
+  let response: Awaited<ReturnType<typeof errorApi.getError>>
+  try {
+    response = await errorApi.getError()
+  } catch (error) {
+    // An answer the page cannot read, such as a gateway's page sent as JSON.
+    console.error('Failed to read the error of the session.', error)
+    return { missingState: false, reason: makeErrorReason('api.unknown'), sessionId }
+  }
   if (response instanceof SuccessApiResponse) {
     if (response.content.redirect_url !== undefined) {
       await redirectOrPush(router, response.content.redirect_url)
@@ -101,6 +110,7 @@ async function fetchErrorCard(state: string): Promise<ErrorCard | undefined> {
 // the person is still on the page.
 function onReturn() {
   if (card.value?.cancelUrl !== undefined) {
+    isReturning.value = true
     document.location.assign(card.value.cancelUrl)
   }
 }
@@ -147,6 +157,7 @@ onMounted(async () => {
           <sa-button
             v-if="card.cancelUrl"
             :label="returnLabel"
+            :submitting="isReturning"
             size="large"
             type="button"
             @click="onReturn"

@@ -5,6 +5,7 @@ import {
   getErrorState,
   getStateQueryParam,
   makeApiErrorRoute,
+  makeErrorReason,
   makeErrorRoute,
   makeMissingStateErrorRoute,
   makeUnknownErrorRoute
@@ -33,16 +34,24 @@ describe('getStateQueryParam', () => {
   })
 })
 
+describe('makeErrorReason', () => {
+  it('leaves out details and a description that say nothing', () => {
+    expect(makeErrorReason('flow.invalid', '', null)).toEqual({ error_code: 'flow.invalid' })
+  })
+})
+
 describe('makeErrorRoute', () => {
+  const reason = makeErrorReason('flow.invalid', 'Some details.', 'Some description.')
+
   it('leads to the error page without putting the reason nor the state in the query', () => {
-    const route = makeErrorRoute('abc', 'flow.invalid', 'Some details.', 'Some description.')
+    const route = makeErrorRoute(reason, 'abc')
 
     expect(route).toMatchObject({ name: 'Error' })
     expect((route as RouteLocationNamedRaw).query).toBeUndefined()
   })
 
   it('carries a reason and a state the error page reads back', () => {
-    const route = makeErrorRoute('abc', 'flow.invalid', 'Some details.', 'Some description.')
+    const route = makeErrorRoute(reason, 'abc')
 
     expect(getErrorReason(historyStateOf(route))).toEqual({
       error_code: 'flow.invalid',
@@ -53,13 +62,20 @@ describe('makeErrorRoute', () => {
   })
 
   it('carries a reason with only a code', () => {
-    expect(getErrorReason(historyStateOf(makeErrorRoute('abc', 'flow.invalid')))).toEqual({
-      error_code: 'flow.invalid'
-    })
+    expect(
+      getErrorReason(historyStateOf(makeErrorRoute(makeErrorReason('flow.invalid'), 'abc')))
+    ).toEqual({ error_code: 'flow.invalid' })
   })
 
   it('carries no state when the page was opened with none', () => {
-    expect(getErrorState(historyStateOf(makeErrorRoute(undefined, 'flow.invalid')))).toBeUndefined()
+    expect(getErrorState(historyStateOf(makeErrorRoute(reason)))).toBeUndefined()
+  })
+
+  it('clears the state of the entry it replaces when the page was opened with none', () => {
+    // A replace writes the new entry over the history state of the one it replaces.
+    const replaced = { ...{ state: 'stale' }, ...historyStateOf(makeErrorRoute(reason)) }
+
+    expect(getErrorState(replaced)).toBeUndefined()
   })
 })
 
