@@ -147,17 +147,23 @@
       "cancelling": "Cancelling..."
     },
     "error": {
-      "title": "Something went wrong"
-    }
-  },
-  "errors": {
-    "missing_state": {
-      "description": "You are not authorized to access the page. Please go back to your application and retry to sign-in.",
-      "details": "A state issued by the authorization server must be passed as query param."
-    },
-    "unknown": {
-      "description": "An unexpected error occurred. Please go back to your application and retry to sign-in.",
-      "details": "An unexpected error occurred."
+      "title": "Something went wrong",
+      "unexpected": "Your sign-in stopped on an unexpected error. Return to {0} and sign in again. If it happens again, send the details below to its support.",
+      "unexpected_no_client": "Your sign-in stopped on an unexpected error. Return to the application and sign in again. If it happens again, send the details below to its support.",
+      "return": "Return to {0}",
+      "return_no_client": "Return to the application",
+      "missing_state": {
+        "title": "This page can't be opened directly",
+        "description": "Sign-in pages work only when an app sends you here. Go back to the app you were using and sign in from there."
+      },
+      "technical_details": {
+        "title": "Technical details",
+        "error": "Error",
+        "details": "Details",
+        "session_id": "Session id",
+        "time": "Time",
+        "copy": "Copy details"
+      }
     }
   },
   "or": {

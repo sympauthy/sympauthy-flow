@@ -4,14 +4,15 @@ import BasePage from '@/components/BasePage.vue'
 import TitleContentCard from '@/components/card/TitleContentCard.vue'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { injectRequired, isClickInPlace, linkAttributes, redirectOrPush } from '@/utils/VueUtils'
 import { signInApiKey } from '@/client/api/SignInApi'
 import type { SignInFlowResource } from '@/client/model/SignInFlowResource'
 import { SuccessApiResponse } from '@/client/SuccessApiResponse'
-import { makeErrorRoute } from '@/router'
+import { getStateQueryParam, makeApiErrorRoute } from '@/router'
 
 const { t } = useI18n()
+const route = useRoute()
 const router = useRouter()
 const signInApi = injectRequired(signInApiKey)
 
@@ -41,7 +42,7 @@ onMounted(async () => {
     }
     signIn.value = response.content
   } else {
-    await router.replace(makeErrorRoute(response.errorCode, response.details, response.description))
+    await router.replace(makeApiErrorRoute(getStateQueryParam(route), response))
   }
 })
 </script>

@@ -1,60 +1,107 @@
 import { describe, expect, it } from 'vitest'
-import type { HistoryState, RouteLocationNamedRaw } from 'vue-router'
+import type { HistoryState, RouteLocationNamedRaw, RouteLocationNormalized } from 'vue-router'
 import {
   getErrorReason,
+  getErrorState,
+  getStateQueryParam,
+  makeApiErrorRoute,
   makeErrorRoute,
   makeMissingStateErrorRoute,
   makeUnknownErrorRoute
 } from '@/router'
+import { ErrorApiResponse } from '@/client/ErrorApiResponse'
 
 function historyStateOf(route: unknown): HistoryState | undefined {
   return (route as RouteLocationNamedRaw).state
 }
 
+function routeWithQuery(query: RouteLocationNormalized['query']): RouteLocationNormalized {
+  return { query } as RouteLocationNormalized
+}
+
+describe('getStateQueryParam', () => {
+  it('returns the state the route carries', () => {
+    expect(getStateQueryParam(routeWithQuery({ state: 'abc' }))).toBe('abc')
+    expect(getStateQueryParam(routeWithQuery({ state: ['abc', 'def'] }))).toBe('abc')
+  })
+
+  it('returns nothing for a missing, empty or blank state', () => {
+    expect(getStateQueryParam(routeWithQuery({}))).toBeUndefined()
+    expect(getStateQueryParam(routeWithQuery({ state: '' }))).toBeUndefined()
+    expect(getStateQueryParam(routeWithQuery({ state: ' ' }))).toBeUndefined()
+    expect(getStateQueryParam(routeWithQuery({ state: [null] }))).toBeUndefined()
+  })
+})
+
 describe('makeErrorRoute', () => {
-  it('leads to the error page without putting the reason in the query', () => {
-    const route = makeErrorRoute('flow.invalid', 'Some details.', 'Some description.')
+  it('leads to the error page without putting the reason nor the state in the query', () => {
+    const route = makeErrorRoute('abc', 'flow.invalid', 'Some details.', 'Some description.')
 
     expect(route).toMatchObject({ name: 'Error' })
     expect((route as RouteLocationNamedRaw).query).toBeUndefined()
   })
 
-  it('carries a reason the error page reads back', () => {
-    const route = makeErrorRoute('flow.invalid', 'Some details.', 'Some description.')
+  it('carries a reason and a state the error page reads back', () => {
+    const route = makeErrorRoute('abc', 'flow.invalid', 'Some details.', 'Some description.')
 
     expect(getErrorReason(historyStateOf(route))).toEqual({
       error_code: 'flow.invalid',
       details: 'Some details.',
       description: 'Some description.'
     })
+    expect(getErrorState(historyStateOf(route))).toBe('abc')
   })
 
   it('carries a reason with only a code', () => {
-    expect(getErrorReason(historyStateOf(makeErrorRoute('flow.invalid')))).toEqual({
+    expect(getErrorReason(historyStateOf(makeErrorRoute('abc', 'flow.invalid')))).toEqual({
       error_code: 'flow.invalid'
+    })
+  })
+
+  it('carries no state when the page was opened with none', () => {
+    expect(getErrorState(historyStateOf(makeErrorRoute(undefined, 'flow.invalid')))).toBeUndefined()
+  })
+})
+
+describe('makeApiErrorRoute', () => {
+  it("carries the server's details and description", () => {
+    const response = new ErrorApiResponse('flow.invalid', 'Some details.', 'Some description.', {
+      error_code: 'flow.invalid',
+      details: 'Some details.',
+      description: 'Some description.'
+    })
+
+    expect(getErrorReason(historyStateOf(makeApiErrorRoute('abc', response)))).toEqual({
+      error_code: 'flow.invalid',
+      details: 'Some details.',
+      description: 'Some description.'
+    })
+  })
+
+  it("leaves out the flow's stand-in for details the server did not send", () => {
+    const response = new ErrorApiResponse('api.unknown', 'An unknown error occurred.')
+
+    expect(getErrorReason(historyStateOf(makeApiErrorRoute('abc', response)))).toEqual({
+      error_code: 'api.unknown'
     })
   })
 })
 
 describe('makeMissingStateErrorRoute', () => {
-  it('tells the end-user to go back to their application', () => {
-    expect(getErrorReason(historyStateOf(makeMissingStateErrorRoute()))).toEqual({
-      error_code: 'state.unauthorized',
-      details: 'A state issued by the authorization server must be passed as query param.',
-      description:
-        'You are not authorized to access the page. Please go back to your application and retry to sign-in.'
-    })
+  it('carries only the code, and no state', () => {
+    const route = makeMissingStateErrorRoute()
+
+    expect(getErrorReason(historyStateOf(route))).toEqual({ error_code: 'state.unauthorized' })
+    expect(getErrorState(historyStateOf(route))).toBeUndefined()
   })
 })
 
 describe('makeUnknownErrorRoute', () => {
-  it('tells the end-user to go back to their application', () => {
-    expect(getErrorReason(historyStateOf(makeUnknownErrorRoute()))).toEqual({
-      error_code: 'unknown',
-      details: 'An unexpected error occurred.',
-      description:
-        'An unexpected error occurred. Please go back to your application and retry to sign-in.'
-    })
+  it('carries only the code, and the state', () => {
+    const route = makeUnknownErrorRoute('abc')
+
+    expect(getErrorReason(historyStateOf(route))).toEqual({ error_code: 'unknown' })
+    expect(getErrorState(historyStateOf(route))).toBe('abc')
   })
 })
 
@@ -73,5 +120,13 @@ describe('getErrorReason', () => {
     expect(getErrorReason({ error: { error_code: 'flow.invalid', details: 42 } })).toEqual({
       error_code: 'flow.invalid'
     })
+  })
+})
+
+describe('getErrorState', () => {
+  it('returns nothing for a state that is not a string, or is empty', () => {
+    expect(getErrorState(undefined)).toBeUndefined()
+    expect(getErrorState({ state: 42 })).toBeUndefined()
+    expect(getErrorState({ state: '' })).toBeUndefined()
   })
 })
